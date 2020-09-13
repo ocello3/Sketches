@@ -26,7 +26,6 @@ module.exports = {
         "ignoreInitial": true
     },
     "server": {
-			baseDir: "./src",
 			index: "index.html"
 		},
     "proxy": false,
