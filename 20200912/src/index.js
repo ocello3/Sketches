@@ -9,7 +9,8 @@ const sketch = s => {
 		s.frameRate(2);
 	};
 	s.draw = () => {
-		s.strokeWeight(5);
+		s.background(255);
+		s.strokeWeight(10);
 		s.noFill();
 		s.circle(s.width/2, s.height/2, 50, 50);
 		s.rect(0, 0, s.width, s.height);

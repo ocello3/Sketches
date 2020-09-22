@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>p5.js example</title>
+		<!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+		<style>* {
+				margin: 100;
+				padding: 100;
+				overflow: hidden;
+			}
+			:not(input, textarea) {
+				-webkit-user-select: none;
+			}
+			canvas {
+				display: block;
+			}</style>
+		<script src="src.e31bb0bc.js" type="module"></script>
+		<script>var setup_lockScroll = function setup_lockScroll() {
+  window.addEventListener("touchstart", scroll_control, {
+    passive: false
+  });
+  window.addEventListener("touchmove", scroll_control, {
+    passive: false
+  });
+};
+
+var scroll_control = function scroll_control(event) {
+  return event.preventDefault();
+};</script>
+	</head>
+	<body>
+		<div id="p5js"></div>
+	</body>
+</html>
