@@ -6,11 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint src",
-		"start": "browser-sync start --config bs-config.js"
+    "start": "browser-sync start --config bs-config.js"
   },
   "author": "ocello3",
   "license": "ISC",
   "devDependencies": {
-    "browser-sync": "^2.26.12"
+    "browser-sync": "^2.26.12",
+    "jest": "^26.4.2"
+  },
+  "dependencies": {
+    "p5": "^1.1.9",
+    "tone": "^14.7.39"
   }
 }

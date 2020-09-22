@@ -1,0 +1,23 @@
+{
+  "name": "20200912",
+  "version": "1.0.0",
+  "description": "sketch at 20200912",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "dev": "parcel watch ./src/index.html --out-file app.html --out-dir ./dev --public-url .",
+    "build": "parcel build ./src/index.html --out-file app.html --out-dir ./pub --public-url ."
+  },
+  "author": "ocello3",
+  "license": "ISC",
+  "dependencies": {
+    "p5": "^1.1.9",
+    "tone": "^14.7.39",
+    "tweakpane": "^1.5.4"
+  },
+  "devDependencies": {
+    "eslint": "^7.9.0",
+    "jest": "^26.4.2",
+    "parcel-bundler": "^1.12.4"
+  }
+}
