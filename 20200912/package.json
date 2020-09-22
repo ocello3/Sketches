@@ -4,8 +4,9 @@
   "description": "sketch at 20200912",
   "main": "index.js",
   "scripts": {
+		"preinstall": "npx npm-force-resolutions",
     "test": "jest",
-    "dev": "parcel watch ./src/index.html --out-file app.html --out-dir ./dev --public-url .",
+    "parcel": "parcel ./src/index.html",
     "build": "parcel build ./src/index.html --out-file app.html --out-dir ./pub --public-url ."
   },
   "author": "ocello3",
@@ -19,5 +20,9 @@
     "eslint": "^7.9.0",
     "jest": "^26.4.2",
     "parcel-bundler": "^1.12.4"
+  },
+  "resolutions": {
+    "browserslist": "4.14.2",
+    "caniuse-lite": "1.0.30001129"
   }
 }

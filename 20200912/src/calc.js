@@ -1,4 +1,4 @@
-"use strict";
+// "use strict";
 
 import { s } from './index.js';
 
