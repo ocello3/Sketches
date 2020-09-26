@@ -3,12 +3,12 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>p5.js example</title>
+		<title>20200912</title>
 		<!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
 		<style>
-			* {
-				margin: 100;
-				padding: 100;
+			html, body {
+				margin: 0;
+				padding: 0;
 				overflow: hidden;
 			}
 			:not(input, textarea) {
@@ -16,9 +16,14 @@
 			}
 			canvas {
 				display: block;
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				margin: auto;
 			}
 		</style>
-		<script src="index.js" type="module"></script>
 		<script>
 			const setup_lockScroll = () => {
 				window.addEventListener("touchstart", scroll_control, { passive: false });
@@ -26,6 +31,7 @@
 			}
 			const scroll_control = event => event.preventDefault();
 		</script>
+		<script src="index.js" type="module"></script>
 	</head>
 	<body>
 		<div id='p5js'></div>

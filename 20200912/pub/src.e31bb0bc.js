@@ -32539,10 +32539,12 @@ var _p = _interopRequireDefault(require("p5"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// "use strict";
 var sketch = function sketch(s) {
+  var baseSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
+  var size = baseSize < 500 ? baseSize : baseSize * 0.6;
+
   s.setup = function () {
-    s.createCanvas(500, 500);
+    s.createCanvas(size, size);
     s.noLoop();
     s.frameRate(2);
   };
@@ -32586,7 +32588,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50262" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52605" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
