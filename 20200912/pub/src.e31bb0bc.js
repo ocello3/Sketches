@@ -45171,11 +45171,19 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var setPane = function setPane(pane, params) {};
+var setPane = function setPane(pane, params) {
+  pane.addButton({
+    title: 'frame'
+  });
+  pane.addInput(params, 'flagCount');
+  pane.addButton({
+    title: 'sound'
+  });
+};
 
 var adjustPos = function adjustPos(paneId, params) {
   paneId.style.left = params.margin.x + 'px';
-  paneId.style.top = params.margin.y + 'px';
+  paneId.style.top = params.margin.y * 0.2 + 'px';
 };
 
 var gui = function gui(pane, paneId, params) {
@@ -45218,8 +45226,8 @@ var sketch = function sketch(s) {
 
   s.setup = function () {
     s.createCanvas(params.canvasSize, params.canvasSize); // s.noLoop();
-    // s.frameRate(2);
-    // gui(pane, paneId, params);
+
+    (0, _gui.default)(pane, paneId, params);
   };
 
   s.draw = function () {
@@ -45231,13 +45239,7 @@ var sketch = function sketch(s) {
       return func(params);
     }); // draw background
 
-    s.background(255); // draw frame
-    // s.push();
-    // s.strokeWeight(1);
-    // s.noFill();
-    // s.rect(0, 0, s.width, s.height);
-    // s.pop();
-    // draw bar
+    s.background(255); // draw bar
 
     s.push();
     s.stroke(0);
@@ -45289,7 +45291,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50061" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58038" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

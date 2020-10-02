@@ -14,8 +14,7 @@ const sketch = (s) => {
 	s.setup = () => {
 		s.createCanvas(params.canvasSize, params.canvasSize);
 		// s.noLoop();
-		// s.frameRate(2);
-		// gui(pane, paneId, params);
+		gui(pane, paneId, params);
 	};
 
 	s.draw = () => {
@@ -24,12 +23,6 @@ const sketch = (s) => {
 		flags = flags.map(func => func(params));
 		// draw background
 		s.background(255);
-		// draw frame
-		// s.push();
-		// s.strokeWeight(1);
-		// s.noFill();
-		// s.rect(0, 0, s.width, s.height);
-		// s.pop();
 		// draw bar
 		s.push();
 		s.stroke(0);
