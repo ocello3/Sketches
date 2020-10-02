@@ -1,15 +1,19 @@
 import P5 from 'p5';
+import Tweakpane from 'tweakpane';
 import * as calc from './calc.js';
+import gui from './gui.js';
 
 const sketch = (s) => {
-	const baseSize = (window.innerWidth < window.innerHeight) ? window.innerWidth : window.innerHeight;
-	const size = (baseSize < 500) ? baseSize : baseSize * 0.6;
-	const circleSize = calc.circleSize(size);
+	const paneId = document.getElementById('pane');
+	const pane = new Tweakpane({ container:paneId });
+	const params = calc.getParams();
+	const circlePos = calc.circlePos(params);
 
 	s.setup = () => {
-		s.createCanvas(size, size);
+		s.createCanvas(params.canvasSize, params.canvasSize);
 		s.noLoop();
 		s.frameRate(2);
+		gui(pane, paneId, params);
 	};
 
 	s.draw = () => {
@@ -17,7 +21,7 @@ const sketch = (s) => {
 		s.strokeWeight(10);
 		s.noFill();
 		s.rect(0, 0, s.width, s.height);
-		s.circle(circleSize.x, circleSize.y, 100);
+		s.circle(circlePos.x, circlePos.y, params.circleRadius);
 	};
 };
 

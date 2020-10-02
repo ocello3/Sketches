@@ -11,6 +11,6 @@ module.exports = {
     },
     "rules": {
     },
-		"plugins":"jest"
+		"plugins":["jest"]
 };
 

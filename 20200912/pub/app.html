@@ -21,6 +21,13 @@
 				bottom: 0;
 				left: 0;
 				margin: auto;
+			}
+			div#pane {
+				position: absolute;
+				top: 10;
+				right: 10;
+				bottom: 10;
+				left: 10;
 			}</style>
 		<script>var setup_lockScroll = function setup_lockScroll() {
   window.addEventListener("touchstart", scroll_control, {
@@ -38,5 +45,6 @@ var scroll_control = function scroll_control(event) {
 	</head>
 	<body>
 		<div id="p5js"></div>
+		<div id="pane"></div>
 	</body>
 </html>
