@@ -32535,24 +32535,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.circleSize = void 0;
 
-// import P5 from 'p5';
-// import { s } from './index.js';
-var circleSize = function circleSize() {
-  // return new P5.Vector(s.width/2, s.height/2);
-  return {
-    x: 200,
-    y: 200
-  };
+var _p = _interopRequireDefault(require("p5"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var circleSize = function circleSize(size) {
+  return new _p.default.Vector(size / 2, size / 2);
 };
 
 exports.circleSize = circleSize;
-},{}],"index.js":[function(require,module,exports) {
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"index.js":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.s = void 0;
 
 var _p = _interopRequireDefault(require("p5"));
 
@@ -32567,26 +32560,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var sketch = function sketch(s) {
   var baseSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
   var size = baseSize < 500 ? baseSize : baseSize * 0.6;
-  var circleSize = calc.circleSize();
+  var circleSize = calc.circleSize(size);
 
   s.setup = function () {
     s.createCanvas(size, size);
     s.noLoop();
     s.frameRate(2);
-    console.log(circleSize.x);
   };
 
   s.draw = function () {
     s.background(255);
     s.strokeWeight(10);
     s.noFill();
-    s.circle(circleSize.x, circleSize.y, 50, 50);
     s.rect(0, 0, s.width, s.height);
+    s.circle(circleSize.x, circleSize.y, 100);
   };
 };
 
-var s = new _p.default(sketch, 'p5js');
-exports.s = s;
+new _p.default(sketch, 'p5js');
 },{"p5":"../node_modules/p5/lib/p5.min.js","./calc.js":"calc.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -32615,7 +32606,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60610" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61858" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

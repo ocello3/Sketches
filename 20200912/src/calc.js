@@ -1,8 +1,6 @@
-// import P5 from 'p5';
-// import { s } from './index.js';
+import P5 from 'p5';
 
-export const circleSize = () => {
-	// return new P5.Vector(s.width/2, s.height/2);
-	return {x: 200, y: 200};
+export const circleSize = (size) => {
+	return new P5.Vector(size/2, size/2);
 };
 
