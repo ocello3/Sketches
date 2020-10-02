@@ -1,12 +1,5 @@
 const setPane = (pane, params) => {
-	const folder = pane.addFolder({
-		expanded: true,
-		title: 'circle',
-	});
-	folder.addInput(params, 'circleRadius', {
-		min: 10,
-		max: params.canvasSize,
-	});
+	
 };
 
 const adjustPos = (paneId, params) => {
