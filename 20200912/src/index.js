@@ -6,7 +6,8 @@ import gui from './gui.js';
 const sketch = (s) => {
 	const paneId = document.getElementById('pane');
 	const pane = new Tweakpane({ container:paneId });
-	const params = calc.getParams();
+	const windowSize = (window.innerWidth < window.innerHeight) ? window.innerWidth : window.innerHeight;
+	const params = calc.getParams(windowSize);
 	const colorPalette = [s.color(108, 160, 220), s.color(249, 228, 236), s.color(119, 221, 119)];
 	let flags = Array.from(Array(3), (flag, index) => calc.initFlag(index));
 	flags = flags.map(func => func(params));
@@ -14,7 +15,7 @@ const sketch = (s) => {
 	s.setup = () => {
 		s.createCanvas(params.canvasSize, params.canvasSize);
 		// s.noLoop();
-		gui(pane, paneId, params);
+		// gui(pane, paneId, params);
 	};
 
 	s.draw = () => {
