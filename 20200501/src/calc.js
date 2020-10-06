@@ -62,13 +62,23 @@ export const updateSnake = (snake, index) => (params, frameCount) => {
 		return P5.Vector.add(pos, new P5.Vector(xIncrement, 0));
 	};
 
-	const calcShrinkPos = (pos, posIndex) => (params) => {
+	const calcShrinkedPos = (pos, posIndex) => (params) => {
 		const xIncrement = params.pointInterval * params.waveLengthShrinkRate * posIndex;
 		return P5.Vector.add(pos, new P5.Vector(xIncrement, 0));
 	};
 
+	const calcTargetPosArray = (prevTargetPosArray, params, status) => {
+		const stretchedPosFuncArray = prevTargetPosArray.map((pos, posIndex) => calcStretchedPos(pos, posIndex));
+		const stretchedPosArray = stretchedPosFuncArray.map(func => func(params));
+		const shrinkedPosFuncArray = prevTargetPosArray.map((pos, posIndex) => calcShrinkedPos(pos, posIndex));
+		const shrinkedPosArray = shrinkedPosFuncArray.map(func => func(params));
+		if (status == 'stretch') return stretchedPosArray;
+		if (status == 'shrink') return shrinkedPosArray;
+	};
+
 	const updateSnake = {};
 	updateSnake.status = updateStatus(frameCount);
+	updateSnake.targetPosArray = calcTargetPosArray(snake.targetPosArray, params, updateSnake.status);
 	return updateSnake;
 };
 
