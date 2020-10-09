@@ -9,8 +9,10 @@ const setPane = (pane, params) => {
 };
 
 const adjustPos = (paneId, params) => {
-	paneId.style.left = params.marginVec.x + 'px';
-	paneId.style.top = params.marginVec.y * 0.2 + 'px';
+	const marginWidth = (window.innerWidth - params.canvasSize) / 2;
+	const marginHeight = (window.innerHeight - params.canvasSize) / 2;
+	paneId.style.left = marginWidth + 'px';
+	paneId.style.top = marginHeight * 0.2 + 'px';
 };
 
 const gui = (pane, paneId, params) => {

@@ -32533,20 +32533,140 @@ var global = arguments[3];
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getParams = void 0;
+exports.updateSnake = exports.initSnake = exports.getParams = void 0;
 
 var _p = _interopRequireDefault(require("p5"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var getParams = function getParams(windowSize) {
+  var calcMarginVec = function calcMarginVec(canvasSize) {
+    var x = (window.innerWidth - canvasSize) / 2;
+    var y = (window.innerHeight - canvasSize) / 2;
+    return new _p.default.Vector(x, y);
+  };
+
   var params = {};
   params.canvasSize = windowSize < 500 ? windowSize : windowSize * 0.6;
-  params.margin = new _p.default.Vector((window.innerWidth - params.canvasSize) / 2, (window.innerHeight - params.canvasSize) / 2);
+  params.marginVec = calcMarginVec(params.canvasSize);
+  params.snakeCount = 5;
+  params.pointCount = 18;
+  params.waveCount = 3;
+  params.waveLength = 6 / 8 * params.canvasSize;
+  params.waveLengthShrinkRate = 0.7;
+  params.totalLength = params.waveLength * params.waveCount;
+  params.pointIntervalLength = params.totalLength / params.pointCount;
+  params.angleIntervalLength = Math.PI * 2 * params.waveCount / params.pointCount;
+  params.waveAmp = 6 / 8 * params.canvasSize;
+  params.waveAmpReducRate = 0.8;
+  params.easingFactorMax = 0.4;
+  params.easingFactorReducRate = 0.65;
   return params;
 };
 
 exports.getParams = getParams;
+
+var initSnake = function initSnake(index) {
+  return function (params) {
+    var initStretchedVec = function initStretchedVec(vecIndex) {
+      return function (params) {
+        var head_x = params.totalLength;
+        var x = head_x - params.pointInterval * vecIndex;
+        var head_y = params.canvasSize / (params.snakeCount + 1) * (vecIndex + 1);
+        var currentWaveAmp = params.waveAmp * Math.pow(params.waveAmpReducRate, vecIndex);
+        var y = head_y + Math.sin(params.angleInterval * vecIndex) * currentWaveAmp;
+        return new _p.default.Vector(x, y);
+      };
+    };
+
+    var initStretchedVecArray = function initStretchedVecArray(params) {
+      var curryArray = Array.from(Array(params.pointCount), function (vec, vecIndex) {
+        return initStretchedVec(vecIndex);
+      });
+      return curryArray.map(function (func) {
+        return func(params);
+      });
+    };
+
+    var initSnake = {};
+    initSnake.status = 'keep';
+    initSnake.targetVecArray = initStretchedVecArray(index, params);
+    initSnake.currentVecArray = initStretchedVecArray(index, params);
+    return initSnake;
+  };
+};
+
+exports.initSnake = initSnake;
+
+var updateSnake = function updateSnake(snake) {
+  return function (params, frameCount) {
+    var updateStatus = function updateStatus(frameCount) {
+      if ((frameCount + 50) % 100 == 0) return 'stretch';
+      if (frameCount % 100 == 0) return 'shrink';
+      return 'keep';
+    };
+
+    var calcStretchedVec = function calcStretchedVec(vec, vecIndex) {
+      return function (params) {
+        var xIncrement = params.pointIntervalLength * params.waveLengthShrinkRate * (params.pointCount - vecIndex - 1);
+        return _p.default.Vector.add(vec, new _p.default.Vector(xIncrement, 0));
+      };
+    };
+
+    var calcShrinkedVec = function calcShrinkedVec(vec, vecIndex) {
+      return function (params) {
+        var xIncrement = params.pointIntervalLength * params.waveLengthShrinkRate * vecIndex;
+        return _p.default.Vector.add(vec, new _p.default.Vector(xIncrement, 0));
+      };
+    };
+
+    var calcTargetVecArray = function calcTargetVecArray(targetVecArray, params, status) {
+      var curryArray_stretched = targetVecArray.map(function (vec, vecIndex) {
+        return calcStretchedVec(vec, vecIndex);
+      });
+      var stretchedVecArray = curryArray_stretched.map(function (func) {
+        return func(params);
+      });
+      var curryArray_shrinked = targetVecArray.map(function (vec, vecIndex) {
+        return calcShrinkedVec(vec, vecIndex);
+      });
+      var shrinkedArray = curryArray_shrinked.map(function (func) {
+        return func(params);
+      });
+      if (status == 'stretch') return stretchedVecArray;
+      if (status == 'shrink') return shrinkedArray;
+    };
+
+    var calcCurrentVec = function calcCurrentVec(currentVec, vecIndex) {
+      return function (params, targetVecArray) {
+        var easingFactor = params.easingFactorMax * Math.pow(params.easingFactorReducRate, vecIndex + 1);
+
+        var diffVec = _p.default.Vector.sub(targetVecArray[vecIndex]);
+
+        var displacementVec = _p.default.Vector.mult(diffVec, easingFactor);
+
+        return _p.default.Vector.add(currentVec, displacementVec);
+      };
+    };
+
+    var calcCurrentVecArray = function calcCurrentVecArray(currentVecArray, params, targetVecArray) {
+      var curryArray = currentVecArray.map(function (currentVec, vecIndex) {
+        return calcCurrentVec(currentVec, vecIndex);
+      });
+      return curryArray.map(function (func) {
+        return func(params, targetVecArray);
+      });
+    };
+
+    var updateSnake = {};
+    updateSnake.status = updateStatus(frameCount);
+    updateSnake.targetVecArray = calcTargetVecArray(snake.targetVecArray, params, updateSnake.status);
+    updateSnake.currentVecArray = calcCurrentVecArray(snake.currentVecArray, params, updateSnake.targetVecArray);
+    return updateSnake;
+  };
+};
+
+exports.updateSnake = updateSnake;
 },{"p5":"../node_modules/p5/lib/p5.min.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -32567,6 +32687,16 @@ var sketch = function sketch(s) {
   // const pane = new Tweakpane({ container:paneId });
   var windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
   var params = calc.getParams(windowSize);
+  var colorPalette = {
+    color_1: s.color('blue'),
+    color_2: s.color('red')
+  };
+  var snakes = Array.from(Array(params.snakeCount), function (snake, index) {
+    return calc.initSnake(index);
+  });
+  snakes = snakes.map(function (func) {
+    return func(params);
+  });
 
   s.setup = function () {
     s.createCanvas(params.canvasSize, params.canvasSize);
@@ -32574,11 +32704,38 @@ var sketch = function sketch(s) {
   };
 
   s.draw = function () {
-    // draw background
+    snakes = snakes.map(function (snake) {
+      return calc.updateSnake(snake);
+    });
+    snakes = snakes.map(function (func) {
+      return func(params);
+    }); // draw background
+
     s.background(255); // draw frame
 
     s.fill(0);
-    s.rect(0, 0, params.canvasSize, params.canvasSize);
+    s.rect(0, 0, params.canvasSize, params.canvasSize); // prepare draw snake function
+
+    var drawSnake = function drawSnake(snake, index, self) {
+      var lerpVal = index / (self.length - 1);
+      var snakeColor = s.lerpColor(params.colorPalette.color_1, params.colorPalette.color_2, lerpVal);
+      s.push();
+      s.fill(snakeColor);
+      s.beginShape();
+      snake.currentVecArray.forEach(function (vec) {
+        s.curveVertex(vec.x, vec.y);
+      });
+      s.endShape(s.CLOSE);
+      s.pop();
+    }; // draw snake
+
+
+    s.push();
+    s.noStroke();
+    s.fill(0);
+    snakes.forEach(function (snake, index, self) {
+      return drawSnake(snake, index, self);
+    });
   };
 };
 
@@ -32611,7 +32768,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52773" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61591" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
