@@ -39,3 +39,22 @@ test('calcWaveAmp', () => {
 	}
 });
 
+test('calcInitStretchedSnakePos', () => {
+	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
+		// test when pointIndex is 0
+		const stretchedSnakeHeadPos = calcInit.calcStretchedSnakeHeadPos(snakeIndex, params);
+		const initStretchedSnakePosFunc = calcInit.calcInitStretchedSnakePos(0);
+		const initStretchedSnakePos = initStretchedSnakePosFunc(snakeIndex, params);
+		expect(initStretchedSnakePos.x).toBe(stretchedSnakeHeadPos.x);
+		expect(initStretchedSnakePos.y).toBe(stretchedSnakeHeadPos.y);
+		// test whne pointIndex is greater than 0
+		for (let pointIndex = 1; pointIndex < pointNum; pointIndex++) {
+			const initStretchedSnakePosFunc = calcInit.calcInitStretchedSnakePos(pointIndex);
+			const initStretchedSnakePos = initStretchedSnakePosFunc(snakeIndex, params);
+			expect(initStretchedSnakePos.x).toBeLessThan(0);
+			expect(initStretchedSnakePos.y).toBeGreaterThan(0);
+		}
+	}
+});
+
+

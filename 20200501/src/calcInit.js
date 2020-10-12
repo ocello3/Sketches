@@ -18,20 +18,17 @@ export const calcWaveAmp = (pointIndex, params) => {
 	return params.headWaveAmp * Math.pow(params.waveAmpReducRate, pointIndex);
 };
 
-export const calcInitStretchedSnakePoint = (pointIndex) => (snakeIndex, params) => {
-	const xPos_head = params.snakeLength;
-	const pointInterval = params.snakeLength / params.drawPointNum;
-	const xPos = xPos_head - pointInterval * pointIndex;
-	const yPos_head = params.canvasSize / (params.snakeNum + 1) * (snakeIndex + 1);
-	const currentSnakeHeight = params.snakeLeadHeight * Math.pow(params.snakeHeightReducRate, pointIndex);
-	const snakeCurveAngleInterval = Math.PI * 2 * params.jointNum / params.drawPointNum;
-	const currentSnakeCurveAngle = snakeCurveAngleInterval * pointIndex;
-	const yPos = yPos_head + Math.sin(currentSnakeCurveAngle) * currentSnakeHeight;
-	return new P5.Vector(xPos, yPos);
+export const calcInitStretchedSnakePos = (pointIndex) => (snakeIndex, params) => {
+	const stretchedSnakeHeadPos = calcStretchedSnakeHeadPos(snakeIndex, params);
+	const stretchedSnakePosAngle = calcStretchedSnakePosAngle(pointIndex);
+	const waveAmp = calcWaveAmp(pointIndex, params);
+	const x = stretchedSnakeHeadPos.x - params.waveLength / 2 * pointIndex;
+	const y = stretchedSnakeHeadPos.y + waveAmp * Math.sin(stretchedSnakePosAngle);
+	return new P5.Vector(x, y);
 };
 
 export const calcInitStretchVecArray = (snakeIndex, params) => {
-	const curryArray = Array.from(Array(params.drawPointNum), (point, pointIndex) => calcInitStretchedSnakePoint(pointIndex));
+	const curryArray = Array.from(Array(params.drawPointNum), (point, pointIndex) => calcInitStretchedSnakePos(pointIndex));
 	return curryArray.map(func => func(snakeIndex, params));
 };
 
