@@ -27,16 +27,17 @@ export const calcInitStretchedSnakePos = (pointIndex) => (snakeIndex, params) =>
 	return new P5.Vector(x, y);
 };
 
-export const calcInitStretchVecArray = (snakeIndex, params) => {
-	const curryArray = Array.from(Array(params.drawPointNum), (point, pointIndex) => calcInitStretchedSnakePos(pointIndex));
+export const calcInitStretchedSnakePosArray = (snakeIndex, params) => {
+	const pointNum = calcPointNum(params);
+	const curryArray = Array.from(Array(pointNum), (point, pointIndex) => calcInitStretchedSnakePos(pointIndex));
 	return curryArray.map(func => func(snakeIndex, params));
 };
 
 export const calcInit = (snakeIndex) => (params) => {
 	const initSnake = {};
 	initSnake.status = 'keep';
-	initSnake.targetVecArray = calcInitStretchVecArray(snakeIndex, params);
-	initSnake.currentVecArray = initSnake.targetVecArray;
+	initSnake.targetPosArray = calcInitStretchedSnakePosArray(snakeIndex, params);
+	initSnake.currentPosArray = initSnake.targetVecArray;
 	return initSnake;
 };
 

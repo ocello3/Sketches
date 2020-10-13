@@ -57,4 +57,16 @@ test('calcInitStretchedSnakePos', () => {
 	}
 });
 
+test('calcInitStretchedSnakePosArray', () => {
+	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
+		const initStretchedSnakePosArray = calcInit.calcInitStretchedSnakePosArray(snakeIndex, params);
+		for (let pointIndex = 0; pointIndex < pointNum; pointIndex++) {
+			const initStretchedSnakePos = initStretchedSnakePosArray[pointIndex];
+			const testPosFunc = calcInit.calcInitStretchedSnakePos(pointIndex);
+			const testPos = testPosFunc(snakeIndex, params);
+			expect(initStretchedSnakePos.x).toBe(testPos.x);
+			expect(initStretchedSnakePos.y).toBe(testPos.y);
+		}
+	}
+});
 
