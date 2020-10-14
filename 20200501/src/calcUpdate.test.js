@@ -25,17 +25,34 @@ test('calcStatus', () => {
 });
 
 test('calcShrinkedSnakePos', () => {
-	// when pointIndex is 0
 	const currentTargetPos = new P5.Vector(0, 0);
+	// when pointIndex is 0
 	const shrinkedSnakePosFunc = calcUpdate.calcShrinkedSnakePos(currentTargetPos, 0);
 	const shrinkedSnakePos = shrinkedSnakePosFunc(params);
 	expect(shrinkedSnakePos.x).toBe(currentTargetPos.x);
 	expect(shrinkedSnakePos.y).toBe(currentTargetPos.y);
+	// when pointIndex is greater than 0
 	for (let pointIndex = 1; pointIndex < pointNum; pointIndex++) {
 		const shrinkedSnakePosFunc = calcUpdate.calcShrinkedSnakePos(currentTargetPos, pointIndex);
 		const shrinkedSnakePos = shrinkedSnakePosFunc(params);
 		expect(shrinkedSnakePos.x).toBeGreaterThan(currentTargetPos.x);
 		expect(shrinkedSnakePos.y).toBe(currentTargetPos.y);
 	}
+});
+
+test('calcStretchedSnakePos', () => {
+	const currentTargetPos = new P5.Vector(0, 0);
+	// when pointIndex is less than the last index
+	for (let pointIndex = 0; pointIndex < pointNum - 1; pointIndex++) {
+		const stretchedSnakePosFunc = calcUpdate.calcStretchedSnakePos(currentTargetPos, pointIndex, Array(pointNum));
+		const stretchedSnakePos = stretchedSnakePosFunc(params);
+		expect(stretchedSnakePos.x).toBeGreaterThan(currentTargetPos.x);
+		expect(stretchedSnakePos.y).toBe(currentTargetPos.y);
+	}
+	// when pointIndex is the last index
+	const stretchedSnakePosFunc = calcUpdate.calcStretchedSnakePos(currentTargetPos, pointNum - 1, Array(pointNum));
+	const stretchedSnakePos = stretchedSnakePosFunc(params);
+	expect(stretchedSnakePos.x).toBe(currentTargetPos.x);
+	expect(stretchedSnakePos.y).toBe(currentTargetPos.y);
 });
 
