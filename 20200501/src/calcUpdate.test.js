@@ -83,3 +83,24 @@ test('calcTargetPosArray for stretch status', () => {
 	});
 });
 
+test('calcCurrentPos', () => {
+	const currentCurrentPos = new P5.Vector(0, 0);
+	const targetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
+	for (let pointIndex = 0; pointIndex < pointNum; pointIndex++) {
+		const currentPosFunc = calcUpdate.calcCurrentPos(currentCurrentPos, pointIndex);
+		const currentPos = currentPosFunc(params, targetPosArray);
+		expect(currentPos.x).toBe(0);
+		expect(currentPos.y).toBe(0);
+	}
+});
+
+test('calcCurrentPosArray', () => {
+	const currentCurrentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
+	const targetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
+	const currentPosArray = calcUpdate.calcCurrentPosArray(currentCurrentPosArray, params, targetPosArray);
+	currentPosArray.forEach(currentPos => {
+		expect(currentPos.x).toBe(0);
+		expect(currentPos.y).toBe(0);
+	});
+});
+

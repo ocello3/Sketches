@@ -35,15 +35,15 @@ export const calcTargetPosArray = (currentTargetPosArray, params, status) => {
 	}
 };
 
-export const calcCurrentPos = (currentPos, pointIndex) => (params, targetPosArray) => {
+export const calcCurrentPos = (currentCurrentPos, pointIndex) => (params, targetPosArray) => {
 	const easingFactor = params.initEasingFactor * Math.pow(params.easingFactorReducRate, (pointIndex + 1));
 	const diff = P5.Vector.sub(targetPosArray[pointIndex]);
 	const displacementVec = P5.Vector.mult(diff, easingFactor);
-	return P5.Vector.add(currentPos, displacementVec);
+	return P5.Vector.add(currentCurrentPos, displacementVec);
 };
 
-export const calcCurrentPosArray = (currentPosArray, params, targetPosArray) => {
-	const curryArray = currentPosArray.map((point, pointIndex) => calcCurrentPos(point, pointIndex));
+export const calcCurrentPosArray = (currentCurrentPosArray, params, targetPosArray) => {
+	const curryArray = currentCurrentPosArray.map((point, pointIndex) => calcCurrentPos(point, pointIndex));
 	return curryArray.map(func => func(params, targetPosArray));
 };
 
