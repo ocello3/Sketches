@@ -9,7 +9,7 @@ export const getParams = (windowSize) => {
 	params.waveLength = 1/8 * params.canvasSize;
 	params.headWaveAmp = params.canvasSize / (params.snakeNum + 1) * 0.8;
 	params.waveAmpReducRate = 0.7;
-	params.easingFactor = 0.4;
+	params.initEasingFactor = 0.4;
 	params.easingFactorReducRate = 0.65;
 	return params;
 };

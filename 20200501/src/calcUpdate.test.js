@@ -8,19 +8,19 @@ const pointNum = params.waveNum * 4 + 1;
 test('calcStatus', () => {
 	// confirm for keep status
 	for (let frameCount = 0; frameCount < params.statusSwitchDuration; frameCount++) {
-		const status = calcUpdate.calcStatus(frameCount);
+		const status = calcUpdate.calcStatus(params, frameCount);
 		expect(status).toBe('keep');
 	}
 	// confirm for stretch status
-	const status_stretch = calcUpdate.calcStatus(params.statusSwitchDuration);
+	const status_stretch = calcUpdate.calcStatus(params, params.statusSwitchDuration);
 	expect(status_stretch).toBe('stretch');
 	// confirm for keep status
 	for (let frameCount = params.statusSwitchDuration + 1; frameCount < params.statusSwitchDuration * 2; frameCount++) {
-		const status = calcUpdate.calcStatus(frameCount);
+		const status = calcUpdate.calcStatus(params, frameCount);
 		expect(status).toBe('keep');
 	}
 	// confirm for shrink status
-	const status_shrink = calcUpdate.calcStatus(params.statusSwitchDuration * 2);
+	const status_shrink = calcUpdate.calcStatus(params, params.statusSwitchDuration * 2);
 	expect(status_shrink).toBe('shrink');
 });
 
@@ -54,5 +54,32 @@ test('calcStretchedSnakePos', () => {
 	const stretchedSnakePos = stretchedSnakePosFunc(params);
 	expect(stretchedSnakePos.x).toBe(currentTargetPos.x);
 	expect(stretchedSnakePos.y).toBe(currentTargetPos.y);
+});
+
+test('calcTargetPosArray for keep status', () => {
+	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
+	const targetPosArray = calcUpdate.calcTargetPosArray(currentTargetPosArray, params, 'keep');
+	targetPosArray.forEach(targetPos => {
+		expect(targetPos.x).toBe(0);
+		expect(targetPos.y).toBe(0);
+	});
+});
+
+test('calcTargetPosArray for shrink status', () => {
+	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
+	const targetPosArray = calcUpdate.calcTargetPosArray(currentTargetPosArray, params, 'shrink');
+	targetPosArray.forEach(targetPos => {
+		expect(targetPos.x).not.toBeUndefined();
+		expect(targetPos.y).not.toBeUndefined();
+	});
+});
+
+test('calcTargetPosArray for stretch status', () => {
+	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
+	const targetPosArray = calcUpdate.calcTargetPosArray(currentTargetPosArray, params, 'stretch');
+	targetPosArray.forEach(targetPos => {
+		expect(targetPos.x).not.toBeUndefined();
+		expect(targetPos.y).not.toBeUndefined();
+	});
 });
 
