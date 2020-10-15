@@ -37,7 +37,7 @@ export const calcInit = (snakeIndex) => (params) => {
 	const initSnake = {};
 	initSnake.status = 'keep';
 	initSnake.targetPosArray = calcInitStretchedSnakePosArray(snakeIndex, params);
-	initSnake.currentPosArray = initSnake.targetVecArray;
+	initSnake.currentPosArray = initSnake.targetPosArray;
 	return initSnake;
 };
 

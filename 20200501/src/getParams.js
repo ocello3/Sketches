@@ -6,7 +6,7 @@ export const getParams = (windowSize) => {
 	params.statusSwitchDuration = 50;
 	params.snakeNum = 5;
 	params.waveNum = 3;
-	params.waveLength = 1/8 * params.canvasSize;
+	params.waveLength = 1/40 * params.canvasSize;
 	params.headWaveAmp = params.canvasSize / (params.snakeNum + 1) * 0.8;
 	params.waveAmpReducRate = 0.7;
 	params.initEasingFactor = 0.4;
