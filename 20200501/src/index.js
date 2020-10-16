@@ -10,6 +10,10 @@ const sketch = (s) => {
 	// const pane = new Tweakpane({ container:paneId });
 	const windowSize = (window.innerWidth < window.innerHeight) ? window.innerWidth : window.innerHeight;
 	const params = getParams(windowSize);
+	const colorPalette = {
+		green: s.color('green'),
+		pink: s.color('pink'),
+	};
 	let snakes = Array.from(Array(params.snakeNum), (snake, snakeIndex) => calcInit(snakeIndex));
 	snakes = snakes.map(func => func(params));
 
@@ -25,11 +29,11 @@ const sketch = (s) => {
 		snakes = snakes.map(func => func(params, s.frameCount));
 		
 		// draw background
-		s.background(255, 40);
+		s.background(255, 140);
 		
 		// draw frame
-		s.noFill();
-		s.rect(0, 0, params.canvasSize, params.canvasSize);
+		// s.noFill();
+		// s.rect(0, 0, params.canvasSize, params.canvasSize);
 		
 		// draw snake
 		s.push();
@@ -38,19 +42,15 @@ const sketch = (s) => {
 		snakes.forEach((snake, snakeIndex) => {
 			const posArray = snake.currentPosArray;
 			const length = posArray.length;
-			let numColor;
-			if (snakeIndex == 0) { numColor = 'red'; }
-			if (snakeIndex == 1) { numColor = 'blue'; }
-			if (snakeIndex == 2) { numColor = 'orange'; }
-			if (snakeIndex == 3) { numColor = 'green'; }
-			if (snakeIndex == 4) { numColor = 'black'; }
 
 			// draw line
 			const initPos = posArray[0];
 			const lastPos = posArray[length - 1];
+			const colorIndex = 1.0 / params.snakeNum * snakeIndex * 1.5;
+			const snakeColor = s.lerpColor(colorPalette.green, colorPalette.pink, colorIndex);
 			s.push();
 			s.noFill();
-			s.stroke(numColor);
+			s.stroke(snakeColor);
 			s.beginShape();
 			s.curveVertex(initPos.x, initPos.y);
 			posArray.forEach((pos) => {
