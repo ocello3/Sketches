@@ -32749,6 +32749,10 @@ var sketch = function sketch(s) {
   // const pane = new Tweakpane({ container:paneId });
   var windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
   var params = (0, _getParams.getParams)(windowSize);
+  var colorPalette = {
+    green: s.color('green'),
+    pink: s.color('pink')
+  };
   var snakes = Array.from(Array(params.snakeNum), function (snake, snakeIndex) {
     return (0, _calcInit.calcInit)(snakeIndex);
   });
@@ -32770,45 +32774,25 @@ var sketch = function sketch(s) {
       return func(params, s.frameCount);
     }); // draw background
 
-    s.background(255, 40); // draw frame
-
-    s.noFill();
-    s.rect(0, 0, params.canvasSize, params.canvasSize); // draw snake
+    s.background(255, 140); // draw frame
+    // s.noFill();
+    // s.rect(0, 0, params.canvasSize, params.canvasSize);
+    // draw snake
 
     s.push();
     s.stroke(0);
     s.noFill();
     snakes.forEach(function (snake, snakeIndex) {
       var posArray = snake.currentPosArray;
-      var length = posArray.length;
-      var numColor;
-
-      if (snakeIndex == 0) {
-        numColor = 'red';
-      }
-
-      if (snakeIndex == 1) {
-        numColor = 'blue';
-      }
-
-      if (snakeIndex == 2) {
-        numColor = 'orange';
-      }
-
-      if (snakeIndex == 3) {
-        numColor = 'green';
-      }
-
-      if (snakeIndex == 4) {
-        numColor = 'black';
-      } // draw line
-
+      var length = posArray.length; // draw line
 
       var initPos = posArray[0];
       var lastPos = posArray[length - 1];
+      var colorIndex = 1.0 / params.snakeNum * snakeIndex * 1.5;
+      var snakeColor = s.lerpColor(colorPalette.green, colorPalette.pink, colorIndex);
       s.push();
       s.noFill();
-      s.stroke(numColor);
+      s.stroke(snakeColor);
       s.beginShape();
       s.curveVertex(initPos.x, initPos.y);
       posArray.forEach(function (pos) {
@@ -32850,7 +32834,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59546" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59994" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
