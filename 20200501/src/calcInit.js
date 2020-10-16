@@ -22,8 +22,8 @@ export const calcInitStretchedSnakePos = (pointIndex) => (snakeIndex, params) =>
 	const stretchedSnakeHeadPos = calcStretchedSnakeHeadPos(snakeIndex, params);
 	const stretchedSnakePosAngle = calcStretchedSnakePosAngle(pointIndex);
 	const waveAmp = calcWaveAmp(pointIndex, params);
-	const x = stretchedSnakeHeadPos.x - params.waveLength / 2 * pointIndex;
-	const y = stretchedSnakeHeadPos.y + waveAmp * Math.sin(stretchedSnakePosAngle);
+	const x = stretchedSnakeHeadPos.x - (params.waveLength / 2 * pointIndex);
+	const y = stretchedSnakeHeadPos.y + (waveAmp * Math.sin(stretchedSnakePosAngle));
 	return new P5.Vector(x, y);
 };
 

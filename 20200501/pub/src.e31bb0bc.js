@@ -32542,8 +32542,8 @@ var getParams = function getParams(windowSize) {
   params.snakeNum = 5;
   params.waveNum = 3;
   params.waveLength = 1 / 40 * params.canvasSize;
-  params.headWaveAmp = params.canvasSize / (params.snakeNum + 1) * 0.8;
-  params.waveAmpReducRate = 0.7;
+  params.headWaveAmp = params.canvasSize / (params.snakeNum + 1) * 0.3;
+  params.waveAmpReducRate = 1;
   params.initEasingFactor = 0.4;
   params.easingFactorReducRate = 0.65;
   return params;
@@ -32762,14 +32762,9 @@ var sketch = function sketch(s) {
   };
 
   s.draw = function () {
-    snakes = snakes.map(function (currentSnake) {
-      return (0, _calcUpdate.calcUpdate)(currentSnake);
-    });
-    snakes = snakes.map(function (func) {
-      return func(params, 60);
-    });
-    console.log(snakes[0]); // draw background
-
+    // snakes = snakes.map((currentSnake) => calcUpdate(currentSnake));
+    // snakes = snakes.map(func => func(params, s.frameCount));
+    // draw background
     s.background(255); // draw frame
 
     s.noFill();
@@ -32778,21 +32773,57 @@ var sketch = function sketch(s) {
     s.push();
     s.stroke(0);
     s.noFill();
-    snakes.forEach(function (snake) {
+    snakes.forEach(function (snake, snakeIndex) {
       var posArray = snake.currentPosArray;
+      var length = posArray.length;
+      var numColor;
+
+      if (snakeIndex == 0) {
+        numColor = 'red';
+      }
+
+      if (snakeIndex == 1) {
+        numColor = 'blue';
+      }
+
+      if (snakeIndex == 2) {
+        numColor = 'orange';
+      }
+
+      if (snakeIndex == 3) {
+        numColor = 'green';
+      }
+
+      if (snakeIndex == 4) {
+        numColor = 'black';
+      } // debug
+
+
+      console.log("snake #".concat(snakeIndex, ": ").concat(posArray[0].y)); // draw line
+
       var initPos = posArray[0];
-      var lastPos = posArray[posArray.length - 1];
+      var lastPos = posArray[length - 1];
+      s.push();
+      s.noFill();
+      s.stroke(numColor);
       s.beginShape();
-      s.curveVertex(initPos.x, initPos.y);
-      s.curveVertex(initPos.x, initPos.y);
+      s.curveVertex(initPos.x * 5 + params.canvasSize * 0.9, initPos.y);
       posArray.forEach(function (pos) {
-        s.curveVertex(pos.x, pos.y);
+        s.curveVertex(pos.x * 5 + params.canvasSize * 0.9, pos.y);
       });
-      s.curveVertex(lastPos.x, lastPos.y);
-      s.curveVertex(lastPos.x, lastPos.y);
-      s.endShape(s.CLOSE);
+      s.curveVertex(lastPos.x * 5 + params.canvasSize * 0.9, lastPos.y);
+      s.endShape();
+      s.pop(); // draw text
+
+      posArray.forEach(function (pos, index) {
+        s.push();
+        s.stroke(numColor);
+        s.fill(numColor);
+        s.textSize(15);
+        s.text(index, pos.x * 5 + params.canvasSize * 0.9, pos.y);
+        s.pop();
+      });
     });
-    s.pop();
   };
 };
 
@@ -32825,7 +32856,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53776" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54710" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

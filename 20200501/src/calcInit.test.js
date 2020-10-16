@@ -14,6 +14,7 @@ test('calcStretchedSnakeHeadPos', () => {
 		const stretchedSnakeHeadPos = calcInit.calcStretchedSnakeHeadPos(snakeIndex, params);
 		expect(stretchedSnakeHeadPos.x).toBe(0);
 		expect(stretchedSnakeHeadPos.y).toBeGreaterThan(0);
+		expect(stretchedSnakeHeadPos.y).toBeLessThan(params.canvasSize);
 	}
 });
 
@@ -35,7 +36,7 @@ test('calcWaveAmp', () => {
 	// test when pointIndex is greater than 0
 	for (let pointIndex = 1; pointIndex < pointNum; pointIndex++) {
 		const waveAmp = calcInit.calcWaveAmp(pointIndex, params);
-		expect(waveAmp).toBeLessThan(params.headWaveAmp);
+		expect(waveAmp).toBeLessThanOrEqual(params.headWaveAmp);
 	}
 });
 
@@ -47,12 +48,16 @@ test('calcInitStretchedSnakePos', () => {
 		const initStretchedSnakePos = initStretchedSnakePosFunc(snakeIndex, params);
 		expect(initStretchedSnakePos.x).toBe(stretchedSnakeHeadPos.x);
 		expect(initStretchedSnakePos.y).toBe(stretchedSnakeHeadPos.y);
+		expect(initStretchedSnakePos.y).toBeLessThan(params.canvasSize);
 		// test whne pointIndex is greater than 0
 		for (let pointIndex = 1; pointIndex < pointNum; pointIndex++) {
 			const initStretchedSnakePosFunc = calcInit.calcInitStretchedSnakePos(pointIndex);
 			const initStretchedSnakePos = initStretchedSnakePosFunc(snakeIndex, params);
 			expect(initStretchedSnakePos.x).toBeLessThan(0);
 			expect(initStretchedSnakePos.y).toBeGreaterThan(0);
+			if (pointIndex % 2 == 0) {
+				expect(initStretchedSnakePos.y).toBeCloseTo(stretchedSnakeHeadPos.y);
+			}
 		}
 	}
 });
@@ -66,6 +71,7 @@ test('calcInitStretchedSnakePosArray', () => {
 			const testPos = testPosFunc(snakeIndex, params);
 			expect(initStretchedSnakePos.x).toBe(testPos.x);
 			expect(initStretchedSnakePos.y).toBe(testPos.y);
+			expect(initStretchedSnakePos.y).toBeLessThan(params.canvasSize);
 		}
 	}
 });
