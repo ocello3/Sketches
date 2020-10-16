@@ -28,8 +28,8 @@ const sketch = (s) => {
 		s.background(255, 40);
 		
 		// draw frame
-		s.noFill();
-		s.rect(0, 0, params.canvasSize, params.canvasSize);
+		// s.noFill();
+		// s.rect(0, 0, params.canvasSize, params.canvasSize);
 		
 		// draw snake
 		s.push();
