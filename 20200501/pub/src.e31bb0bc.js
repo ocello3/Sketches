@@ -32541,11 +32541,11 @@ var getParams = function getParams(windowSize) {
   params.statusSwitchDuration = 50;
   params.snakeNum = 5;
   params.waveNum = 3;
-  params.waveLength = 1 / 40 * params.canvasSize;
-  params.headWaveAmp = params.canvasSize / (params.snakeNum + 1) * 0.3;
-  params.waveAmpReducRate = 1;
-  params.initEasingFactor = 0.4;
-  params.easingFactorReducRate = 0.65;
+  params.waveLength = 1 / 30 * params.canvasSize;
+  params.headWaveAmp = params.canvasSize / (params.snakeNum + 1) * 0.8;
+  params.waveAmpReducRate = 0.7;
+  params.initEasingFactor = 0.2;
+  params.easingFactorReducRate = 0.7;
   return params;
 };
 
@@ -32630,7 +32630,7 @@ exports.calcInit = calcInit;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.calcUpdate = exports.calcCurrentPosArray = exports.calcCurrentPos = exports.calcTargetPosArray = exports.calcStretchedSnakePos = exports.calcShrinkedSnakePos = exports.calcStatus = void 0;
+exports.calcUpdate = exports.calcCurrentPosArray = exports.calcCurrentPos = exports.calcTargetPosArray = exports.calcStretchedSnakePosArray = exports.calcStretchedSnakePos = exports.calcShrinkedSnakePosArray = exports.calcShrinkedSnakePos = exports.calcStatus = void 0;
 
 var _p = _interopRequireDefault(require("p5"));
 
@@ -32654,6 +32654,17 @@ var calcShrinkedSnakePos = function calcShrinkedSnakePos(currentTargetPos, point
 
 exports.calcShrinkedSnakePos = calcShrinkedSnakePos;
 
+var calcShrinkedSnakePosArray = function calcShrinkedSnakePosArray(currentTargetPosArray, params) {
+  var arrayFunc = currentTargetPosArray.map(function (currentTargetPos, pointIndex) {
+    return calcShrinkedSnakePos(currentTargetPos, pointIndex);
+  });
+  return arrayFunc.map(function (func) {
+    return func(params);
+  });
+};
+
+exports.calcShrinkedSnakePosArray = calcShrinkedSnakePosArray;
+
 var calcStretchedSnakePos = function calcStretchedSnakePos(currentTargetPos, pointIndex, currentTargetPosArray) {
   return function (params) {
     var xIncrement = params.waveLength / 4 * (currentTargetPosArray.length - pointIndex - 1);
@@ -32663,28 +32674,21 @@ var calcStretchedSnakePos = function calcStretchedSnakePos(currentTargetPos, poi
 
 exports.calcStretchedSnakePos = calcStretchedSnakePos;
 
+var calcStretchedSnakePosArray = function calcStretchedSnakePosArray(currentTargetPosArray, params) {
+  var arrayFunc = currentTargetPosArray.map(function (currentTargetPos, pointIndex, self) {
+    return calcStretchedSnakePos(currentTargetPos, pointIndex, self);
+  });
+  return arrayFunc.map(function (func) {
+    return func(params);
+  });
+};
+
+exports.calcStretchedSnakePosArray = calcStretchedSnakePosArray;
+
 var calcTargetPosArray = function calcTargetPosArray(currentTargetPosArray, params, status) {
-  if (status == 'keep') {
-    return currentTargetPosArray;
-  }
-
-  if (status == 'shrink') {
-    var curryArray_shrinked = currentTargetPosArray.map(function (currentTargetPos, pointIndex) {
-      return calcShrinkedSnakePos(currentTargetPos, pointIndex);
-    });
-    return curryArray_shrinked.map(function (func) {
-      return func(params);
-    });
-  }
-
-  if (status == 'stretch') {
-    var curryArray_stretched = currentTargetPosArray.map(function (targetPos, pointIndex, self) {
-      return calcStretchedSnakePos(targetPos, pointIndex, self);
-    });
-    return curryArray_stretched.map(function (func) {
-      return func(params);
-    });
-  }
+  if (status == 'keep') return currentTargetPosArray;
+  if (status == 'shrink') return calcShrinkedSnakePosArray(currentTargetPosArray, params);
+  if (status == 'stretch') return calcStretchedSnakePosArray(currentTargetPosArray, params);
 };
 
 exports.calcTargetPosArray = calcTargetPosArray;
@@ -32693,7 +32697,7 @@ var calcCurrentPos = function calcCurrentPos(currentCurrentPos, pointIndex) {
   return function (params, targetPosArray) {
     var easingFactor = params.initEasingFactor * Math.pow(params.easingFactorReducRate, pointIndex + 1);
 
-    var diff = _p.default.Vector.sub(targetPosArray[pointIndex]);
+    var diff = _p.default.Vector.sub(targetPosArray[pointIndex], currentCurrentPos);
 
     var displacementVec = _p.default.Vector.mult(diff, easingFactor);
 
@@ -32744,11 +32748,7 @@ var sketch = function sketch(s) {
   // const paneId = document.getElementById('pane');
   // const pane = new Tweakpane({ container:paneId });
   var windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
-  var params = (0, _getParams.getParams)(windowSize); // const colorPalette = {
-  // 	color_1: s.color('blue'),
-  // 	color_2: s.color('red'),
-  // };
-
+  var params = (0, _getParams.getParams)(windowSize);
   var snakes = Array.from(Array(params.snakeNum), function (snake, snakeIndex) {
     return (0, _calcInit.calcInit)(snakeIndex);
   });
@@ -32757,15 +32757,20 @@ var sketch = function sketch(s) {
   });
 
   s.setup = function () {
-    s.createCanvas(params.canvasSize, params.canvasSize);
-    s.noLoop(); // gui(pane, paneId, params);
+    s.createCanvas(params.canvasSize, params.canvasSize); // s.noLoop();
+    // gui(pane, paneId, params);
   };
 
   s.draw = function () {
-    // snakes = snakes.map((currentSnake) => calcUpdate(currentSnake));
-    // snakes = snakes.map(func => func(params, s.frameCount));
-    // draw background
-    s.background(255); // draw frame
+    // update snakes
+    snakes = snakes.map(function (currentSnake) {
+      return (0, _calcUpdate.calcUpdate)(currentSnake);
+    });
+    snakes = snakes.map(function (func) {
+      return func(params, s.frameCount);
+    }); // draw background
+
+    s.background(255, 40); // draw frame
 
     s.noFill();
     s.rect(0, 0, params.canvasSize, params.canvasSize); // draw snake
@@ -32796,10 +32801,8 @@ var sketch = function sketch(s) {
 
       if (snakeIndex == 4) {
         numColor = 'black';
-      } // debug
+      } // draw line
 
-
-      console.log("snake #".concat(snakeIndex, ": ").concat(posArray[0].y)); // draw line
 
       var initPos = posArray[0];
       var lastPos = posArray[length - 1];
@@ -32807,22 +32810,13 @@ var sketch = function sketch(s) {
       s.noFill();
       s.stroke(numColor);
       s.beginShape();
-      s.curveVertex(initPos.x * 5 + params.canvasSize * 0.9, initPos.y);
+      s.curveVertex(initPos.x, initPos.y);
       posArray.forEach(function (pos) {
-        s.curveVertex(pos.x * 5 + params.canvasSize * 0.9, pos.y);
+        s.curveVertex(pos.x, pos.y);
       });
-      s.curveVertex(lastPos.x * 5 + params.canvasSize * 0.9, lastPos.y);
+      s.curveVertex(lastPos.x, lastPos.y);
       s.endShape();
-      s.pop(); // draw text
-
-      posArray.forEach(function (pos, index) {
-        s.push();
-        s.stroke(numColor);
-        s.fill(numColor);
-        s.textSize(15);
-        s.text(index, pos.x * 5 + params.canvasSize * 0.9, pos.y);
-        s.pop();
-      });
+      s.pop();
     });
   };
 };
@@ -32856,7 +32850,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54710" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59546" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

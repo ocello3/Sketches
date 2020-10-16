@@ -15,7 +15,7 @@ const sketch = (s) => {
 
 	s.setup = () => {
 		s.createCanvas(params.canvasSize, params.canvasSize);
-		s.noLoop();
+		// s.noLoop();
 		// gui(pane, paneId, params);
 	};
 
@@ -25,7 +25,7 @@ const sketch = (s) => {
 		snakes = snakes.map(func => func(params, s.frameCount));
 		
 		// draw background
-		s.background(255);
+		s.background(255, 40);
 		
 		// draw frame
 		s.noFill();
@@ -59,16 +59,6 @@ const sketch = (s) => {
 			s.curveVertex(lastPos.x, lastPos.y);
 			s.endShape();
 			s.pop();
-
-			// draw text
-			posArray.forEach((pos, index) => {
-				s.push();
-				s.stroke(numColor);
-				s.fill(numColor);
-				s.textSize(15);
-				s.text(index, pos.x, pos.y);
-				s.pop();
-			});
 		});
 	};
 };
