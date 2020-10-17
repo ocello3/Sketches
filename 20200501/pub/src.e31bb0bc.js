@@ -32624,26 +32624,53 @@ var calcInit = function calcInit(snakeIndex) {
 };
 
 exports.calcInit = calcInit;
-},{"p5":"../node_modules/p5/lib/p5.min.js"}],"calcUpdate.js":[function(require,module,exports) {
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"calcUpdate_currentPosArray.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.calcUpdate = exports.calcCurrentPosArray = exports.calcCurrentPos = exports.calcTargetPosArray = exports.calcStretchedSnakePosArray = exports.calcStretchedSnakePos = exports.calcShrinkedSnakePosArray = exports.calcShrinkedSnakePos = exports.calcStatus = void 0;
+exports.calcCurrentPosArray = exports.calcCurrentPos = void 0;
 
 var _p = _interopRequireDefault(require("p5"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var calcStatus = function calcStatus(params, frameCount) {
-  if (frameCount == 0) return 'keep';
-  if (frameCount % (params.statusSwitchDuration * 2) == params.statusSwitchDuration) return 'stretch';
-  if (frameCount % (params.statusSwitchDuration * 2) == 0) return 'shrink';
-  return 'keep';
+var calcCurrentPos = function calcCurrentPos(currentCurrentPos, pointIndex) {
+  return function (params, targetPosArray) {
+    var easingFactor = params.initEasingFactor * Math.pow(params.easingFactorReducRate, pointIndex + 1);
+
+    var diff = _p.default.Vector.sub(targetPosArray[pointIndex], currentCurrentPos);
+
+    var displacementVec = _p.default.Vector.mult(diff, easingFactor);
+
+    return _p.default.Vector.add(currentCurrentPos, displacementVec);
+  };
 };
 
-exports.calcStatus = calcStatus;
+exports.calcCurrentPos = calcCurrentPos;
+
+var calcCurrentPosArray = function calcCurrentPosArray(currentCurrentPosArray, params, targetPosArray) {
+  var curryArray = currentCurrentPosArray.map(function (point, pointIndex) {
+    return calcCurrentPos(point, pointIndex);
+  });
+  return curryArray.map(function (func) {
+    return func(params, targetPosArray);
+  });
+};
+
+exports.calcCurrentPosArray = calcCurrentPosArray;
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"calcUpdate_targetPosArray.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcTargetPosArray = exports.calcStretchedSnakePosArray = exports.calcStretchedSnakePos = exports.calcShrinkedSnakePosArray = exports.calcShrinkedSnakePos = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var calcShrinkedSnakePos = function calcShrinkedSnakePos(currentTargetPos, pointIndex) {
   return function (params) {
@@ -32692,44 +32719,39 @@ var calcTargetPosArray = function calcTargetPosArray(currentTargetPosArray, para
 };
 
 exports.calcTargetPosArray = calcTargetPosArray;
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"calcUpdate.js":[function(require,module,exports) {
+"use strict";
 
-var calcCurrentPos = function calcCurrentPos(currentCurrentPos, pointIndex) {
-  return function (params, targetPosArray) {
-    var easingFactor = params.initEasingFactor * Math.pow(params.easingFactorReducRate, pointIndex + 1);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcUpdate = exports.calcStatus = void 0;
 
-    var diff = _p.default.Vector.sub(targetPosArray[pointIndex], currentCurrentPos);
+var _calcUpdate_currentPosArray = require("./calcUpdate_currentPosArray.js");
 
-    var displacementVec = _p.default.Vector.mult(diff, easingFactor);
+var _calcUpdate_targetPosArray = require("./calcUpdate_targetPosArray.js");
 
-    return _p.default.Vector.add(currentCurrentPos, displacementVec);
-  };
+var calcStatus = function calcStatus(params, frameCount) {
+  if (frameCount == 0) return 'keep';
+  if (frameCount % (params.statusSwitchDuration * 2) == params.statusSwitchDuration) return 'stretch';
+  if (frameCount % (params.statusSwitchDuration * 2) == 0) return 'shrink';
+  return 'keep';
 };
 
-exports.calcCurrentPos = calcCurrentPos;
-
-var calcCurrentPosArray = function calcCurrentPosArray(currentCurrentPosArray, params, targetPosArray) {
-  var curryArray = currentCurrentPosArray.map(function (point, pointIndex) {
-    return calcCurrentPos(point, pointIndex);
-  });
-  return curryArray.map(function (func) {
-    return func(params, targetPosArray);
-  });
-};
-
-exports.calcCurrentPosArray = calcCurrentPosArray;
+exports.calcStatus = calcStatus;
 
 var calcUpdate = function calcUpdate(currentSnake) {
   return function (params, frameCount) {
     var updateSnake = {};
     updateSnake.status = calcStatus(params, frameCount);
-    updateSnake.targetPosArray = calcTargetPosArray(currentSnake.targetPosArray, params, updateSnake.status);
-    updateSnake.currentPosArray = calcCurrentPosArray(currentSnake.currentPosArray, params, updateSnake.targetPosArray);
+    updateSnake.targetPosArray = (0, _calcUpdate_targetPosArray.calcTargetPosArray)(currentSnake.targetPosArray, params, updateSnake.status);
+    updateSnake.currentPosArray = (0, _calcUpdate_currentPosArray.calcCurrentPosArray)(currentSnake.currentPosArray, params, updateSnake.targetPosArray);
     return updateSnake;
   };
 };
 
 exports.calcUpdate = calcUpdate;
-},{"p5":"../node_modules/p5/lib/p5.min.js"}],"index.js":[function(require,module,exports) {
+},{"./calcUpdate_currentPosArray.js":"calcUpdate_currentPosArray.js","./calcUpdate_targetPosArray.js":"calcUpdate_targetPosArray.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _p = _interopRequireDefault(require("p5"));
@@ -32834,7 +32856,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59994" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61428" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

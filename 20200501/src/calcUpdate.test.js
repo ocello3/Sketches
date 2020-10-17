@@ -1,134 +1,24 @@
-import P5 from 'p5';
 import { getParams } from './getParams.js';
-import * as calcUpdate from './calcUpdate.js';
+import * as target from './calcUpdate.js';
 
 const params = getParams(300);
-const pointNum = params.waveNum * 4 + 1;
 
 test('calcStatus', () => {
 	// confirm for keep status
 	for (let frameCount = 0; frameCount < params.statusSwitchDuration; frameCount++) {
-		const status = calcUpdate.calcStatus(params, frameCount);
+		const status = target.calcStatus(params, frameCount);
 		expect(status).toBe('keep');
 	}
 	// confirm for stretch status
-	const status_stretch = calcUpdate.calcStatus(params, params.statusSwitchDuration);
+	const status_stretch = target.calcStatus(params, params.statusSwitchDuration);
 	expect(status_stretch).toBe('stretch');
 	// confirm for keep status
 	for (let frameCount = params.statusSwitchDuration + 1; frameCount < params.statusSwitchDuration * 2; frameCount++) {
-		const status = calcUpdate.calcStatus(params, frameCount);
+		const status = target.calcStatus(params, frameCount);
 		expect(status).toBe('keep');
 	}
 	// confirm for shrink status
-	const status_shrink = calcUpdate.calcStatus(params, params.statusSwitchDuration * 2);
+	const status_shrink = target.calcStatus(params, params.statusSwitchDuration * 2);
 	expect(status_shrink).toBe('shrink');
-});
-
-test('calcShrinkedSnakePos', () => {
-	const currentTargetPos = new P5.Vector(0, 0);
-	// when pointIndex is 0
-	const shrinkedSnakePosFunc = calcUpdate.calcShrinkedSnakePos(currentTargetPos, 0);
-	const shrinkedSnakePos = shrinkedSnakePosFunc(params);
-	expect(shrinkedSnakePos.x).toBe(currentTargetPos.x);
-	expect(shrinkedSnakePos.y).toBe(currentTargetPos.y);
-	// when pointIndex is greater than 0
-	for (let pointIndex = 1; pointIndex < pointNum; pointIndex++) {
-		const shrinkedSnakePosFunc = calcUpdate.calcShrinkedSnakePos(currentTargetPos, pointIndex);
-		const shrinkedSnakePos = shrinkedSnakePosFunc(params);
-		expect(shrinkedSnakePos.x).toBeGreaterThan(currentTargetPos.x);
-		expect(shrinkedSnakePos.y).toBe(currentTargetPos.y);
-	}
-});
-
-test('calcShrinkedSnakePosArray', () => {
-	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const shrinkedSnakePosArray = calcUpdate.calcShrinkedSnakePosArray(currentTargetPosArray, params);
-	shrinkedSnakePosArray.forEach((shrinkedSnakePos, pointIndex) => {
-		if (pointIndex == 0) {
-			expect(shrinkedSnakePos.x).toBe(0);
-			expect(shrinkedSnakePos.y).toBe(0);
-		} else {
-			expect(shrinkedSnakePos.x).toBeGreaterThan(0);
-			expect(shrinkedSnakePos.y).toBe(0);
-		}
-	});
-});
-
-test('calcStretchedSnakePos', () => {
-	const currentTargetPos = new P5.Vector(0, 0);
-	// when pointIndex is less than the last index
-	for (let pointIndex = 0; pointIndex < pointNum - 1; pointIndex++) {
-		const stretchedSnakePosFunc = calcUpdate.calcStretchedSnakePos(currentTargetPos, pointIndex, Array(pointNum));
-		const stretchedSnakePos = stretchedSnakePosFunc(params);
-		expect(stretchedSnakePos.x).toBeGreaterThan(currentTargetPos.x);
-		expect(stretchedSnakePos.y).toBe(currentTargetPos.y);
-	}
-	// when pointIndex is the last index
-	const stretchedSnakePosFunc = calcUpdate.calcStretchedSnakePos(currentTargetPos, pointNum - 1, Array(pointNum));
-	const stretchedSnakePos = stretchedSnakePosFunc(params);
-	expect(stretchedSnakePos.x).toBe(currentTargetPos.x);
-	expect(stretchedSnakePos.y).toBe(currentTargetPos.y);
-});
-
-test('calcStretchedSnakePosArray', () => {
-	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const stretchedSnakePosArray = calcUpdate.calcStretchedSnakePosArray(currentTargetPosArray, params);
-	stretchedSnakePosArray.forEach((stretchedSnakePos, pointIndex, self) => {
-		if (pointIndex == (self.length - 1)) {
-			expect(stretchedSnakePos.x).toBe(0);
-			expect(stretchedSnakePos.y).toBe(0);
-		} else {
-			expect(stretchedSnakePos.x).toBeGreaterThan(0);
-			expect(stretchedSnakePos.y).toBe(0);
-		}
-	});
-});
-
-test('calcTargetPosArray for keep status', () => {
-	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const targetPosArray = calcUpdate.calcTargetPosArray(currentTargetPosArray, params, 'keep');
-	targetPosArray.forEach(targetPos => {
-		expect(targetPos.x).toBe(0);
-		expect(targetPos.y).toBe(0);
-	});
-});
-
-test('calcTargetPosArray for shrink status', () => {
-	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const targetPosArray = calcUpdate.calcTargetPosArray(currentTargetPosArray, params, 'shrink');
-	targetPosArray.forEach(targetPos => {
-		expect(targetPos.x).not.toBeUndefined();
-		expect(targetPos.y).not.toBeUndefined();
-	});
-});
-
-test('calcTargetPosArray for stretch status', () => {
-	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const targetPosArray = calcUpdate.calcTargetPosArray(currentTargetPosArray, params, 'stretch');
-	targetPosArray.forEach(targetPos => {
-		expect(targetPos.x).not.toBeUndefined();
-		expect(targetPos.y).not.toBeUndefined();
-	});
-});
-
-test('calcCurrentPos', () => {
-	const currentCurrentPos = new P5.Vector(0, 0);
-	const targetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	for (let pointIndex = 0; pointIndex < pointNum; pointIndex++) {
-		const currentPosFunc = calcUpdate.calcCurrentPos(currentCurrentPos, pointIndex);
-		const currentPos = currentPosFunc(params, targetPosArray);
-		expect(currentPos.x).toBe(0);
-		expect(currentPos.y).toBe(0);
-	}
-});
-
-test('calcCurrentPosArray', () => {
-	const currentCurrentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const targetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const currentPosArray = calcUpdate.calcCurrentPosArray(currentCurrentPosArray, params, targetPosArray);
-	currentPosArray.forEach(currentPos => {
-		expect(currentPos.x).toBe(0);
-		expect(currentPos.y).toBe(0);
-	});
 });
 
