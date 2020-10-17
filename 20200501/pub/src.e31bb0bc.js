@@ -32616,6 +32616,7 @@ exports.calcInitStretchedSnakePosArray = calcInitStretchedSnakePosArray;
 var calcInit = function calcInit(snakeIndex) {
   return function (params) {
     var initSnake = {};
+    initSnake.frameCount = 1;
     initSnake.status = 'keep';
     initSnake.targetPosArray = calcInitStretchedSnakePosArray(snakeIndex, params);
     initSnake.currentPosArray = initSnake.targetPosArray;
@@ -32725,14 +32726,14 @@ exports.calcTargetPosArray = calcTargetPosArray;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.calcUpdate = exports.calcStatus = void 0;
+exports.calcUpdate = exports.calcFrameCount = exports.calcStatus = void 0;
 
 var _calcUpdate_currentPosArray = require("./calcUpdate_currentPosArray.js");
 
 var _calcUpdate_targetPosArray = require("./calcUpdate_targetPosArray.js");
 
-var calcStatus = function calcStatus(params, frameCount) {
-  if (frameCount == 0) return 'keep';
+var calcStatus = function calcStatus(params, frameCount, currentPosArray) {
+  if (currentPosArray[currentPosArray.length - 1].x > params.canvasSize) return 'restart';
   if (frameCount % (params.statusSwitchDuration * 2) == params.statusSwitchDuration) return 'stretch';
   if (frameCount % (params.statusSwitchDuration * 2) == 0) return 'shrink';
   return 'keep';
@@ -32740,10 +32741,18 @@ var calcStatus = function calcStatus(params, frameCount) {
 
 exports.calcStatus = calcStatus;
 
+var calcFrameCount = function calcFrameCount(frameCount, status) {
+  if (status == 'restart') return 1;
+  return frameCount + 1;
+};
+
+exports.calcFrameCount = calcFrameCount;
+
 var calcUpdate = function calcUpdate(currentSnake) {
-  return function (params, frameCount) {
+  return function (params) {
     var updateSnake = {};
-    updateSnake.status = calcStatus(params, frameCount);
+    updateSnake.status = calcStatus(params, currentSnake.frameCount, currentSnake.currentPosArray);
+    updateSnake.frameCount = calcFrameCount(currentSnake.frameCount);
     updateSnake.targetPosArray = (0, _calcUpdate_targetPosArray.calcTargetPosArray)(currentSnake.targetPosArray, params, updateSnake.status);
     updateSnake.currentPosArray = (0, _calcUpdate_currentPosArray.calcCurrentPosArray)(currentSnake.currentPosArray, params, updateSnake.targetPosArray);
     return updateSnake;
@@ -32793,7 +32802,7 @@ var sketch = function sketch(s) {
       return (0, _calcUpdate.calcUpdate)(currentSnake);
     });
     snakes = snakes.map(function (func) {
-      return func(params, s.frameCount);
+      return func(params);
     }); // draw background
 
     s.background(255, 140); // draw frame
@@ -32856,7 +32865,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61428" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63443" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
