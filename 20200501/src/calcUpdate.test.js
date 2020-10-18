@@ -4,45 +4,32 @@ import * as target from './calcUpdate.js';
 
 const params = getParams(300);
 const pointNum = params.waveNum * 4 + 1;
+const currentSnake = {};
+currentSnake.status = 'keep';
+currentSnake.frameCount = 1;
+currentSnake.targetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
+currentSnake.currentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
 
-test('calcStatus for restart status', () => {
-});
-
-test('calcStatus for stretch status', () => {
-	const frameCount = params.statusSwitchDuration;
-	const currentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const status = target.calcStatus(params, frameCount, currentPosArray);
-	expect(status).toBe('stretch');
-});
-
-test('calcStatus for shrink status', () => {
-	const frameCount = params.statusSwitchDuration * 2;
-	const currentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const status = target.calcStatus(params, frameCount, currentPosArray);
-	expect(status).toBe('shrink');
-});
-
-test('calcStatus for keep status', () => {
-	const currentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	for (let frameCount = 1; frameCount < params.statusSwitchDuration; frameCount++) {
-		const status = target.calcStatus(params, frameCount, currentPosArray);
-		expect(status).toBe('keep');
-	}
-	for (let frameCount = params.statusSwitchDuration + 1; frameCount < params.statusSwitchDuration * 2; frameCount++) {
-		const status = target.calcStatus(params, frameCount, currentPosArray);
-		expect(status).toBe('keep');
+test('status for restart', () => {
+	currentSnake.currentPosArray = Array.from(Array(pointNum), () => new P5.Vector(params.canvasSize + 50, params.canvasSize / 2));
+	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
+		const updateSnakeFunc = target.calcUpdate(currentSnake, snakeIndex);
+		const updateSnake = updateSnakeFunc(params);
+		expect(updateSnake.status).toBe('restart');
 	}
 });
 
-test('calcFrameCount when restart', () => {
-	const currentFrameCount = 10;
-	const updateFrameCount = target.calcFrameCount(currentFrameCount, 'restart');
-	expect(updateFrameCount).toBe(1);
-});
-
-test('calcFrameCount without restart', () => {
-	const currentFrameCount = 10;
-	const updateFrameCount = target.calcFrameCount(currentFrameCount, 'keep');
-	expect(updateFrameCount).toBe(currentFrameCount + 1);
+test('currentPosArray for restart', () => {
+	currentSnake.frameCount = 1000;
+	currentSnake.currentPosArray = Array.from(Array(pointNum), () => new P5.Vector(params.canvasSize + 50, 100));
+	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
+		const updateSnakeFunc = target.calcUpdate(currentSnake, snakeIndex);
+		const updateSnake = updateSnakeFunc(params);
+		updateSnake.currentPosArray.forEach(currentPos => {
+			expect(currentPos.x).toBeLessThanOrEqual(0);
+			expect(currentPos.y).toBeGreaterThan(0);
+			expect(currentPos.y).toBeLessThan(params.canvasSize);
+		});
+	}
 });
 

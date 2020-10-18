@@ -1,6 +1,6 @@
 import P5 from 'p5';
-import { getParams } from './getParams.js';
-import * as target from './calcUpdate_targetPosArray.js';
+import { getParams } from '../getParams.js';
+import * as target from './targetPosArray.js';
 
 const params = getParams(300);
 const pointNum = params.waveNum * 4 + 1;

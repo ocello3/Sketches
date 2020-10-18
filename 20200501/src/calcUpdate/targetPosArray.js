@@ -1,5 +1,5 @@
 import P5 from 'p5';
-import { calcInitStretchedSnakePosArray } from './calcInit.js';
+import { calcInitStretchedSnakePosArray } from '../calcInit.js';
 
 export const calcShrinkedSnakePos = (currentTargetPos, pointIndex) => (params) => {
 	const xIncrement = params.waveLength / 4 * pointIndex;

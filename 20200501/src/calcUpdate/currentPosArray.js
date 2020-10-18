@@ -1,5 +1,5 @@
 import P5 from 'p5';
-import { calcInitStretchedSnakePosArray } from './calcInit.js';
+import { calcInitStretchedSnakePosArray } from '../calcInit.js';
 
 export const calcCurrentPos = (currentCurrentPos, pointIndex) => (params, targetPosArray) => {
 	const easingFactor = params.initEasingFactor * Math.pow(params.easingFactorReducRate, (pointIndex + 1));
