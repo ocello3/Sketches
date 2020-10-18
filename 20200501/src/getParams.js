@@ -16,7 +16,10 @@ export const getParams = (windowSize) => {
 		min: 0.1,
 		max: 0.5
 	};
-	params.easingFactorReducRate = 1.0; // 0.7 - 1.0
+	params.easingFactorReducRate = {
+		min: 0.7,
+		max: 1.0
+	};
 	params.lineNum = 8;
 	return params;
 };

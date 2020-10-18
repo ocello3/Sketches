@@ -17,6 +17,12 @@ test('calcInitEasingFactor', () => {
 	expect(initEasingFactor).toBeLessThanOrEqual(params.initEasingFactor.max);
 });
 
+test('calcEasingFactorReducRate', () => {
+	const easingFactorReducRate = target.calcEasingFactorReducRate(params);
+	expect(easingFactorReducRate).toBeGreaterThanOrEqual(params.easingFactorReducRate.min);
+	expect(easingFactorReducRate).toBeLessThanOrEqual(params.easingFactorReducRate.max);
+});
+
 test('calcPointNum', () => {
 	const pointNum = target.calcPointNum(params);
 	expect(pointNum).toBeGreaterThan(1);
