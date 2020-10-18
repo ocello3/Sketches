@@ -32616,6 +32616,7 @@ exports.calcInitStretchedSnakePosArray = calcInitStretchedSnakePosArray;
 var calcInit = function calcInit(snakeIndex) {
   return function (params) {
     var initSnake = {};
+    initSnake.frameCount = 1;
     initSnake.status = 'keep';
     initSnake.targetPosArray = calcInitStretchedSnakePosArray(snakeIndex, params);
     initSnake.currentPosArray = initSnake.targetPosArray;
@@ -32624,26 +32625,88 @@ var calcInit = function calcInit(snakeIndex) {
 };
 
 exports.calcInit = calcInit;
-},{"p5":"../node_modules/p5/lib/p5.min.js"}],"calcUpdate.js":[function(require,module,exports) {
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"calcUpdate/status.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.calcUpdate = exports.calcCurrentPosArray = exports.calcCurrentPos = exports.calcTargetPosArray = exports.calcStretchedSnakePosArray = exports.calcStretchedSnakePos = exports.calcShrinkedSnakePosArray = exports.calcShrinkedSnakePos = exports.calcStatus = void 0;
+exports.calcStatus = void 0;
 
-var _p = _interopRequireDefault(require("p5"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var calcStatus = function calcStatus(params, frameCount) {
-  if (frameCount == 0) return 'keep';
+var calcStatus = function calcStatus(params, frameCount, currentPosArray) {
+  if (currentPosArray[currentPosArray.length - 1].x > params.canvasSize) return 'restart';
   if (frameCount % (params.statusSwitchDuration * 2) == params.statusSwitchDuration) return 'stretch';
   if (frameCount % (params.statusSwitchDuration * 2) == 0) return 'shrink';
   return 'keep';
 };
 
 exports.calcStatus = calcStatus;
+},{}],"calcUpdate/frameCount.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcFrameCount = void 0;
+
+var calcFrameCount = function calcFrameCount(frameCount, status) {
+  if (status == 'restart') return 1;
+  return frameCount + 1;
+};
+
+exports.calcFrameCount = calcFrameCount;
+},{}],"calcUpdate/currentPosArray.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcCurrentPosArray = exports.calcCurrentPos = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+var _calcInit = require("../calcInit.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var calcCurrentPos = function calcCurrentPos(currentCurrentPos, pointIndex) {
+  return function (params, targetPosArray) {
+    var easingFactor = params.initEasingFactor * Math.pow(params.easingFactorReducRate, pointIndex + 1);
+
+    var diff = _p.default.Vector.sub(targetPosArray[pointIndex], currentCurrentPos);
+
+    var displacementVec = _p.default.Vector.mult(diff, easingFactor);
+
+    return _p.default.Vector.add(currentCurrentPos, displacementVec);
+  };
+};
+
+exports.calcCurrentPos = calcCurrentPos;
+
+var calcCurrentPosArray = function calcCurrentPosArray(currentCurrentPosArray, status, snakeIndex, params, targetPosArray) {
+  if (status == 'restart') return (0, _calcInit.calcInitStretchedSnakePosArray)(snakeIndex, params);
+  var curryArray = currentCurrentPosArray.map(function (point, pointIndex) {
+    return calcCurrentPos(point, pointIndex);
+  });
+  return curryArray.map(function (func) {
+    return func(params, targetPosArray);
+  });
+};
+
+exports.calcCurrentPosArray = calcCurrentPosArray;
+},{"p5":"../node_modules/p5/lib/p5.min.js","../calcInit.js":"calcInit.js"}],"calcUpdate/targetPosArray.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcTargetPosArray = exports.calcStretchedSnakePosArray = exports.calcStretchedSnakePos = exports.calcShrinkedSnakePosArray = exports.calcShrinkedSnakePos = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+var _calcInit = require("../calcInit.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var calcShrinkedSnakePos = function calcShrinkedSnakePos(currentTargetPos, pointIndex) {
   return function (params) {
@@ -32685,51 +32748,43 @@ var calcStretchedSnakePosArray = function calcStretchedSnakePosArray(currentTarg
 
 exports.calcStretchedSnakePosArray = calcStretchedSnakePosArray;
 
-var calcTargetPosArray = function calcTargetPosArray(currentTargetPosArray, params, status) {
+var calcTargetPosArray = function calcTargetPosArray(currentTargetPosArray, snakeIndex, params, status) {
+  if (status == 'restart') return (0, _calcInit.calcInitStretchedSnakePosArray)(snakeIndex, params);
   if (status == 'keep') return currentTargetPosArray;
   if (status == 'shrink') return calcShrinkedSnakePosArray(currentTargetPosArray, params);
   if (status == 'stretch') return calcStretchedSnakePosArray(currentTargetPosArray, params);
 };
 
 exports.calcTargetPosArray = calcTargetPosArray;
+},{"p5":"../node_modules/p5/lib/p5.min.js","../calcInit.js":"calcInit.js"}],"calcUpdate.js":[function(require,module,exports) {
+"use strict";
 
-var calcCurrentPos = function calcCurrentPos(currentCurrentPos, pointIndex) {
-  return function (params, targetPosArray) {
-    var easingFactor = params.initEasingFactor * Math.pow(params.easingFactorReducRate, pointIndex + 1);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcUpdate = void 0;
 
-    var diff = _p.default.Vector.sub(targetPosArray[pointIndex], currentCurrentPos);
+var _status = require("./calcUpdate/status.js");
 
-    var displacementVec = _p.default.Vector.mult(diff, easingFactor);
+var _frameCount = require("./calcUpdate/frameCount.js");
 
-    return _p.default.Vector.add(currentCurrentPos, displacementVec);
-  };
-};
+var _currentPosArray = require("./calcUpdate/currentPosArray.js");
 
-exports.calcCurrentPos = calcCurrentPos;
+var _targetPosArray = require("./calcUpdate/targetPosArray.js");
 
-var calcCurrentPosArray = function calcCurrentPosArray(currentCurrentPosArray, params, targetPosArray) {
-  var curryArray = currentCurrentPosArray.map(function (point, pointIndex) {
-    return calcCurrentPos(point, pointIndex);
-  });
-  return curryArray.map(function (func) {
-    return func(params, targetPosArray);
-  });
-};
-
-exports.calcCurrentPosArray = calcCurrentPosArray;
-
-var calcUpdate = function calcUpdate(currentSnake) {
-  return function (params, frameCount) {
+var calcUpdate = function calcUpdate(currentSnake, snakeIndex) {
+  return function (params) {
     var updateSnake = {};
-    updateSnake.status = calcStatus(params, frameCount);
-    updateSnake.targetPosArray = calcTargetPosArray(currentSnake.targetPosArray, params, updateSnake.status);
-    updateSnake.currentPosArray = calcCurrentPosArray(currentSnake.currentPosArray, params, updateSnake.targetPosArray);
+    updateSnake.status = (0, _status.calcStatus)(params, currentSnake.frameCount, currentSnake.currentPosArray);
+    updateSnake.frameCount = (0, _frameCount.calcFrameCount)(currentSnake.frameCount, updateSnake.status);
+    updateSnake.targetPosArray = (0, _targetPosArray.calcTargetPosArray)(currentSnake.targetPosArray, snakeIndex, params, updateSnake.status);
+    updateSnake.currentPosArray = (0, _currentPosArray.calcCurrentPosArray)(currentSnake.currentPosArray, updateSnake.status, snakeIndex, params, updateSnake.targetPosArray);
     return updateSnake;
   };
 };
 
 exports.calcUpdate = calcUpdate;
-},{"p5":"../node_modules/p5/lib/p5.min.js"}],"index.js":[function(require,module,exports) {
+},{"./calcUpdate/status.js":"calcUpdate/status.js","./calcUpdate/frameCount.js":"calcUpdate/frameCount.js","./calcUpdate/currentPosArray.js":"calcUpdate/currentPosArray.js","./calcUpdate/targetPosArray.js":"calcUpdate/targetPosArray.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _p = _interopRequireDefault(require("p5"));
@@ -32767,11 +32822,11 @@ var sketch = function sketch(s) {
 
   s.draw = function () {
     // update snakes
-    snakes = snakes.map(function (currentSnake) {
-      return (0, _calcUpdate.calcUpdate)(currentSnake);
+    snakes = snakes.map(function (currentSnake, snakeIndex) {
+      return (0, _calcUpdate.calcUpdate)(currentSnake, snakeIndex);
     });
     snakes = snakes.map(function (func) {
-      return func(params, s.frameCount);
+      return func(params);
     }); // draw background
 
     s.background(255, 140); // draw frame
@@ -32834,7 +32889,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59994" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51255" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -25,9 +25,9 @@ const sketch = (s) => {
 
 	s.draw = () => {
 		// update snakes
-		snakes = snakes.map((currentSnake) => calcUpdate(currentSnake));
-		snakes = snakes.map(func => func(params, s.frameCount));
-		
+		snakes = snakes.map((currentSnake, snakeIndex) => calcUpdate(currentSnake, snakeIndex));
+		snakes = snakes.map(func => func(params));
+
 		// draw background
 		s.background(255, 140);
 		
