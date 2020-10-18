@@ -1,5 +1,11 @@
 import P5 from 'p5';
 
+export const calcStatusSwitchDuration = (params) => {
+	const diff = params.statusSwitchDuration.max - params.statusSwitchDuration.min;
+	const floatDuration = (Math.random() * diff) + params.statusSwitchDuration.min;
+	return Math.floor(floatDuration);
+};
+
 export const calcPointNum = (params) => {
 	return params.waveNum * 4 + 1;
 };
@@ -35,8 +41,9 @@ export const calcInitStretchedSnakePosArray = (snakeIndex, params) => {
 
 export const calcInit = (snakeIndex) => (params) => {
 	const initSnake = {};
-	initSnake.frameCount = 1;
+	initSnake.statusSwitchDuration = calcStatusSwitchDuration(params);
 	initSnake.status = 'keep';
+	initSnake.frameCount = 1;
 	initSnake.targetPosArray = calcInitStretchedSnakePosArray(snakeIndex, params);
 	initSnake.currentPosArray = initSnake.targetPosArray;
 	return initSnake;

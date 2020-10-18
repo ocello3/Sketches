@@ -4,6 +4,12 @@ import * as target from './calcInit.js';
 const params = getParams(300);
 const pointNum = target.calcPointNum(params);
 
+test('calcStatusSwitchDuration', () => {
+	const statusSwitchDuration = target.calcStatusSwitchDuration(params);
+	expect(statusSwitchDuration).toBeGreaterThanOrEqual(params.statusSwitchDuration.min);
+	expect(statusSwitchDuration).toBeLessThanOrEqual(params.statusSwitchDuration.max);
+});
+
 test('calcPointNum', () => {
 	const pointNum = target.calcPointNum(params);
 	expect(pointNum).toBeGreaterThan(1);

@@ -48,18 +48,18 @@ const sketch = (s) => {
 			const lastPos = posArray[length - 1];
 			const colorIndex = 1.0 / params.snakeNum * snakeIndex * 1.5;
 			const snakeColor = s.lerpColor(colorPalette.green, colorPalette.pink, colorIndex);
-			for (let lineNum = 0; lineNum < 8; lineNum++) {
-				const alpha = 255 / 5 * (lineNum + 1);
+			for (let lineIndex = 0; lineIndex < params.lineNum; lineIndex++) {
+				const alpha = 255 / 5 * (lineIndex + 1);
 				s.push();
 				s.noFill();
 				snakeColor.setAlpha(alpha);
 				s.stroke(snakeColor);
 				s.beginShape();
-				s.curveVertex(initPos.x + lineNum, initPos.y);
+				s.curveVertex(initPos.x + lineIndex, initPos.y);
 				posArray.forEach((pos) => {
-					s.curveVertex(pos.x + lineNum, pos.y);
+					s.curveVertex(pos.x + lineIndex, pos.y);
 				});
-				s.curveVertex(lastPos.x + lineNum, lastPos.y);
+				s.curveVertex(lastPos.x + lineIndex, lastPos.y);
 				s.endShape();
 				s.pop();
 			}
