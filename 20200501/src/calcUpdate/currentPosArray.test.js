@@ -4,13 +4,15 @@ import * as target from './currentPosArray.js';
 
 const params = getParams(300);
 const pointNum = params.waveNum * 4 + 1;
+const initEasingFactor = 0.4;
+const easingFactorReducRate = 0.8;
 
 test('calcCurrentPos', () => {
 	const currentCurrentPos = new P5.Vector(0, 0);
 	const targetPosArray = Array.from(Array(pointNum), () => new P5.Vector(10, 0));
 	for (let pointIndex = 0; pointIndex < pointNum; pointIndex++) {
 		const currentPosFunc = target.calcCurrentPos(currentCurrentPos, pointIndex);
-		const currentPos = currentPosFunc(params, targetPosArray);
+		const currentPos = currentPosFunc(params, targetPosArray, initEasingFactor, easingFactorReducRate);
 		expect(currentPos.x).toBeGreaterThan(0);
 		expect(currentPos.y).toBe(0);
 	}
@@ -20,7 +22,7 @@ test('calcCurrentPosArray when restart', () => {
 	const currentCurrentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
 	const targetPosArray = Array.from(Array(pointNum), () => new P5.Vector(10, 0));
 	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
-		const currentPosArray = target.calcCurrentPosArray(currentCurrentPosArray, 'restart', snakeIndex, params, targetPosArray);
+		const currentPosArray = target.calcCurrentPosArray(currentCurrentPosArray, 'restart', snakeIndex, params, targetPosArray, initEasingFactor, easingFactorReducRate);
 		currentPosArray.forEach(currentPos => {
 			expect(currentPos.x).toBeLessThanOrEqual(0);
 			expect(currentPos.y).toBeGreaterThanOrEqual(0);
@@ -33,7 +35,7 @@ test('calcCurrentPosArray without restart', () => {
 	const currentCurrentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
 	const targetPosArray = Array.from(Array(pointNum), () => new P5.Vector(10, 0));
 	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
-		const currentPosArray = target.calcCurrentPosArray(currentCurrentPosArray, 'keep', snakeIndex, params, targetPosArray);
+		const currentPosArray = target.calcCurrentPosArray(currentCurrentPosArray, 'keep', snakeIndex, params, targetPosArray, initEasingFactor, easingFactorReducRate);
 		currentPosArray.forEach(currentPos => {
 			expect(currentPos.x).toBeGreaterThan(0);
 			expect(currentPos.y).toBe(0);

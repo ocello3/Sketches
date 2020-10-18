@@ -4,6 +4,25 @@ import * as target from './calcInit.js';
 const params = getParams(300);
 const pointNum = target.calcPointNum(params);
 
+test('calcStatusSwitchDuration', () => {
+	const statusSwitchDuration = target.calcStatusSwitchDuration(params);
+	expect(statusSwitchDuration).toBeGreaterThanOrEqual(params.statusSwitchDuration.min);
+	expect(statusSwitchDuration).toBeLessThanOrEqual(params.statusSwitchDuration.max);
+});
+
+
+test('calcInitEasingFactor', () => {
+	const initEasingFactor = target.calcInitEasingFactor(params);
+	expect(initEasingFactor).toBeGreaterThanOrEqual(params.initEasingFactor.min);
+	expect(initEasingFactor).toBeLessThanOrEqual(params.initEasingFactor.max);
+});
+
+test('calcEasingFactorReducRate', () => {
+	const easingFactorReducRate = target.calcEasingFactorReducRate(params);
+	expect(easingFactorReducRate).toBeGreaterThanOrEqual(params.easingFactorReducRate.min);
+	expect(easingFactorReducRate).toBeLessThanOrEqual(params.easingFactorReducRate.max);
+});
+
 test('calcPointNum', () => {
 	const pointNum = target.calcPointNum(params);
 	expect(pointNum).toBeGreaterThan(1);
