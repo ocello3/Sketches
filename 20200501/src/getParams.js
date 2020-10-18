@@ -12,7 +12,10 @@ export const getParams = (windowSize) => {
 	params.waveLength = 1/30 * params.canvasSize;
 	params.headWaveAmp = params.canvasSize / (params.snakeNum + 1) * 0.8;
 	params.waveAmpReducRate = 0.7;
-	params.initEasingFactor = 0.4; // 0.1 - 0.5
+	params.initEasingFactor = {
+		min: 0.1,
+		max: 0.5
+	};
 	params.easingFactorReducRate = 1.0; // 0.7 - 1.0
 	params.lineNum = 8;
 	return params;

@@ -10,14 +10,14 @@ test('calcStatus for restart status', () => {
 });
 
 test('calcStatus for stretch status', () => {
-	const frameCount = params.statusSwitchDuration;
+	const frameCount = currentStatusSwitchDuration;
 	const currentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
 	const status = target.calcStatus(params, frameCount, currentStatusSwitchDuration, currentPosArray);
 	expect(status).toBe('stretch');
 });
 
 test('calcStatus for shrink status', () => {
-	const frameCount = params.statusSwitchDuration * 2;
+	const frameCount = currentStatusSwitchDuration * 2;
 	const currentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
 	const status = target.calcStatus(params, frameCount, currentStatusSwitchDuration, currentPosArray);
 	expect(status).toBe('shrink');
@@ -25,7 +25,7 @@ test('calcStatus for shrink status', () => {
 
 test('calcStatus for keep status', () => {
 	const currentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	for (let frameCount = 1; frameCount < params.statusSwitchDuration; frameCount++) {
+	for (let frameCount = 1; frameCount < currentStatusSwitchDuration; frameCount++) {
 		const status = target.calcStatus(params, frameCount, currentStatusSwitchDuration, currentPosArray);
 		expect(status).toBe('keep');
 	}

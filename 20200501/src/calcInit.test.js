@@ -10,6 +10,13 @@ test('calcStatusSwitchDuration', () => {
 	expect(statusSwitchDuration).toBeLessThanOrEqual(params.statusSwitchDuration.max);
 });
 
+
+test('calcInitEasingFactor', () => {
+	const initEasingFactor = target.calcInitEasingFactor(params);
+	expect(initEasingFactor).toBeGreaterThanOrEqual(params.initEasingFactor.min);
+	expect(initEasingFactor).toBeLessThanOrEqual(params.initEasingFactor.max);
+});
+
 test('calcPointNum', () => {
 	const pointNum = target.calcPointNum(params);
 	expect(pointNum).toBeGreaterThan(1);

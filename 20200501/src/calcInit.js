@@ -6,6 +6,11 @@ export const calcStatusSwitchDuration = (params) => {
 	return Math.floor(floatDuration);
 };
 
+export const calcInitEasingFactor = (params) => {
+	const diff = params.initEasingFactor.max - params.initEasingFactor.min;
+	return (Math.random() * diff) + params.initEasingFactor.min;
+};
+
 export const calcPointNum = (params) => {
 	return params.waveNum * 4 + 1;
 };
@@ -42,6 +47,7 @@ export const calcInitStretchedSnakePosArray = (snakeIndex, params) => {
 export const calcInit = (snakeIndex) => (params) => {
 	const initSnake = {};
 	initSnake.statusSwitchDuration = calcStatusSwitchDuration(params);
+	initSnake.initEasingFactor = calcInitEasingFactor(params);
 	initSnake.status = 'keep';
 	initSnake.frameCount = 1;
 	initSnake.targetPosArray = calcInitStretchedSnakePosArray(snakeIndex, params);

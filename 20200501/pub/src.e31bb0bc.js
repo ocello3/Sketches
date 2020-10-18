@@ -32547,8 +32547,10 @@ var getParams = function getParams(windowSize) {
   params.waveLength = 1 / 30 * params.canvasSize;
   params.headWaveAmp = params.canvasSize / (params.snakeNum + 1) * 0.8;
   params.waveAmpReducRate = 0.7;
-  params.initEasingFactor = 0.4; // 0.1 - 0.5
-
+  params.initEasingFactor = {
+    min: 0.1,
+    max: 0.5
+  };
   params.easingFactorReducRate = 1.0; // 0.7 - 1.0
 
   params.lineNum = 8;
@@ -32562,7 +32564,7 @@ exports.getParams = getParams;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.calcInit = exports.calcInitStretchedSnakePosArray = exports.calcInitStretchedSnakePos = exports.calcWaveAmp = exports.calcStretchedSnakePosAngle = exports.calcStretchedSnakeHeadPos = exports.calcPointNum = exports.calcStatusSwitchDuration = void 0;
+exports.calcInit = exports.calcInitStretchedSnakePosArray = exports.calcInitStretchedSnakePos = exports.calcWaveAmp = exports.calcStretchedSnakePosAngle = exports.calcStretchedSnakeHeadPos = exports.calcPointNum = exports.calcInitEasingFactor = exports.calcStatusSwitchDuration = void 0;
 
 var _p = _interopRequireDefault(require("p5"));
 
@@ -32575,6 +32577,13 @@ var calcStatusSwitchDuration = function calcStatusSwitchDuration(params) {
 };
 
 exports.calcStatusSwitchDuration = calcStatusSwitchDuration;
+
+var calcInitEasingFactor = function calcInitEasingFactor(params) {
+  var diff = params.initEasingFactor.max - params.initEasingFactor.min;
+  return Math.random() * diff + params.initEasingFactor.min;
+};
+
+exports.calcInitEasingFactor = calcInitEasingFactor;
 
 var calcPointNum = function calcPointNum(params) {
   return params.waveNum * 4 + 1;
@@ -32631,6 +32640,7 @@ var calcInit = function calcInit(snakeIndex) {
   return function (params) {
     var initSnake = {};
     initSnake.statusSwitchDuration = calcStatusSwitchDuration(params);
+    initSnake.initEasingFactor = calcInitEasingFactor(params);
     initSnake.status = 'keep';
     initSnake.frameCount = 1;
     initSnake.targetPosArray = calcInitStretchedSnakePosArray(snakeIndex, params);
@@ -32685,8 +32695,8 @@ var _calcInit = require("../calcInit.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var calcCurrentPos = function calcCurrentPos(currentCurrentPos, pointIndex) {
-  return function (params, targetPosArray) {
-    var easingFactor = params.initEasingFactor * Math.pow(params.easingFactorReducRate, pointIndex + 1);
+  return function (params, targetPosArray, initEasingFactor) {
+    var easingFactor = initEasingFactor * Math.pow(params.easingFactorReducRate, pointIndex + 1);
 
     var diff = _p.default.Vector.sub(targetPosArray[pointIndex], currentCurrentPos);
 
@@ -32698,13 +32708,13 @@ var calcCurrentPos = function calcCurrentPos(currentCurrentPos, pointIndex) {
 
 exports.calcCurrentPos = calcCurrentPos;
 
-var calcCurrentPosArray = function calcCurrentPosArray(currentCurrentPosArray, status, snakeIndex, params, targetPosArray) {
+var calcCurrentPosArray = function calcCurrentPosArray(currentCurrentPosArray, status, snakeIndex, params, targetPosArray, initEasingFactor) {
   if (status == 'restart') return (0, _calcInit.calcInitStretchedSnakePosArray)(snakeIndex, params);
   var curryArray = currentCurrentPosArray.map(function (point, pointIndex) {
     return calcCurrentPos(point, pointIndex);
   });
   return curryArray.map(function (func) {
-    return func(params, targetPosArray);
+    return func(params, targetPosArray, initEasingFactor);
   });
 };
 
@@ -32793,10 +32803,11 @@ var calcUpdate = function calcUpdate(currentSnake, snakeIndex) {
   return function (params) {
     var updateSnake = {};
     updateSnake.statusSwitchDuration = (0, _calcInit.calcStatusSwitchDuration)(params);
+    updateSnake.initEasingFactor = (0, _calcInit.calcInitEasingFactor)(params);
     updateSnake.status = (0, _status.calcStatus)(params, currentSnake.frameCount, updateSnake.statusSwitchDuration, currentSnake.currentPosArray);
     updateSnake.frameCount = (0, _frameCount.calcFrameCount)(currentSnake.frameCount, updateSnake.status);
     updateSnake.targetPosArray = (0, _targetPosArray.calcTargetPosArray)(currentSnake.targetPosArray, snakeIndex, params, updateSnake.status);
-    updateSnake.currentPosArray = (0, _currentPosArray.calcCurrentPosArray)(currentSnake.currentPosArray, updateSnake.status, snakeIndex, params, updateSnake.targetPosArray);
+    updateSnake.currentPosArray = (0, _currentPosArray.calcCurrentPosArray)(currentSnake.currentPosArray, updateSnake.status, snakeIndex, params, updateSnake.targetPosArray, updateSnake.initEasingFactor);
     return updateSnake;
   };
 };
@@ -32916,7 +32927,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55420" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55600" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
