@@ -32545,7 +32545,7 @@ var getParams = function getParams(windowSize) {
   params.headWaveAmp = params.canvasSize / (params.snakeNum + 1) * 0.8;
   params.waveAmpReducRate = 0.7;
   params.initEasingFactor = 0.2;
-  params.easingFactorReducRate = 0.7;
+  params.easingFactorReducRate = 0.8;
   return params;
 };
 
@@ -32829,7 +32829,7 @@ var sketch = function sketch(s) {
       return func(params);
     }); // draw background
 
-    s.background(255, 140); // draw frame
+    s.background(255); // draw frame
     // s.noFill();
     // s.rect(0, 0, params.canvasSize, params.canvasSize);
     // draw snake
@@ -32845,17 +32845,26 @@ var sketch = function sketch(s) {
       var lastPos = posArray[length - 1];
       var colorIndex = 1.0 / params.snakeNum * snakeIndex * 1.5;
       var snakeColor = s.lerpColor(colorPalette.green, colorPalette.pink, colorIndex);
-      s.push();
-      s.noFill();
-      s.stroke(snakeColor);
-      s.beginShape();
-      s.curveVertex(initPos.x, initPos.y);
-      posArray.forEach(function (pos) {
-        s.curveVertex(pos.x, pos.y);
-      });
-      s.curveVertex(lastPos.x, lastPos.y);
-      s.endShape();
-      s.pop();
+
+      var _loop = function _loop(lineNum) {
+        var alpha = 255 / 5 * (lineNum + 1);
+        s.push();
+        s.noFill();
+        snakeColor.setAlpha(alpha);
+        s.stroke(snakeColor);
+        s.beginShape();
+        s.curveVertex(initPos.x + lineNum, initPos.y);
+        posArray.forEach(function (pos) {
+          s.curveVertex(pos.x + lineNum, pos.y);
+        });
+        s.curveVertex(lastPos.x + lineNum, lastPos.y);
+        s.endShape();
+        s.pop();
+      };
+
+      for (var lineNum = 0; lineNum < 8; lineNum++) {
+        _loop(lineNum);
+      }
     });
   };
 };
@@ -32889,7 +32898,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51255" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52273" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

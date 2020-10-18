@@ -29,7 +29,7 @@ const sketch = (s) => {
 		snakes = snakes.map(func => func(params));
 
 		// draw background
-		s.background(255, 140);
+		s.background(255);
 		
 		// draw frame
 		// s.noFill();
@@ -48,17 +48,21 @@ const sketch = (s) => {
 			const lastPos = posArray[length - 1];
 			const colorIndex = 1.0 / params.snakeNum * snakeIndex * 1.5;
 			const snakeColor = s.lerpColor(colorPalette.green, colorPalette.pink, colorIndex);
-			s.push();
-			s.noFill();
-			s.stroke(snakeColor);
-			s.beginShape();
-			s.curveVertex(initPos.x, initPos.y);
-			posArray.forEach((pos) => {
-				s.curveVertex(pos.x, pos.y);
-			});
-			s.curveVertex(lastPos.x, lastPos.y);
-			s.endShape();
-			s.pop();
+			for (let lineNum = 0; lineNum < 8; lineNum++) {
+				const alpha = 255 / 5 * (lineNum + 1);
+				s.push();
+				s.noFill();
+				snakeColor.setAlpha(alpha);
+				s.stroke(snakeColor);
+				s.beginShape();
+				s.curveVertex(initPos.x + lineNum, initPos.y);
+				posArray.forEach((pos) => {
+					s.curveVertex(pos.x + lineNum, pos.y);
+				});
+				s.curveVertex(lastPos.x + lineNum, lastPos.y);
+				s.endShape();
+				s.pop();
+			}
 		});
 	};
 };
