@@ -65,30 +65,48 @@ test('calcStretchedSnakePosArray', () => {
 	});
 });
 
+test('calcTargetPosArray for restart status', () => {
+	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(310, 100));
+	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
+		const targetPosArray = target.calcTargetPosArray(currentTargetPosArray, snakeIndex, params, 'restart');
+		targetPosArray.forEach(targetPos => {
+			expect(targetPos.x).toBeLessThanOrEqual(0);
+			expect(targetPos.y).toBeGreaterThan(0);
+			expect(targetPos.y).toBeLessThan(params.canvasSize);
+		});
+	}
+});
+
 test('calcTargetPosArray for keep status', () => {
 	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const targetPosArray = target.calcTargetPosArray(currentTargetPosArray, params, 'keep');
-	targetPosArray.forEach(targetPos => {
-		expect(targetPos.x).toBe(0);
-		expect(targetPos.y).toBe(0);
-	});
+	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
+		const targetPosArray = target.calcTargetPosArray(currentTargetPosArray, snakeIndex, params, 'keep');
+		targetPosArray.forEach(targetPos => {
+			expect(targetPos.x).toBe(0);
+			expect(targetPos.y).toBe(0);
+		});
+	}
 });
 
 test('calcTargetPosArray for shrink status', () => {
 	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const targetPosArray = target.calcTargetPosArray(currentTargetPosArray, params, 'shrink');
-	targetPosArray.forEach(targetPos => {
-		expect(targetPos.x).not.toBeUndefined();
-		expect(targetPos.y).not.toBeUndefined();
-	});
+	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
+		const targetPosArray = target.calcTargetPosArray(currentTargetPosArray, snakeIndex, params, 'shrink');
+		targetPosArray.forEach(targetPos => {
+			expect(targetPos.x).not.toBeUndefined();
+			expect(targetPos.y).not.toBeUndefined();
+		});
+	}
 });
 
 test('calcTargetPosArray for stretch status', () => {
 	const currentTargetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-	const targetPosArray = target.calcTargetPosArray(currentTargetPosArray, params, 'stretch');
-	targetPosArray.forEach(targetPos => {
-		expect(targetPos.x).not.toBeUndefined();
-		expect(targetPos.y).not.toBeUndefined();
-	});
+	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
+		const targetPosArray = target.calcTargetPosArray(currentTargetPosArray, snakeIndex, params, 'stretch');
+		targetPosArray.forEach(targetPos => {
+			expect(targetPos.x).not.toBeUndefined();
+			expect(targetPos.y).not.toBeUndefined();
+		});
+	}
 });
 

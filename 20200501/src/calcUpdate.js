@@ -13,12 +13,12 @@ export const calcFrameCount = (frameCount, status) => {
 	return frameCount + 1;
 };
 
-export const calcUpdate = (currentSnake) => (params) => {
+export const calcUpdate = (currentSnake, snakeIndex) => (params) => {
 	const updateSnake = {};
 	updateSnake.status = calcStatus(params, currentSnake.frameCount, currentSnake.currentPosArray);
 	updateSnake.frameCount = calcFrameCount(currentSnake.frameCount);
-	updateSnake.targetPosArray = calcTargetPosArray(currentSnake.targetPosArray, params, updateSnake.status);
-	updateSnake.currentPosArray = calcCurrentPosArray(currentSnake.currentPosArray, params, updateSnake.targetPosArray);
+	updateSnake.targetPosArray = calcTargetPosArray(currentSnake.targetPosArray, snakeIndex, params, updateSnake.status);
+	updateSnake.currentPosArray = calcCurrentPosArray(currentSnake.currentPosArray, updateSnake.status, snakeIndex, params, updateSnake.targetPosArray);
 	return updateSnake;
 };
 

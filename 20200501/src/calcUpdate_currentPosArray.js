@@ -1,4 +1,5 @@
 import P5 from 'p5';
+import { calcInitStretchedSnakePosArray } from './calcInit.js';
 
 export const calcCurrentPos = (currentCurrentPos, pointIndex) => (params, targetPosArray) => {
 	const easingFactor = params.initEasingFactor * Math.pow(params.easingFactorReducRate, (pointIndex + 1));
@@ -7,7 +8,8 @@ export const calcCurrentPos = (currentCurrentPos, pointIndex) => (params, target
 	return P5.Vector.add(currentCurrentPos, displacementVec);
 };
 
-export const calcCurrentPosArray = (currentCurrentPosArray, params, targetPosArray) => {
+export const calcCurrentPosArray = (currentCurrentPosArray, status, snakeIndex, params, targetPosArray) => {
+	if (status == 'restart') return calcInitStretchedSnakePosArray(snakeIndex, params);
 	const curryArray = currentCurrentPosArray.map((point, pointIndex) => calcCurrentPos(point, pointIndex));
 	return curryArray.map(func => func(params, targetPosArray));
 };

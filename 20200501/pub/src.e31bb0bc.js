@@ -32635,6 +32635,8 @@ exports.calcCurrentPosArray = exports.calcCurrentPos = void 0;
 
 var _p = _interopRequireDefault(require("p5"));
 
+var _calcInit = require("./calcInit.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var calcCurrentPos = function calcCurrentPos(currentCurrentPos, pointIndex) {
@@ -32651,7 +32653,8 @@ var calcCurrentPos = function calcCurrentPos(currentCurrentPos, pointIndex) {
 
 exports.calcCurrentPos = calcCurrentPos;
 
-var calcCurrentPosArray = function calcCurrentPosArray(currentCurrentPosArray, params, targetPosArray) {
+var calcCurrentPosArray = function calcCurrentPosArray(currentCurrentPosArray, status, snakeIndex, params, targetPosArray) {
+  if (status == 'restart') return (0, _calcInit.calcInitStretchedSnakePosArray)(snakeIndex, params);
   var curryArray = currentCurrentPosArray.map(function (point, pointIndex) {
     return calcCurrentPos(point, pointIndex);
   });
@@ -32661,7 +32664,7 @@ var calcCurrentPosArray = function calcCurrentPosArray(currentCurrentPosArray, p
 };
 
 exports.calcCurrentPosArray = calcCurrentPosArray;
-},{"p5":"../node_modules/p5/lib/p5.min.js"}],"calcUpdate_targetPosArray.js":[function(require,module,exports) {
+},{"p5":"../node_modules/p5/lib/p5.min.js","./calcInit.js":"calcInit.js"}],"calcUpdate_targetPosArray.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -32670,6 +32673,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.calcTargetPosArray = exports.calcStretchedSnakePosArray = exports.calcStretchedSnakePos = exports.calcShrinkedSnakePosArray = exports.calcShrinkedSnakePos = void 0;
 
 var _p = _interopRequireDefault(require("p5"));
+
+var _calcInit = require("./calcInit.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32713,14 +32718,15 @@ var calcStretchedSnakePosArray = function calcStretchedSnakePosArray(currentTarg
 
 exports.calcStretchedSnakePosArray = calcStretchedSnakePosArray;
 
-var calcTargetPosArray = function calcTargetPosArray(currentTargetPosArray, params, status) {
+var calcTargetPosArray = function calcTargetPosArray(currentTargetPosArray, snakeIndex, params, status) {
+  if (status == 'restart') return (0, _calcInit.calcInitStretchedSnakePosArray)(snakeIndex, params);
   if (status == 'keep') return currentTargetPosArray;
   if (status == 'shrink') return calcShrinkedSnakePosArray(currentTargetPosArray, params);
   if (status == 'stretch') return calcStretchedSnakePosArray(currentTargetPosArray, params);
 };
 
 exports.calcTargetPosArray = calcTargetPosArray;
-},{"p5":"../node_modules/p5/lib/p5.min.js"}],"calcUpdate.js":[function(require,module,exports) {
+},{"p5":"../node_modules/p5/lib/p5.min.js","./calcInit.js":"calcInit.js"}],"calcUpdate.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -32748,13 +32754,13 @@ var calcFrameCount = function calcFrameCount(frameCount, status) {
 
 exports.calcFrameCount = calcFrameCount;
 
-var calcUpdate = function calcUpdate(currentSnake) {
+var calcUpdate = function calcUpdate(currentSnake, snakeIndex) {
   return function (params) {
     var updateSnake = {};
     updateSnake.status = calcStatus(params, currentSnake.frameCount, currentSnake.currentPosArray);
     updateSnake.frameCount = calcFrameCount(currentSnake.frameCount);
-    updateSnake.targetPosArray = (0, _calcUpdate_targetPosArray.calcTargetPosArray)(currentSnake.targetPosArray, params, updateSnake.status);
-    updateSnake.currentPosArray = (0, _calcUpdate_currentPosArray.calcCurrentPosArray)(currentSnake.currentPosArray, params, updateSnake.targetPosArray);
+    updateSnake.targetPosArray = (0, _calcUpdate_targetPosArray.calcTargetPosArray)(currentSnake.targetPosArray, snakeIndex, params, updateSnake.status);
+    updateSnake.currentPosArray = (0, _calcUpdate_currentPosArray.calcCurrentPosArray)(currentSnake.currentPosArray, updateSnake.status, snakeIndex, params, updateSnake.targetPosArray);
     return updateSnake;
   };
 };
@@ -32865,7 +32871,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63443" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63649" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

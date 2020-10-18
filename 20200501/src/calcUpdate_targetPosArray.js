@@ -1,4 +1,5 @@
 import P5 from 'p5';
+import { calcInitStretchedSnakePosArray } from './calcInit.js';
 
 export const calcShrinkedSnakePos = (currentTargetPos, pointIndex) => (params) => {
 	const xIncrement = params.waveLength / 4 * pointIndex;
@@ -24,7 +25,8 @@ export const calcStretchedSnakePosArray = (currentTargetPosArray, params) => {
 	return arrayFunc.map(func => func(params));
 };
 
-export const calcTargetPosArray = (currentTargetPosArray, params, status) => {
+export const calcTargetPosArray = (currentTargetPosArray, snakeIndex, params, status) => {
+	if (status == 'restart') return calcInitStretchedSnakePosArray(snakeIndex, params);
 	if (status == 'keep') return currentTargetPosArray;
 	if (status == 'shrink') return calcShrinkedSnakePosArray(currentTargetPosArray, params);
 	if (status == 'stretch') return calcStretchedSnakePosArray(currentTargetPosArray, params);

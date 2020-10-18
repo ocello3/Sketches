@@ -16,13 +16,28 @@ test('calcCurrentPos', () => {
 	}
 });
 
-test('calcCurrentPosArray', () => {
+test('calcCurrentPosArray when restart', () => {
 	const currentCurrentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
 	const targetPosArray = Array.from(Array(pointNum), () => new P5.Vector(10, 0));
-	const currentPosArray = target.calcCurrentPosArray(currentCurrentPosArray, params, targetPosArray);
-	currentPosArray.forEach(currentPos => {
-		expect(currentPos.x).toBeGreaterThan(0);
-		expect(currentPos.y).toBe(0);
-	});
+	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
+		const currentPosArray = target.calcCurrentPosArray(currentCurrentPosArray, 'restart', snakeIndex, params, targetPosArray);
+		currentPosArray.forEach(currentPos => {
+			expect(currentPos.x).toBeLessThanOrEqual(0);
+			expect(currentPos.y).toBeGreaterThanOrEqual(0);
+			expect(currentPos.y).toBeLessThanOrEqual(params.canvasSize);
+		});
+	}
+});
+
+test('calcCurrentPosArray without restart', () => {
+	const currentCurrentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
+	const targetPosArray = Array.from(Array(pointNum), () => new P5.Vector(10, 0));
+	for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
+		const currentPosArray = target.calcCurrentPosArray(currentCurrentPosArray, 'keep', snakeIndex, params, targetPosArray);
+		currentPosArray.forEach(currentPos => {
+			expect(currentPos.x).toBeGreaterThan(0);
+			expect(currentPos.y).toBe(0);
+		});
+	}
 });
 
