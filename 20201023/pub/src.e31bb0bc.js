@@ -32543,9 +32543,9 @@ var getParams = function getParams(windowSize) {
 
 exports.getParams = getParams;
 },{}],"shader/shader.vert":[function(require,module,exports) {
-module.exports = "#ifdef GL_ES\nprecision mediump float;\n#define GLSLIFY 1\n#endif\n\nattribute vec3 aPosition;\nattribute vec2 aTexCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n\t// vTexCoord = aTexCoord; // copy\n\t\n\tvec4 positionVec4 = vec4(aPosition, 1.0);\n\tpositionVec4.xy = positionVec4.xy * 2.0 - 1.0;\n\tgl_Position = positionVec4;\n}\n\n";
+module.exports = "#ifdef GL_ES\nprecision mediump float;\n#define GLSLIFY 1\n#endif\n\nattribute vec3 aPosition;\nattribute vec2 aTexCoord;\n\nvoid main() {\n\tvec4 positionVec4 = vec4(aPosition, 1.0);\n\tpositionVec4.xy = positionVec4.xy * 2.0 - 1.0;\n\tgl_Position = positionVec4;\n}\n\n";
 },{}],"shader/shader.frag":[function(require,module,exports) {
-module.exports = "#ifdef GL_ES\nprecision mediump float;\n#define GLSLIFY 1\n#endif\n\nuniform vec2 u_resolution;\n// varying vec2 vTexCoord;\n\nvoid main () {\n\n\tvec2 st = gl_FragCoord.xy / u_resolution.xy;\n\tgl_FragColor = vec4(st.x, 0.0, 0.0, 1.0);\n}\n\n";
+module.exports = "#ifdef GL_ES\nprecision mediump float;\n#define GLSLIFY 1\n#endif\n\n#define PI 3.14159265359\n#define TWO_PI 6.28318530718\n\nuniform vec2 u_resolution;\nuniform float u_time;\nuniform float u_mouse;\n\nvec3 rgb(float r, float g, float b){\n  return vec3(r / 255.0, g / 255.0, b / 255.0);\n}\n\nvec4 poly(vec2 center, float size, float sides, float rotation, vec3 col){\n\tvec2 pos = gl_FragCoord.xy - center; // move to drawingg pos\n\tfloat angle = atan(pos.x, pos.y) + PI + rotation; // angle of a pixel relative to pos\n\tfloat radius = TWO_PI / sides; // size of shape\n\tfloat d = cos(floor(0.5 + angle / radius) * radius - angle) * length(pos);\n\td = 1.0 - smoothstep(size*0.5, size*0.5+1.0, d); // use the smoothstep to get soft edge\n\treturn vec4(col, d); // / return the color with the shape as the alpha channel\n}\n\nvoid main () {\n\tvec2 center = u_resolution; // draw shape at center\n  float size = u_resolution.y * 0.5; // shape size is a quarter of the screen height\n  float sides = mod(floor(u_mouse), 7.0) + 3.0; // increase the sides\n  float rotation = u_time; // rotation is in radians\n\n\tvec3 grn = rgb(255.0, 255.0, 255.0);\n\n\tvec4 poly = poly(center, size, sides, rotation, grn);\n\n\tpoly.rgb = mix(1.0 - grn, poly.rgb, poly.a); // mix the polygon with the opposite of the green color according to the shapes alpha\n\n\tvec2 pos = gl_FragCoord.xy / u_resolution.xy;\n\tgl_FragColor = vec4(poly.rgb, 1.0);\n}\n\n";
 },{}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -32566,8 +32566,8 @@ var sketch = function sketch(s) {
 
   s.setup = function () {
     s.createCanvas(params.canvasSize, params.canvasSize, s.WEBGL);
-    s.noStroke();
-    s.noLoop();
+    s.noStroke(); // s.noLoop();
+
     theShader = s.createShader(_shader.default, _shader2.default);
   };
 
@@ -32585,8 +32585,8 @@ var sketch = function sketch(s) {
     // shader
     s.shader(theShader);
     theShader.setUniform('u_resolution', [params.canvasSize, params.canvasSize]);
-    theShader.setUniform("mouse", s.map(s.mouseX, 0, params.canvasSize, 0, 7));
-    theShader.setUniform('time', s.frameCount * 0.01);
+    theShader.setUniform("u_mouse", s.map(s.mouseX, 0, params.canvasSize, 0, 7));
+    theShader.setUniform('u_time', s.frameCount * 0.01);
     s.rect(0, 0, params.windowSize, params.windowSize);
   };
 };
@@ -32620,7 +32620,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51517" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54270" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

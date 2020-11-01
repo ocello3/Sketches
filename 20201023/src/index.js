@@ -11,7 +11,7 @@ const sketch = (s) => {
 	s.setup = () => {
 		s.createCanvas(params.canvasSize, params.canvasSize, s.WEBGL);
 		s.noStroke();
-		s.noLoop();
+		// s.noLoop();
 		theShader = s.createShader(vert, frag);
 	};
 
@@ -30,8 +30,8 @@ const sketch = (s) => {
 		// shader
 		s.shader(theShader);
 		theShader.setUniform('u_resolution', [params.canvasSize, params.canvasSize]);
-		theShader.setUniform("mouse", s.map(s.mouseX, 0, params.canvasSize, 0, 7));
-		theShader.setUniform('time', s.frameCount * 0.01);
+		theShader.setUniform("u_mouse", s.map(s.mouseX, 0, params.canvasSize, 0, 7));
+		theShader.setUniform('u_time', s.frameCount * 0.01);
 		s.rect(0, 0, params.windowSize, params.windowSize);
 	};
 };
