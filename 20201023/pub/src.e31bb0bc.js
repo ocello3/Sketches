@@ -32543,9 +32543,9 @@ var getParams = function getParams(windowSize) {
 
 exports.getParams = getParams;
 },{}],"shader/shader.vert":[function(require,module,exports) {
-module.exports = "#ifdef GL_ES\nprecision mediump float;\n#define GLSLIFY 1\n#endif\n\nattribute vec3 aPosition;\nattribute vec2 aTexCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n\tvTexCoord = aTexCoord; // copy\n\t\n\tvec4 positionVec4 = vec4(aPosition, 1.0);\n\tpositionVec4.xy = positionVec4.xy * 2.0 - 1.0;\n\tgl_Position = positionVec4;\n}\n\n";
+module.exports = "#ifdef GL_ES\nprecision mediump float;\n#define GLSLIFY 1\n#endif\n\nattribute vec3 aPosition;\nattribute vec2 aTexCoord;\n\nvarying vec2 vTexCoord;\n\nvoid main() {\n\t// vTexCoord = aTexCoord; // copy\n\t\n\tvec4 positionVec4 = vec4(aPosition, 1.0);\n\tpositionVec4.xy = positionVec4.xy * 2.0 - 1.0;\n\tgl_Position = positionVec4;\n}\n\n";
 },{}],"shader/shader.frag":[function(require,module,exports) {
-module.exports = "#ifdef GL_ES\nprecision mediump float;\n#define GLSLIFY 1\n#endif\n\nuniform vec2 u_resolution;\n\nvarying vec2 vTexCoord;\n\nvoid main () {\n\t// vec2 st = gl_FragCoord.xy/u_resolution.xy;\n\tgl_FragColor = vec4(vTexCoord.x, vTexCoord.y, 0.5, 1.0);\n}\n\n";
+module.exports = "#ifdef GL_ES\nprecision mediump float;\n#define GLSLIFY 1\n#endif\n\nuniform vec2 u_resolution;\n// varying vec2 vTexCoord;\n\nvoid main () {\n\n\tvec2 st = gl_FragCoord.xy / u_resolution.xy;\n\tgl_FragColor = vec4(st.x, 0.0, 0.0, 1.0);\n}\n\n";
 },{}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -32583,8 +32583,10 @@ var sketch = function sketch(s) {
     s.pop();
     */
     // shader
-    theShader.setUniform("u_resolution", [params.windowSize, params.windowSize]);
     s.shader(theShader);
+    theShader.setUniform('u_resolution', [params.canvasSize, params.canvasSize]);
+    theShader.setUniform("mouse", s.map(s.mouseX, 0, params.canvasSize, 0, 7));
+    theShader.setUniform('time', s.frameCount * 0.01);
     s.rect(0, 0, params.windowSize, params.windowSize);
   };
 };
@@ -32618,7 +32620,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59784" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51517" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

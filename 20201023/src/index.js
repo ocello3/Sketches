@@ -28,8 +28,10 @@ const sketch = (s) => {
 		*/
 
 		// shader
-		theShader.setUniform("u_resolution", [params.windowSize, params.windowSize]);
 		s.shader(theShader);
+		theShader.setUniform('u_resolution', [params.canvasSize, params.canvasSize]);
+		theShader.setUniform("mouse", s.map(s.mouseX, 0, params.canvasSize, 0, 7));
+		theShader.setUniform('time', s.frameCount * 0.01);
 		s.rect(0, 0, params.windowSize, params.windowSize);
 	};
 };
