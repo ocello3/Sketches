@@ -2,6 +2,7 @@
 
 import { initParams } from './initParams.js';
 
+window.confirm = jest.fn();
 const params = initParams(400, 500); // width, height
 
 test('windowSize is to be smaller length within width and height', () => {

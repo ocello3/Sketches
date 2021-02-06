@@ -17,18 +17,20 @@ const sketch = (s) => {
 		s.pop();
 	}
 
-	s.setup = () => {
-		s.createCanvas(params.canvasSize, params.canvasSize);
-		s.noLoop();
-		const isStart = confirm("Turn sound on?"); // after selected, return boolean value
-		s.noLoop();
-		if (isStart) {
+	const confirmFunc = (params) => {
+		if (params.isStart) {
 			Tone.start();
 			s.loop();
 		} else {
 			s.loop();
 			Tone.Master.mute = true;
 		}
+	}
+
+	s.setup = () => {
+		s.createCanvas(params.canvasSize, params.canvasSize);
+		s.noLoop();
+		confirmFunc(params);
 	};
 
 	s.draw = () => {
