@@ -80828,11 +80828,90 @@ var initParams = function initParams(innerWidth, innerHeight) {
   var params = {};
   params.windowSize = windowSize(innerWidth, innerHeight);
   params.canvasSize = canvasSize(params.windowSize);
+  params.ballNum = 2;
+  params.isStart = confirm("Trun sound on?");
   return params;
 };
 
 exports.initParams = initParams;
-},{}],"index.js":[function(require,module,exports) {
+},{}],"initBall.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initBall = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var initBall = function initBall(index) {
+  return function (params) {
+    var ball = {};
+    ball.cycleLength = 60;
+    ball.frameVal = 0;
+    ball.angle = 0;
+    ball.marginRate = new _p.default.Vector(0.2, 0.2);
+
+    var calcAmp = function calcAmp() {
+      var margin = params.canvasSize * ball.marginRate.y;
+      var effectiveHeight = params.canvasSize - margin * 2;
+      return effectiveHeight;
+    };
+
+    ball.amp = calcAmp();
+
+    var calcPos = function calcPos() {
+      var margin = params.canvasSize * ball.marginRate.x;
+      var effectiveWidth = params.canvasSize - margin * 2;
+      var eachWidth = effectiveWidth / (params.ballNum + 1);
+      var x = margin + eachWidth * (index + 1);
+      var y = 0;
+      return new _p.default.Vector(x, y);
+    };
+
+    ball.pos = calcPos();
+    return ball;
+  };
+};
+
+exports.initBall = initBall;
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"updateBall.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateBall = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var updateBall = function updateBall(ball) {
+  return function (params, frameCount) {
+    var updatedBall = {};
+    updatedBall.cycleLength = ball.cycleLength;
+    updatedBall.frameVal = frameCount % ball.cycleLength;
+    updatedBall.angle = ball.frameVal * 2 * Math.PI / ball.cycleLength;
+    updatedBall.marginRate = ball.marginRate;
+    updatedBall.amp = ball.amp;
+
+    var calcPos = function calcPos() {
+      var x = ball.pos.x;
+      var margin = params.canvasSize * updatedBall.marginRate.y;
+      var y = margin + updatedBall.amp * (Math.sin(updatedBall.angle) + 1) / 2;
+      return new _p.default.Vector(x, y);
+    };
+
+    updatedBall.pos = calcPos();
+    return updatedBall;
+  };
+};
+
+exports.updateBall = updateBall;
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"index.js":[function(require,module,exports) {
 'use strict';
 
 var _p = _interopRequireDefault(require("p5"));
@@ -80840,6 +80919,10 @@ var _p = _interopRequireDefault(require("p5"));
 var Tone = _interopRequireWildcard(require("tone"));
 
 var _initParams = require("./initParams.js");
+
+var _initBall = require("./initBall.js");
+
+var _updateBall = require("./updateBall.js");
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
@@ -80849,6 +80932,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var sketch = function sketch(s) {
   var params = (0, _initParams.initParams)(window.innerWidth, window.innerHeight);
+  var balls = Array.from(Array(params.ballNum), function (ball, index) {
+    return (0, _initBall.initBall)(index)(params);
+  });
 
   var drawFrame = function drawFrame(params) {
     s.push();
@@ -80859,14 +80945,16 @@ var sketch = function sketch(s) {
     s.pop();
   };
 
-  s.setup = function () {
-    s.createCanvas(params.canvasSize, params.canvasSize);
-    s.noLoop();
-    var isStart = confirm("Turn sound on?"); // after selected, return boolean value
+  var drawBall = function drawBall(ball) {
+    s.push();
+    s.fill(0);
+    s.noStroke();
+    s.circle(ball.pos.x, ball.pos.y, 10);
+    s.pop();
+  };
 
-    s.noLoop();
-
-    if (isStart) {
+  var confirmFunc = function confirmFunc(params) {
+    if (params.isStart) {
       Tone.start();
       s.loop();
     } else {
@@ -80875,15 +80963,26 @@ var sketch = function sketch(s) {
     }
   };
 
+  s.setup = function () {
+    s.createCanvas(params.canvasSize, params.canvasSize);
+    s.noLoop();
+    confirmFunc(params);
+  };
+
   s.draw = function () {
+    balls = balls.map(function (ball) {
+      return (0, _updateBall.updateBall)(ball)(params, s.frameCount);
+    });
     s.background(255);
     drawFrame(params);
-    s.text(s.frameCount, s.width / 2, s.height / 2);
+    balls.forEach(function (ball) {
+      return drawBall(ball);
+    });
   };
 };
 
 new _p.default(sketch, 'p5js');
-},{"p5":"../node_modules/p5/lib/p5.min.js","tone":"../node_modules/tone/build/esm/index.js","./initParams.js":"initParams.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"p5":"../node_modules/p5/lib/p5.min.js","tone":"../node_modules/tone/build/esm/index.js","./initParams.js":"initParams.js","./initBall.js":"initBall.js","./updateBall.js":"updateBall.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -80911,7 +81010,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52242" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60589" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

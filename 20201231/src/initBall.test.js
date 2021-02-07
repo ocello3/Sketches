@@ -10,12 +10,22 @@ const balls = Array.from(Array(params.ballNum), (ball, index) => initBall(index)
 test('confirm amp', () => {
 	balls.forEach((ball) => {
 		expect(ball.amp).toBeGreaterThan(0);
+		expect(ball.amp).toBeLessThan(params.canvasSize);
+	});
+});
+
+test('confirm amp and margin', () => {
+	balls.forEach((ball) => {
+		const amp = ball.amp;
+		const margin_y = params.canvasSize * ball.marginRate.y * 2;
+		expect(amp + margin_y).toBe(params.canvasSize);
 	});
 });
 
 test('confirm pos', () => {
-	balls.forEach((ball, index) => {
-		expect(ball.pos.x).toBeGreaterThan(100/params.ballNum * index);
-	});
+	const firstBall = balls[0];
+	expect(firstBall.pos.x).toBeGreaterThan(0);
+	const lastBall = balls[params.ballNum - 1];
+	expect(lastBall.pos.x).toBeLessThan(params.canvasSize);
 });
 

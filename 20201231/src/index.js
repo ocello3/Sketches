@@ -3,10 +3,13 @@
 import P5 from 'p5';
 import * as Tone from 'tone';
 import { initParams } from './initParams.js';
+import { initBall } from './initBall.js';
+import { updateBall } from './updateBall.js';
 
 const sketch = (s) => {
 	
 	const params = initParams(window.innerWidth, window.innerHeight);
+	let balls = Array.from(Array(params.ballNum), (ball, index) => initBall(index)(params));
 
 	const drawFrame = (params) => {
 		s.push();
@@ -14,6 +17,14 @@ const sketch = (s) => {
 		s.strokeWeight(1);
 		s.noFill();
 		s.rect(0, 0, params.canvasSize, params.canvasSize);
+		s.pop();
+	}
+
+	const drawBall = (ball) => {
+		s.push();
+		s.fill(0);
+		s.noStroke();
+		s.circle(ball.pos.x, ball.pos.y, 10);
 		s.pop();
 	}
 
@@ -34,9 +45,10 @@ const sketch = (s) => {
 	};
 
 	s.draw = () => {
+		balls = balls.map((ball) => updateBall(ball)(params, s.frameCount));
 		s.background(255);
 		drawFrame(params);
-		s.text(s.frameCount, s.width/2, s.height/2)
+		balls.forEach((ball) => drawBall(ball));
 	};
 };
 

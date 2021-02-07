@@ -10,16 +10,13 @@ export const updateBall = (ball) => (params, frameCount) => {
 	updatedBall.marginRate = ball.marginRate;
 	updatedBall.amp = ball.amp;
 	
-	const calcYPos = (ball) => {
+	const calcPos = () => {
 		const x = ball.pos.x;
-		const canvasSize = params.canvasSize;
-		const marginRate_y = updatedBall.marginRate.y;
-		const amp = updatedBall.amp;
-		const angle = updatedBall.angle;
-		const y = canvasSize * marginRate_y + amp * Math.sin(angle);
-		return P5.Vector(x, y);
+		const margin = params.canvasSize * updatedBall.marginRate.y;
+		const y = margin + updatedBall.amp * (Math.sin(updatedBall.angle) + 1)/2;
+		return new P5.Vector(x, y);
 	}
-	updatedBall.pos = calcYPos(ball);
+	updatedBall.pos = calcPos();
 
 	return updatedBall;
 }

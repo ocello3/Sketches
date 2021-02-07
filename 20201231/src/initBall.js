@@ -8,11 +8,19 @@ export const initBall = (index) => (params) => {
 	ball.frameVal = 0;
 	ball.angle = 0;
 	ball.marginRate = new P5.Vector(0.2, 0.2);
-	ball.amp = params.canvasSize * (1 - ball.marginRate.y * 2);
+
+	const calcAmp = () => {
+		const margin = params.canvasSize * ball.marginRate.y;
+		const effectiveHeight = params.canvasSize - margin * 2;
+		return effectiveHeight;
+	}
+	ball.amp = calcAmp();
 
 	const calcPos = () => {
-		const width = (params.canvasSize * (1 - ball.marginRate.x * 2)) / params.ballNum;
-		const x = params.canvasSize + width * index;
+		const margin = params.canvasSize * ball.marginRate.x;
+		const effectiveWidth = params.canvasSize - margin * 2;
+		const eachWidth = effectiveWidth / (params.ballNum + 1);
+		const x = margin + eachWidth * (index + 1);
 		const y = 0;
 		return new P5.Vector(x, y);
 	}
