@@ -8,6 +8,8 @@ export const updateBall = (ball) => (params, frameCount) => {
 	updatedBall.frameVal = frameCount % ball.cycleLength;
 	updatedBall.angle = ball.frameVal * 2 * Math.PI / ball.cycleLength;
 	updatedBall.marginRate = ball.marginRate;
+	updatedBall.leftEdge = ball.leftEdge;
+	updatedBall.rightEdge = ball.rightEdge;
 	updatedBall.amp = ball.amp;
 	
 	const calcPos = () => {

@@ -7,6 +7,20 @@ window.confirm = jest.fn();
 const params = initParams(100, 100);
 const balls = Array.from(Array(params.ballNum), (ball, index) => initBall(index)(params));
 
+test('confirm leftEdge', () => {
+	balls.forEach((ball) => {
+		expect(ball.leftEdge.x).toBeLessThan(params.canvasSize / 2);
+		expect(ball.leftEdge.y).toBe(params.canvasSize / 2);
+	});
+});
+
+test('confirm rightEdge', () => {
+	balls.forEach((ball) => {
+		expect(ball.rightEdge.x).toBeGreaterThan(params.canvasSize / 2);
+		expect(ball.rightEdge.y).toBe(params.canvasSize / 2);
+	});
+});
+
 test('confirm amp', () => {
 	balls.forEach((ball) => {
 		expect(ball.amp).toBeGreaterThan(0);

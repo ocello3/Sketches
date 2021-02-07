@@ -13,7 +13,7 @@ export const initParams = (innerWidth, innerHeight) => {
 	const params = {};
 	params.windowSize = windowSize(innerWidth, innerHeight);
 	params.canvasSize = canvasSize(params.windowSize);
-	params.ballNum = 2;
+	params.ballNum = 5;
 	params.isStart = confirm("Trun sound on?");
 	
 	return params;

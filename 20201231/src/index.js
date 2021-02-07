@@ -20,11 +20,20 @@ const sketch = (s) => {
 		s.pop();
 	}
 
-	const drawBall = (ball) => {
+	const drawBalls = (balls) => {
+		const edgeBall = balls[0];
 		s.push();
 		s.fill(0);
 		s.noStroke();
-		s.circle(ball.pos.x, ball.pos.y, 10);
+		s.beginShape();
+		s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
+		s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
+		balls.forEach((ball) => {
+			s.curveVertex(ball.pos.x, ball.pos.y);
+		});
+		s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
+		s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
+		s.endShape();
 		s.pop();
 	}
 
@@ -48,7 +57,7 @@ const sketch = (s) => {
 		balls = balls.map((ball) => updateBall(ball)(params, s.frameCount));
 		s.background(255);
 		drawFrame(params);
-		balls.forEach((ball) => drawBall(ball));
+		drawBalls(balls);
 	};
 };
 

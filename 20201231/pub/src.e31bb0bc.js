@@ -80828,7 +80828,7 @@ var initParams = function initParams(innerWidth, innerHeight) {
   var params = {};
   params.windowSize = windowSize(innerWidth, innerHeight);
   params.canvasSize = canvasSize(params.windowSize);
-  params.ballNum = 2;
+  params.ballNum = 5;
   params.isStart = confirm("Trun sound on?");
   return params;
 };
@@ -80849,10 +80849,27 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var initBall = function initBall(index) {
   return function (params) {
     var ball = {};
-    ball.cycleLength = 60;
+    ball.cycleLength = 60 + 10 * index;
     ball.frameVal = 0;
     ball.angle = 0;
     ball.marginRate = new _p.default.Vector(0.2, 0.2);
+
+    var calcLeftEdge = function calcLeftEdge() {
+      var x = params.canvasSize * ball.marginRate.x;
+      var y = params.canvasSize / 2;
+      return new _p.default.Vector(x, y);
+    };
+
+    ball.leftEdge = calcLeftEdge();
+
+    var calcRightEdge = function calcRightEdge() {
+      var margin = params.canvasSize * ball.marginRate.x;
+      var x = params.canvasSize - margin;
+      var y = params.canvasSize / 2;
+      return new _p.default.Vector(x, y);
+    };
+
+    ball.rightEdge = calcRightEdge();
 
     var calcAmp = function calcAmp() {
       var margin = params.canvasSize * ball.marginRate.y;
@@ -80896,6 +80913,8 @@ var updateBall = function updateBall(ball) {
     updatedBall.frameVal = frameCount % ball.cycleLength;
     updatedBall.angle = ball.frameVal * 2 * Math.PI / ball.cycleLength;
     updatedBall.marginRate = ball.marginRate;
+    updatedBall.leftEdge = ball.leftEdge;
+    updatedBall.rightEdge = ball.rightEdge;
     updatedBall.amp = ball.amp;
 
     var calcPos = function calcPos() {
@@ -80945,11 +80964,20 @@ var sketch = function sketch(s) {
     s.pop();
   };
 
-  var drawBall = function drawBall(ball) {
+  var drawBalls = function drawBalls(balls) {
+    var edgeBall = balls[0];
     s.push();
     s.fill(0);
     s.noStroke();
-    s.circle(ball.pos.x, ball.pos.y, 10);
+    s.beginShape();
+    s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
+    s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
+    balls.forEach(function (ball) {
+      s.curveVertex(ball.pos.x, ball.pos.y);
+    });
+    s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
+    s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
+    s.endShape();
     s.pop();
   };
 
@@ -80975,9 +81003,7 @@ var sketch = function sketch(s) {
     });
     s.background(255);
     drawFrame(params);
-    balls.forEach(function (ball) {
-      return drawBall(ball);
-    });
+    drawBalls(balls);
   };
 };
 
@@ -81010,7 +81036,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60589" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60797" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
