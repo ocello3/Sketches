@@ -1,17 +1,21 @@
 'use strict';
 
-import { initBall } from './initBall.js';
 import { initParams } from './initParams.js';
+import { initBall } from './initBall.js';
 
 window.confirm = jest.fn();
-const params = initParams(400, 500);
-const ball = initBall(1)(params, 0);
+const params = initParams(100, 100);
+const balls = Array.from(Array(params.ballNum), (ball, index) => initBall(index)(params));
 
-test('confirm frameVal', () => {
-	expect(ball.frameVal).toBeGreaterThanOrEqual(0);
+test('confirm amp', () => {
+	balls.forEach((ball) => {
+		expect(ball.amp).toBeGreaterThan(0);
+	});
 });
 
 test('confirm pos', () => {
-	expect(ball.pos.x).toBeGreaterThan(0);
+	balls.forEach((ball, index) => {
+		expect(ball.pos.x).toBeGreaterThan(100/params.ballNum * index);
+	});
 });
 
