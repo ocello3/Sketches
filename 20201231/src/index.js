@@ -23,8 +23,9 @@ const sketch = (s) => {
 	const drawBalls = (balls) => {
 		const edgeBall = balls[0];
 		s.push();
-		s.fill(0);
-		s.noStroke();
+		s.noFill();
+		s.stroke(0);
+		s.strokeWeight(1);
 		s.beginShape();
 		s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
 		s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);

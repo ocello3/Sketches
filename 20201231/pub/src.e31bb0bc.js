@@ -80828,7 +80828,7 @@ var initParams = function initParams(innerWidth, innerHeight) {
   var params = {};
   params.windowSize = windowSize(innerWidth, innerHeight);
   params.canvasSize = canvasSize(params.windowSize);
-  params.ballNum = 5;
+  params.ballNum = 3;
   params.isStart = confirm("Trun sound on?");
   return params;
 };
@@ -80967,8 +80967,9 @@ var sketch = function sketch(s) {
   var drawBalls = function drawBalls(balls) {
     var edgeBall = balls[0];
     s.push();
-    s.fill(0);
-    s.noStroke();
+    s.noFill();
+    s.stroke(0);
+    s.strokeWeight(1);
     s.beginShape();
     s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
     s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
@@ -81036,7 +81037,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60797" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61413" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
