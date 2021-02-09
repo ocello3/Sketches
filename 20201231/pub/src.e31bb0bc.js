@@ -80829,7 +80829,7 @@ var initParams = function initParams(innerWidth, innerHeight) {
   params.windowSize = windowSize(innerWidth, innerHeight);
   params.canvasSize = canvasSize(params.windowSize);
   params.ballNum = 3;
-  params.isStart = confirm("Trun sound on?");
+  params.isStart = confirm("Turn sound on?");
   return params;
 };
 
@@ -80949,8 +80949,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import { amSynth } from './sound.js';
 var sketch = function sketch(s) {
   var params = (0, _initParams.initParams)(window.innerWidth, window.innerHeight);
+  var synth = {};
   var balls = Array.from(Array(params.ballNum), function (ball, index) {
     return (0, _initBall.initBall)(index)(params);
   });
@@ -80984,8 +80986,11 @@ var sketch = function sketch(s) {
 
   var confirmFunc = function confirmFunc(params) {
     if (params.isStart) {
-      Tone.start();
-      s.loop();
+      // Tone.start();
+      synth.amSynth = new Tone.AMOscillator({
+        frequency: 880,
+        volume: -4
+      }).toDestination().start(), s.loop();
     } else {
       s.loop();
       Tone.Master.mute = true;
@@ -81037,7 +81042,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61413" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50812" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -2,9 +2,8 @@
 
 import Tone from "tone";
 
-export const simpleOsc = new Tone.Oscillator({
-	type:'sine',
+export const amSynth = new Tone.AMOscillator({
 	frequency: 880,
-	volume: -16,
+	volume: -4,
 }).toDestination();
 

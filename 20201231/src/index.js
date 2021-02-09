@@ -5,10 +5,12 @@ import * as Tone from 'tone';
 import { initParams } from './initParams.js';
 import { initBall } from './initBall.js';
 import { updateBall } from './updateBall.js';
+// import { amSynth } from './sound.js';
 
 const sketch = (s) => {
 	
 	const params = initParams(window.innerWidth, window.innerHeight);
+	const synth = {};
 	let balls = Array.from(Array(params.ballNum), (ball, index) => initBall(index)(params));
 
 	const drawFrame = (params) => {
@@ -40,7 +42,11 @@ const sketch = (s) => {
 
 	const confirmFunc = (params) => {
 		if (params.isStart) {
-			Tone.start();
+			// Tone.start();
+			synth.amSynth = new Tone.AMOscillator({
+				frequency: 880,
+				volume: -4,
+			}).toDestination().start(),
 			s.loop();
 		} else {
 			s.loop();
