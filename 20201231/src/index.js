@@ -40,24 +40,19 @@ const sketch = (s) => {
 		s.pop();
 	}
 
-	const confirmFunc = (params) => {
-		if (params.isStart) {
-			// Tone.start();
-			synth.amSynth = new Tone.AMOscillator({
-				frequency: 880,
-				volume: -4,
-			}).toDestination().start(),
-			s.loop();
-		} else {
-			s.loop();
-			Tone.Master.mute = true;
-		}
+	const soundOn = () => {
+		synth.amSynth = new Tone.AMOscillator({
+			frequency: 880,
+			volume: -4,
+		}).toDestination().start();
+		dialog.close();
 	}
-
+	const soundOff = () => {
+		Tone.Master.mute = true;
+		dialog.close();
+	}
 	s.setup = () => {
 		s.createCanvas(params.canvasSize, params.canvasSize);
-		s.noLoop();
-		confirmFunc(params);
 	};
 
 	s.draw = () => {
@@ -66,7 +61,23 @@ const sketch = (s) => {
 		drawFrame(params);
 		drawBalls(balls);
 	};
+
+	s.mouseClicked = () => {
+		Tone.start();
+	}
 };
+
+(openDialog => {
+	const dialog = document.getElementById('dialog');
+	const yes = document.getElementById('yes');
+	const no = document.getElementById('no');
+	yes.addEventListener("click", () => {
+		soundOn();
+	});
+	no.addEventListener("click", () => {
+		soundOff();
+	});
+});
 
 new P5(sketch, 'p5js');
 

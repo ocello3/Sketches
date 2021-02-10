@@ -14,7 +14,7 @@ export const initParams = (innerWidth, innerHeight) => {
 	params.windowSize = windowSize(innerWidth, innerHeight);
 	params.canvasSize = canvasSize(params.windowSize);
 	params.ballNum = 3;
-	params.isStart = confirm("Turn sound on?");
+	// params.isStart = confirm("Turn sound on?");
 	
 	return params;
 };
