@@ -34217,22 +34217,55 @@ new _p.default(sketch, 'p5js');
 var createCoverPage = function createCoverPage(s) {
   s.setup = function () {
     s.noCanvas();
-    var first = s.createDiv();
-    first.class('container');
-    var second = s.createDiv();
-    second.class('row');
-    second.parent(first);
-    var third = s.createDiv();
-    third.class('one-half column');
-    third.style('margin-top: 25%');
-    third.parent(second);
-    var fourth = s.createElement('h2', 'Sketch List');
-    fourth.parent(third);
-    var date_20200501 = s.createP('20200501	');
-    date_20200501.parent(fourth);
+    var container = s.createDiv();
+    container.class('container');
+    var row = s.createDiv();
+    row.class('row');
+    row.parent(container);
+    var titleColumn = s.createDiv();
+    titleColumn.class('one-half column');
+    titleColumn.style('margin-top: 25%');
+    titleColumn.parent(row);
+    var title = s.createElement('h2', 'Sketch List');
+    title.parent(titleColumn); // header
+
+    var header = s.createDiv();
+    header.class('row');
+    header.parent(titleColumn);
+    var date_header = s.createDiv('Date');
+    date_header.class('four columns');
+    date_header.parent(header);
+    var title_header = s.createDiv('Title');
+    title_header.class('four columns');
+    title_header.parent(header); // line
+
+    var lineDev = s.createDiv('<br>');
+    lineDev.class('row');
+    lineDev.parent(header);
+    var line = s.createElement('hr');
+    line.parent(lineDev); // sketch 1
+
+    var sketch_20200501 = s.createDiv();
+    sketch_20200501.class('row');
+    sketch_20200501.parent(header);
+    var date_20200501 = s.createDiv('20200501');
+    date_20200501.class('four columns');
+    date_20200501.parent(sketch_20200501);
     var title_20200501 = s.createA('javascript: void(0);', 'snake');
+    title_20200501.class('four columns');
     title_20200501.mousePressed(createP5_20200501);
-    title_20200501.parent(fourth);
+    title_20200501.parent(sketch_20200501); // sketch 2
+
+    var sketch_20210201 = s.createDiv();
+    sketch_20210201.class('row');
+    sketch_20210201.parent(header);
+    var date_20210201 = s.createDiv('20200501');
+    date_20210201.class('four columns');
+    date_20210201.parent(sketch_20210201);
+    var title_20210201 = s.createA('javascript: void(0);', 'div test');
+    title_20210201.class('four columns');
+    title_20210201.mousePressed(createP5_20200501);
+    title_20210201.parent(sketch_20210201);
   };
 };
 
@@ -34271,7 +34304,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56521" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54485" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
