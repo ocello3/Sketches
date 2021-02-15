@@ -34215,13 +34215,13 @@ exports.initParams = initParams;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.p5_20210201 = void 0;
+exports.sketch = void 0;
 
 var _initParams = require("./initParams.js");
 
 var _index = require("../index.js");
 
-var p5_20210201 = function p5_20210201(s) {
+var sketch = function sketch(s) {
   var canvasDiv = document.getElementById('canvas');
   var params = (0, _initParams.initParams)(canvasDiv.clientWidth);
 
@@ -34261,8 +34261,27 @@ var p5_20210201 = function p5_20210201(s) {
   };
 };
 
+exports.sketch = sketch;
+},{"./initParams.js":"20210201/initParams.js","../index.js":"index.js"}],"20210201/p5_20210201.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.p5_20210201 = void 0;
+
+var _index = require("./index.js");
+
+var p5_20210201 = function p5_20210201() {
+  var p5_map = new Map();
+  p5_map.set('date', '20210201');
+  p5_map.set('title', 'div test');
+  p5_map.set('sketch', _index.sketch);
+  return p5_map;
+};
+
 exports.p5_20210201 = p5_20210201;
-},{"./initParams.js":"20210201/initParams.js","../index.js":"index.js"}],"index.js":[function(require,module,exports) {
+},{"./index.js":"20210201/index.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -34276,7 +34295,7 @@ var _tweakpane = _interopRequireDefault(require("tweakpane"));
 
 var _index = require("./20200501/index.js");
 
-var _index2 = require("./20210201/index.js");
+var _p5_ = require("./20210201/p5_20210201.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34334,13 +34353,14 @@ var createCoverPage = function createCoverPage(s) {
     div_title20200501.mousePressed(createP5_20200501);
     div_title20200501.parent(div_row20200501); // sketch 2
 
+    var p5_map = (0, _p5_.p5_20210201)();
     var div_row20210201 = s.createDiv();
     div_row20210201.class('row');
     div_row20210201.parent(div_rowHeader);
-    var div_date20210201 = s.createDiv('20210201');
+    var div_date20210201 = s.createDiv(p5_map.get('date'));
     div_date20210201.class('four columns');
     div_date20210201.parent(div_row20210201);
-    var div_title20210201 = s.createA('javascript: void(0);', 'div');
+    var div_title20210201 = s.createA('javascript: void(0);', p5_map.get('title'));
     div_title20210201.class('four columns');
     div_title20210201.mousePressed(createP5_20210201);
     div_title20210201.parent(div_row20210201);
@@ -34365,7 +34385,7 @@ var createCoverPage = function createCoverPage(s) {
       divs.pane = new _tweakpane.default({
         container: document.getElementById('pane')
       });
-      divs.p5_20210201 = new _p.default(_index2.p5_20210201, 'canvas');
+      divs.p5_20210201 = new _p.default(p5_map.get('sketch'), 'canvas');
       divs.removeDiv_p5 = s.createA('javascript: void(0);', 'back to top');
       divs.removeDiv_p5.parent(divs.canvasHeader);
     }
@@ -34379,7 +34399,7 @@ var createP5_20200501 = function createP5_20200501() {
   divs.p5_20200501 = new _p.default(_index.p5_20200501);
   divs.coverPage.remove();
 };
-},{"p5":"node_modules/p5/lib/p5.min.js","tweakpane":"node_modules/tweakpane/dist/tweakpane.js","./20200501/index.js":"20200501/index.js","./20210201/index.js":"20210201/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"p5":"node_modules/p5/lib/p5.min.js","tweakpane":"node_modules/tweakpane/dist/tweakpane.js","./20200501/index.js":"20200501/index.js","./20210201/p5_20210201.js":"20210201/p5_20210201.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -34407,7 +34427,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64930" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62769" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

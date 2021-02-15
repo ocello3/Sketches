@@ -1,7 +1,7 @@
 import P5 from 'p5';
 import Tweakpane from 'tweakpane';
 import { p5_20200501 } from './20200501/index.js';
-import { p5_20210201 } from './20210201/index.js';
+import { p5_20210201 } from './20210201/p5_20210201.js';
 
 export const divs = {};
 
@@ -67,15 +67,17 @@ export const createCoverPage = (s) => {
 		div_title20200501.parent(div_row20200501);
 		
 		// sketch 2
+		const p5_map = p5_20210201();
+
 		const div_row20210201 = s.createDiv();
 		div_row20210201.class('row');
 		div_row20210201.parent(div_rowHeader);
 
-		const div_date20210201 = s.createDiv('20210201');
+		const div_date20210201 = s.createDiv(p5_map.get('date'));
 		div_date20210201.class('four columns');
 		div_date20210201.parent(div_row20210201);
 		
-		const div_title20210201 = s.createA('javascript: void(0);', 'div');
+		const div_title20210201 = s.createA('javascript: void(0);', p5_map.get('title'));
 		div_title20210201.class('four columns');
 		div_title20210201.mousePressed(createP5_20210201);
 		div_title20210201.parent(div_row20210201);
@@ -105,7 +107,7 @@ export const createCoverPage = (s) => {
 			divs.pane = new Tweakpane({
 				container: document.getElementById('pane'),
 			});
-			divs.p5_20210201 = new P5(p5_20210201, 'canvas');
+			divs.p5_20210201 = new P5(p5_map.get('sketch'), 'canvas');
 
 			divs.removeDiv_p5 = s.createA('javascript: void(0);', 'back to top');
 			divs.removeDiv_p5.parent(divs.canvasHeader);

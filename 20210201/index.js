@@ -3,7 +3,7 @@
 import { initParams } from './initParams.js';
 import { divs } from '../index.js';
 
-export const p5_20210201 = (s) => {
+export const sketch = (s) => {
 	
 	const canvasDiv = document.getElementById('canvas');
 	const params = initParams(canvasDiv.clientWidth);
