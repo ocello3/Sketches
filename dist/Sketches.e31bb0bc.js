@@ -34186,7 +34186,71 @@ var p5_20200501 = function p5_20200501(s) {
 };
 
 exports.p5_20200501 = p5_20200501;
-},{"./getParams.js":"20200501/getParams.js","./calcInit.js":"20200501/calcInit.js","./calcUpdate.js":"20200501/calcUpdate.js","./gui.js":"20200501/gui.js","../index.js":"index.js"}],"index.js":[function(require,module,exports) {
+},{"./getParams.js":"20200501/getParams.js","./calcInit.js":"20200501/calcInit.js","./calcUpdate.js":"20200501/calcUpdate.js","./gui.js":"20200501/gui.js","../index.js":"index.js"}],"20210201/initParams.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initParams = void 0;
+
+var initParams = function initParams(width) {
+  // const divSize = (width, height) => {
+  // 	return (width < height) ? width : height;
+  // };
+  // const canvasSize = (windowSize) => {
+  // 	return (windowSize < 500) ? windowSize : Math.round(windowSize * 0.6);
+  // };
+  var params = {};
+  params.windowSize = width; // params.canvasSize = canvasSize(params.windowSize);
+
+  params.canvasSize = width;
+  return params;
+};
+
+exports.initParams = initParams;
+},{}],"20210201/index.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.p5_20210201 = void 0;
+
+var _initParams = require("./initParams.js");
+
+// import { divs } from '../index.js';
+var p5_20210201 = function p5_20210201(s) {
+  var canvasDiv = document.getElementById('canvas');
+  var params = (0, _initParams.initParams)(canvasDiv.clientWidth, canvasDiv.clientHeight);
+
+  var drawFrame = function drawFrame() {
+    s.push();
+    s.stroke('black');
+    s.strokeWeight(1);
+    s.noFill();
+    s.rect(0, 0, params.canvasSize, params.canvasSize);
+    s.line(0, 0, params.canvasSize, params.canvasSize);
+    s.line(params.canvasSize, 0, 0, params.canvasSize);
+    s.pop();
+  };
+
+  s.setup = function () {
+    s.createCanvas(params.canvasSize, params.canvasSize);
+    console.log('read setup()');
+    console.log("width: ".concat(canvasDiv.clientWidth));
+    console.log("height: ".concat(canvasDiv.clientHeight));
+  };
+
+  s.draw = function () {
+    s.background(255);
+    drawFrame();
+    s.noLoop();
+  };
+};
+
+exports.p5_20210201 = p5_20210201;
+},{"./initParams.js":"20210201/initParams.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -34199,6 +34263,8 @@ var _p = _interopRequireDefault(require("p5"));
 var _tweakpane = _interopRequireDefault(require("tweakpane"));
 
 var _index = require("./20200501/index.js");
+
+var _index2 = require("./20210201/index.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34217,55 +34283,78 @@ new _p.default(sketch, 'p5js');
 var createCoverPage = function createCoverPage(s) {
   s.setup = function () {
     s.noCanvas();
-    var container = s.createDiv();
-    container.class('container');
-    var row = s.createDiv();
-    row.class('row');
-    row.parent(container);
-    var titleColumn = s.createDiv();
-    titleColumn.class('one-half column');
-    titleColumn.style('margin-top: 25%');
-    titleColumn.parent(row);
-    var title = s.createElement('h2', 'Sketch List');
-    title.parent(titleColumn); // header
+    var div_container = s.createDiv();
+    div_container.class('container');
+    var div_row = s.createDiv();
+    div_row.class('row');
+    div_row.parent(div_container);
+    var div_rowTitle = s.createDiv();
+    div_rowTitle.class('one-half column');
+    div_rowTitle.style('margin-top: 25%');
+    div_rowTitle.parent(div_row);
+    var h2_title = s.createElement('h2', 'Sketch List');
+    h2_title.parent(div_rowTitle); // header
 
-    var header = s.createDiv();
-    header.class('row');
-    header.parent(titleColumn);
-    var date_header = s.createDiv('Date');
-    date_header.class('four columns');
-    date_header.parent(header);
-    var title_header = s.createDiv('Title');
-    title_header.class('four columns');
-    title_header.parent(header); // line
+    var div_rowHeader = s.createDiv();
+    div_rowHeader.class('row');
+    div_rowHeader.parent(div_rowTitle);
+    var div_dateHeader = s.createDiv('Date');
+    div_dateHeader.class('four columns');
+    div_dateHeader.parent(div_rowHeader);
+    var div_titleHeader = s.createDiv('Title');
+    div_titleHeader.class('four columns');
+    div_titleHeader.parent(div_rowHeader); // line
 
-    var lineDev = s.createDiv('<br>');
-    lineDev.class('row');
-    lineDev.parent(header);
+    var div_line = s.createDiv('<br>');
+    div_line.class('row');
+    div_line.parent(div_rowHeader);
     var line = s.createElement('hr');
-    line.parent(lineDev); // sketch 1
+    line.parent(div_line); // sketch 1
 
-    var sketch_20200501 = s.createDiv();
-    sketch_20200501.class('row');
-    sketch_20200501.parent(header);
-    var date_20200501 = s.createDiv('20200501');
-    date_20200501.class('four columns');
-    date_20200501.parent(sketch_20200501);
-    var title_20200501 = s.createA('javascript: void(0);', 'snake');
-    title_20200501.class('four columns');
-    title_20200501.mousePressed(createP5_20200501);
-    title_20200501.parent(sketch_20200501); // sketch 2
+    var div_row20200501 = s.createDiv();
+    div_row20200501.class('row');
+    div_row20200501.parent(div_rowHeader);
+    var div_date20200501 = s.createDiv('20200501');
+    div_date20200501.class('four columns');
+    div_date20200501.parent(div_row20200501);
+    var div_title20200501 = s.createA('javascript: void(0);', 'snake');
+    div_title20200501.class('four columns');
+    div_title20200501.mousePressed(createP5_20200501);
+    div_title20200501.parent(div_row20200501); // sketch 2
 
-    var sketch_20210201 = s.createDiv();
-    sketch_20210201.class('row');
-    sketch_20210201.parent(header);
-    var date_20210201 = s.createDiv('20200501');
-    date_20210201.class('four columns');
-    date_20210201.parent(sketch_20210201);
-    var title_20210201 = s.createA('javascript: void(0);', 'div test');
-    title_20210201.class('four columns');
-    title_20210201.mousePressed(createP5_20200501);
-    title_20210201.parent(sketch_20210201);
+    var div_row20210201 = s.createDiv();
+    div_row20210201.class('row');
+    div_row20210201.parent(div_rowHeader);
+    var div_date20210201 = s.createDiv('20210201');
+    div_date20210201.class('four columns');
+    div_date20210201.parent(div_row20210201);
+    var div_title20210201 = s.createA('javascript: void(0);', 'div');
+    div_title20210201.class('four columns');
+    div_title20210201.mousePressed(createP5_20210201);
+    div_title20210201.parent(div_row20210201);
+
+    function createP5_20210201() {
+      divs.coverPage.remove();
+      divs.canvasHeader = s.createDiv();
+      divs.canvasHeader.class('container');
+      divs.canvasDiv = s.createDiv();
+      divs.canvasDiv.class('row');
+      divs.canvasDiv.parent(divs.canvasHeader);
+      divs.canvasDiv_p5 = s.createDiv();
+      divs.canvasDiv_p5.style('margin-top: 15%');
+      divs.canvasDiv_p5.class('one-half column');
+      divs.canvasDiv_p5.id('canvas');
+      divs.canvasDiv_p5.parent(divs.canvasDiv);
+      divs.p5_20210201 = new _p.default(_index2.p5_20210201, 'canvas');
+      divs.canvasDiv_tone = s.createDiv();
+      divs.canvasDiv_tone.style('margin-top: 15%');
+      divs.canvasDiv_tone.class('one-half column');
+      divs.canvasDiv_tone.id('tone');
+      divs.canvasDiv_tone.parent(divs.canvasDiv);
+      divs.tone_20210201 = new _p.default(_index2.p5_20210201, 'tone');
+      divs.removeDiv_p5 = s.createA('javascript: void(0);', 'back to top');
+      divs.removeDiv_p5.parent(divs.canvasHeader);
+    }
   };
 };
 
@@ -34276,7 +34365,7 @@ var createP5_20200501 = function createP5_20200501() {
   divs.p5_20200501 = new _p.default(_index.p5_20200501);
   divs.coverPage.remove();
 };
-},{"p5":"node_modules/p5/lib/p5.min.js","tweakpane":"node_modules/tweakpane/dist/tweakpane.js","./20200501/index.js":"20200501/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"p5":"node_modules/p5/lib/p5.min.js","tweakpane":"node_modules/tweakpane/dist/tweakpane.js","./20200501/index.js":"20200501/index.js","./20210201/index.js":"20210201/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -34304,7 +34393,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54485" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51502" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
