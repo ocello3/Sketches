@@ -1,7 +1,7 @@
 'use strict';
 
 import { initParams } from './initParams.js';
-// import { divs } from '../index.js';
+import { divs } from '../index.js';
 
 export const p5_20210201 = (s) => {
 	
@@ -19,11 +19,22 @@ export const p5_20210201 = (s) => {
 		s.pop();
 	}
 
+	const setPane = (divs) => {
+		const f1 = divs.pane.addFolder({
+			title: 'Control',
+		});
+		const stopButton = f1.addButton({
+			title: 'stop',
+		});
+		stopButton.on('click', () => {
+			console.log('clicked stop button');
+		});
+	}
+
 	s.setup = () => {
 		s.createCanvas(params.canvasSize, params.canvasSize);
+		setPane(divs);
 		console.log('read setup()');
-		console.log(`width: ${canvasDiv.clientWidth}`);
-		console.log(`height: ${canvasDiv.clientHeight}`);
 	};
 
 	s.draw = () => {

@@ -34219,10 +34219,11 @@ exports.p5_20210201 = void 0;
 
 var _initParams = require("./initParams.js");
 
-// import { divs } from '../index.js';
+var _index = require("../index.js");
+
 var p5_20210201 = function p5_20210201(s) {
   var canvasDiv = document.getElementById('canvas');
-  var params = (0, _initParams.initParams)(canvasDiv.clientWidth, canvasDiv.clientHeight);
+  var params = (0, _initParams.initParams)(canvasDiv.clientWidth);
 
   var drawFrame = function drawFrame() {
     s.push();
@@ -34235,11 +34236,22 @@ var p5_20210201 = function p5_20210201(s) {
     s.pop();
   };
 
+  var setPane = function setPane(divs) {
+    var f1 = divs.pane.addFolder({
+      title: 'Control'
+    });
+    var stopButton = f1.addButton({
+      title: 'stop'
+    });
+    stopButton.on('click', function () {
+      console.log('clicked stop button');
+    });
+  };
+
   s.setup = function () {
     s.createCanvas(params.canvasSize, params.canvasSize);
+    setPane(_index.divs);
     console.log('read setup()');
-    console.log("width: ".concat(canvasDiv.clientWidth));
-    console.log("height: ".concat(canvasDiv.clientHeight));
   };
 
   s.draw = function () {
@@ -34250,7 +34262,7 @@ var p5_20210201 = function p5_20210201(s) {
 };
 
 exports.p5_20210201 = p5_20210201;
-},{"./initParams.js":"20210201/initParams.js"}],"index.js":[function(require,module,exports) {
+},{"./initParams.js":"20210201/initParams.js","../index.js":"index.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -34341,17 +34353,19 @@ var createCoverPage = function createCoverPage(s) {
       divs.canvasDiv.class('row');
       divs.canvasDiv.parent(divs.canvasHeader);
       divs.canvasDiv_p5 = s.createDiv();
-      divs.canvasDiv_p5.style('margin-top: 15%');
+      divs.canvasDiv_p5.style('margin-top: 12%');
       divs.canvasDiv_p5.class('one-half column');
       divs.canvasDiv_p5.id('canvas');
       divs.canvasDiv_p5.parent(divs.canvasDiv);
+      divs.canvasDiv_pane = s.createDiv();
+      divs.canvasDiv_pane.style('margin-top: 12%');
+      divs.canvasDiv_pane.class('one-half column');
+      divs.canvasDiv_pane.id('pane');
+      divs.canvasDiv_pane.parent(divs.canvasDiv);
+      divs.pane = new _tweakpane.default({
+        container: document.getElementById('pane')
+      });
       divs.p5_20210201 = new _p.default(_index2.p5_20210201, 'canvas');
-      divs.canvasDiv_tone = s.createDiv();
-      divs.canvasDiv_tone.style('margin-top: 15%');
-      divs.canvasDiv_tone.class('one-half column');
-      divs.canvasDiv_tone.id('tone');
-      divs.canvasDiv_tone.parent(divs.canvasDiv);
-      divs.tone_20210201 = new _p.default(_index2.p5_20210201, 'tone');
       divs.removeDiv_p5 = s.createA('javascript: void(0);', 'back to top');
       divs.removeDiv_p5.parent(divs.canvasHeader);
     }
@@ -34393,7 +34407,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51502" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64930" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

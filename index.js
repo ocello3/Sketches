@@ -91,18 +91,21 @@ export const createCoverPage = (s) => {
 			divs.canvasDiv.parent(divs.canvasHeader);
 			
 			divs.canvasDiv_p5 = s.createDiv();
-			divs.canvasDiv_p5.style('margin-top: 15%');
+			divs.canvasDiv_p5.style('margin-top: 12%');
 			divs.canvasDiv_p5.class('one-half column');
 			divs.canvasDiv_p5.id('canvas');
 			divs.canvasDiv_p5.parent(divs.canvasDiv);
-			divs.p5_20210201 = new P5(p5_20210201, 'canvas');
 
-			divs.canvasDiv_tone = s.createDiv();
-			divs.canvasDiv_tone.style('margin-top: 15%');
-			divs.canvasDiv_tone.class('one-half column');
-			divs.canvasDiv_tone.id('tone');
-			divs.canvasDiv_tone.parent(divs.canvasDiv);
-			divs.tone_20210201 = new P5(p5_20210201, 'tone');
+			divs.canvasDiv_pane = s.createDiv();
+			divs.canvasDiv_pane.style('margin-top: 12%');
+			divs.canvasDiv_pane.class('one-half column');
+			divs.canvasDiv_pane.id('pane');
+			divs.canvasDiv_pane.parent(divs.canvasDiv);
+			
+			divs.pane = new Tweakpane({
+				container: document.getElementById('pane'),
+			});
+			divs.p5_20210201 = new P5(p5_20210201, 'canvas');
 
 			divs.removeDiv_p5 = s.createA('javascript: void(0);', 'back to top');
 			divs.removeDiv_p5.parent(divs.canvasHeader);
