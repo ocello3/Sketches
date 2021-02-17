@@ -33904,12 +33904,12 @@ var createCoverPageMap = function createCoverPageMap(props) {
       s.createElement('th', 'Date').parent(theadTr);
       s.createElement('th', 'Name').parent(theadTr); // get p5 element
 
-      var p5_map = (0, _p5_.p5_20210201)(); // contents
+      var p5map = (0, _p5_.p5_20210201)(); // contents
 
       var tbody = s.createElement('tbody').parent(table);
       var tbodyTr = s.createElement('tr').parent(tbody);
-      s.createElement('td', p5_map.get('date')).parent(tbodyTr);
-      s.createElement('td', p5_map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5_20210201);
+      s.createElement('td', p5map.get('date')).parent(tbodyTr);
+      s.createElement('td', p5map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5_20210201);
 
       function createP5_20210201() {
         props.coverPage.remove();
@@ -33920,9 +33920,10 @@ var createCoverPageMap = function createCoverPageMap(props) {
         props.pane = new _tweakpane.default({
           container: document.getElementById('pane')
         });
-        var sketchFunc = p5_map.get('sketch');
-        props.p5_20210201 = new _p.default(sketchFunc(props), 'canvas');
-        s.createDiv('back to top').parent(container).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer');
+        props.p5_20210201 = new _p.default(p5map.get('sketch')(props), 'canvas');
+        s.createDiv('back to top').parent(container).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer'); // function backToTop () {
+        // 	props.get
+        // }
       }
     };
   };
@@ -33953,8 +33954,7 @@ var sketch = function sketch(s) {
   s.setup = function () {
     s.noCanvas();
     var coverPageMap = (0, _createCoverPageMap.createCoverPageMap)(props);
-    var coverPage = coverPageMap.get('coverPage');
-    props.coverPage = new _p.default(coverPage);
+    props.coverPage = new _p.default(coverPageMap.get('coverPage'));
   };
 };
 
@@ -33987,7 +33987,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51524" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56001" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

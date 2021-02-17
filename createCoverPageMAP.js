@@ -25,12 +25,12 @@ export const createCoverPageMap = (props) => {
 			s.createElement('th', 'Date').parent(theadTr);
 			s.createElement('th', 'Name').parent(theadTr);
 			// get p5 element
-			const p5_map = p5_20210201();
+			const p5map = p5_20210201();
 			// contents
 			const tbody = s.createElement('tbody').parent(table);
 			const tbodyTr = s.createElement('tr').parent(tbody);
-			s.createElement('td', p5_map.get('date')).parent(tbodyTr);
-			s.createElement('td', p5_map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5_20210201);
+			s.createElement('td', p5map.get('date')).parent(tbodyTr);
+			s.createElement('td', p5map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5_20210201);
 
 			function createP5_20210201 () {
 				props.coverPage.remove();
@@ -43,10 +43,13 @@ export const createCoverPageMap = (props) => {
 				props.pane = new Tweakpane({
 					container: document.getElementById('pane'),
 				});
-				const sketchFunc = p5_map.get('sketch');
-				props.p5_20210201 = new P5(sketchFunc(props), 'canvas');
+				props.p5_20210201 = new P5(p5map.get('sketch')(props), 'canvas');
 
 				s.createDiv('back to top').parent(container).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer');
+
+				// function backToTop () {
+				// 	props.get
+				// }
 			}
 		}
 	}

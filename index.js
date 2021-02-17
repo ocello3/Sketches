@@ -7,8 +7,7 @@ const sketch = (s) => {
 	s.setup = () => {
 		s.noCanvas();
 		const coverPageMap = createCoverPageMap(props);
-		const coverPage = coverPageMap.get('coverPage');
-		props.coverPage = new P5(coverPage);
+		props.coverPage = new P5(coverPageMap.get('coverPage'));
 	}
 }
 
