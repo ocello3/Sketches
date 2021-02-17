@@ -33867,7 +33867,24 @@ var p5_20210201 = function p5_20210201() {
 };
 
 exports.p5_20210201 = p5_20210201;
-},{"./index.js":"20210201/index.js"}],"createCoverPageMap.js":[function(require,module,exports) {
+},{"./index.js":"20210201/index.js"}],"getP5maps.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getP5maps = void 0;
+
+var _p5_ = require("./20210201/p5_20210201.js");
+
+var getP5maps = function getP5maps() {
+  var p5maps = [];
+  p5maps.push((0, _p5_.p5_20210201)());
+  return p5maps;
+};
+
+exports.getP5maps = getP5maps;
+},{"./20210201/p5_20210201.js":"20210201/p5_20210201.js"}],"createCoverPageMap.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -33879,11 +33896,16 @@ var _p = _interopRequireDefault(require("p5"));
 
 var _tweakpane = _interopRequireDefault(require("tweakpane"));
 
-var _p5_ = require("./20210201/p5_20210201.js");
+var _getP5maps = require("./getP5maps.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import { props } from './index.js';
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 var createCoverPageMap = function createCoverPageMap(props) {
   return function (s) {
     s.setup = function () {
@@ -33900,40 +33922,56 @@ var createCoverPageMap = function createCoverPageMap(props) {
       var thead = s.createElement('thead').parent(table);
       var theadTr = s.createElement('tr').parent(thead);
       s.createElement('th', 'Date').parent(theadTr);
-      s.createElement('th', 'Name').parent(theadTr); // get p5 element
+      s.createElement('th', 'Name').parent(theadTr); // get p5maps
 
-      var p5map = (0, _p5_.p5_20210201)(); // contents
+      var p5maps = (0, _getP5maps.getP5maps)();
 
-      var tbody = s.createElement('tbody').parent(table);
-      var tbodyTr = s.createElement('tr').parent(tbody);
-      s.createElement('td', p5map.get('date')).parent(tbodyTr);
-      s.createElement('td', p5map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5_20210201);
-
-      function createP5_20210201() {
-        props.get('coverPage').remove();
-        var container = s.createDiv().class('container');
-        var row = s.createDiv().class('row').parent(container);
-        s.createDiv().style('margin-top: 12%').class('one-half column').id('canvas').parent(row);
-        s.createDiv().style('margin-top: 12%').class('one-half column').id('pane').parent(row);
-        props.set('pane', new _tweakpane.default({
-          container: document.getElementById('pane')
-        }));
-        props.set('p5_20210201', new _p.default(p5map.get('sketch')(props), 'canvas'));
-        s.createDiv('back to top').parent(container).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
-
-        function backToTop() {
-          props.get('pane').dispose();
-          props.get('p5_20210201').remove();
+      var getCreateP5 = function getCreateP5(p5map) {
+        return function createP5() {
           props.get('coverPage').remove();
-          location.reload(false);
+          var container = s.createDiv().class('container');
+          var row = s.createDiv().class('row').parent(container);
+          s.createDiv().style('margin-top: 12%').class('one-half column').id('canvas').parent(row);
+          s.createDiv().style('margin-top: 12%').class('one-half column').id('pane').parent(row);
+          props.set('pane', new _tweakpane.default({
+            container: document.getElementById('pane')
+          }));
+          props.set('p5_20210201', new _p.default(p5map.get('sketch')(props), 'canvas'));
+          s.createDiv('back to top').parent(container).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
+
+          function backToTop() {
+            props.get('pane').dispose();
+            props.get('p5_20210201').remove();
+            props.get('coverPage').remove();
+            location.reload(false);
+          }
+        };
+      }; // contents
+
+
+      var _iterator = _createForOfIteratorHelper(p5maps),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var p5map = _step.value;
+          var createP5 = getCreateP5(p5map);
+          var tbody = s.createElement('tbody').parent(table);
+          var tbodyTr = s.createElement('tr').parent(tbody);
+          s.createElement('td', p5map.get('date')).parent(tbodyTr);
+          s.createElement('td', p5map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5);
         }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
       }
     };
   };
 };
 
 exports.createCoverPageMap = createCoverPageMap;
-},{"p5":"node_modules/p5/lib/p5.min.js","tweakpane":"node_modules/tweakpane/dist/tweakpane.js","./20210201/p5_20210201.js":"20210201/p5_20210201.js"}],"index.js":[function(require,module,exports) {
+},{"p5":"node_modules/p5/lib/p5.min.js","tweakpane":"node_modules/tweakpane/dist/tweakpane.js","./getP5maps.js":"getP5maps.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _p = _interopRequireDefault(require("p5"));
@@ -33980,7 +34018,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58020" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55221" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
