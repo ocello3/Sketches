@@ -1,16 +1,16 @@
 import P5 from 'p5';
-import { createCoverPageMap } from './createCoverPageMap.js';
+import { createCoverPage } from './createCoverPage.js';
 
 
-const sketch = (s) => {
+export const initSketch = (s) => {
 	s.setup = () => {
 		s.noCanvas();
 		const props = new Map();
-		const coverPage = createCoverPageMap(props);
+		const coverPage = createCoverPage(props);
 		props.set('coverPage', new P5(coverPage));
 	}
 }
 
-new P5(sketch, 'p5js');
+new P5(initSketch);
 
 
