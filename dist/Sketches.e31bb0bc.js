@@ -33772,7 +33772,422 @@ var process = require("process");
     })["default"]
   );
 });
-},{"process":"node_modules/process/browser.js"}],"20210201/initParams.js":[function(require,module,exports) {
+},{"process":"node_modules/process/browser.js"}],"20200501/getParams.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getParams = void 0;
+
+var getParams = function getParams(width) {
+  var params = {};
+  params.canvasSize = width;
+  params.statusSwitchDuration = {
+    min: 5,
+    max: 200
+  };
+  params.snakeNum = 5;
+  params.waveNum = 3;
+  params.waveLength = 1 / 30 * params.canvasSize;
+  params.headWaveAmp = params.canvasSize / (params.snakeNum + 1) * 0.8;
+  params.waveAmpReducRate = 0.7;
+  params.initEasingFactor = {
+    min: 0.1,
+    max: 0.5
+  };
+  params.easingFactorReducRate = {
+    min: 0.7,
+    max: 1.0
+  };
+  params.lineNum = 8;
+  return params;
+};
+
+exports.getParams = getParams;
+},{}],"20200501/calcInit.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcInit = exports.calcInitStretchedSnakePosArray = exports.calcInitStretchedSnakePos = exports.calcWaveAmp = exports.calcStretchedSnakePosAngle = exports.calcStretchedSnakeHeadPos = exports.calcPointNum = exports.calcEasingFactorReducRate = exports.calcInitEasingFactor = exports.calcStatusSwitchDuration = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var calcStatusSwitchDuration = function calcStatusSwitchDuration(params) {
+  var diff = params.statusSwitchDuration.max - params.statusSwitchDuration.min;
+  var floatDuration = Math.random() * diff + params.statusSwitchDuration.min;
+  return Math.floor(floatDuration);
+};
+
+exports.calcStatusSwitchDuration = calcStatusSwitchDuration;
+
+var calcInitEasingFactor = function calcInitEasingFactor(params) {
+  var diff = params.initEasingFactor.max - params.initEasingFactor.min;
+  return Math.random() * diff + params.initEasingFactor.min;
+};
+
+exports.calcInitEasingFactor = calcInitEasingFactor;
+
+var calcEasingFactorReducRate = function calcEasingFactorReducRate(params) {
+  var diff = params.easingFactorReducRate.max - params.easingFactorReducRate.min;
+  return Math.random() * diff + params.easingFactorReducRate.min;
+};
+
+exports.calcEasingFactorReducRate = calcEasingFactorReducRate;
+
+var calcPointNum = function calcPointNum(params) {
+  return params.waveNum * 4 + 1;
+};
+
+exports.calcPointNum = calcPointNum;
+
+var calcStretchedSnakeHeadPos = function calcStretchedSnakeHeadPos(snakeIndex, params) {
+  var x = 0;
+  var y = params.canvasSize / (params.snakeNum + 1) * (snakeIndex + 1);
+  return new _p.default.Vector(x, y);
+};
+
+exports.calcStretchedSnakeHeadPos = calcStretchedSnakeHeadPos;
+
+var calcStretchedSnakePosAngle = function calcStretchedSnakePosAngle(pointIndex) {
+  return Math.PI / 2 * pointIndex;
+};
+
+exports.calcStretchedSnakePosAngle = calcStretchedSnakePosAngle;
+
+var calcWaveAmp = function calcWaveAmp(pointIndex, params) {
+  return params.headWaveAmp * Math.pow(params.waveAmpReducRate, pointIndex);
+};
+
+exports.calcWaveAmp = calcWaveAmp;
+
+var calcInitStretchedSnakePos = function calcInitStretchedSnakePos(pointIndex) {
+  return function (snakeIndex, params) {
+    var stretchedSnakeHeadPos = calcStretchedSnakeHeadPos(snakeIndex, params);
+    var stretchedSnakePosAngle = calcStretchedSnakePosAngle(pointIndex);
+    var waveAmp = calcWaveAmp(pointIndex, params);
+    var x = stretchedSnakeHeadPos.x - params.waveLength / 2 * pointIndex;
+    var y = stretchedSnakeHeadPos.y + waveAmp * Math.sin(stretchedSnakePosAngle);
+    return new _p.default.Vector(x, y);
+  };
+};
+
+exports.calcInitStretchedSnakePos = calcInitStretchedSnakePos;
+
+var calcInitStretchedSnakePosArray = function calcInitStretchedSnakePosArray(snakeIndex, params) {
+  var pointNum = calcPointNum(params);
+  var curryArray = Array.from(Array(pointNum), function (point, pointIndex) {
+    return calcInitStretchedSnakePos(pointIndex);
+  });
+  return curryArray.map(function (func) {
+    return func(snakeIndex, params);
+  });
+};
+
+exports.calcInitStretchedSnakePosArray = calcInitStretchedSnakePosArray;
+
+var calcInit = function calcInit(snakeIndex) {
+  return function (params) {
+    var initSnake = {};
+    initSnake.statusSwitchDuration = calcStatusSwitchDuration(params);
+    initSnake.initEasingFactor = calcInitEasingFactor(params);
+    initSnake.easingFactorReducRate = calcEasingFactorReducRate(params);
+    initSnake.status = 'keep';
+    initSnake.frameCount = 1;
+    initSnake.targetPosArray = calcInitStretchedSnakePosArray(snakeIndex, params);
+    initSnake.currentPosArray = initSnake.targetPosArray;
+    return initSnake;
+  };
+};
+
+exports.calcInit = calcInit;
+},{"p5":"node_modules/p5/lib/p5.min.js"}],"20200501/calcUpdate/status.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcStatus = void 0;
+
+var calcStatus = function calcStatus(params, frameCount, statusSwitchDuration, currentPosArray) {
+  if (currentPosArray[currentPosArray.length - 1].x > params.canvasSize) return 'restart';
+  if (frameCount % (statusSwitchDuration * 2) == statusSwitchDuration) return 'stretch';
+  if (frameCount % (statusSwitchDuration * 2) == 0) return 'shrink';
+  return 'keep';
+};
+
+exports.calcStatus = calcStatus;
+},{}],"20200501/calcUpdate/frameCount.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcFrameCount = void 0;
+
+var calcFrameCount = function calcFrameCount(frameCount, status) {
+  if (status == 'restart') return 1;
+  return frameCount + 1;
+};
+
+exports.calcFrameCount = calcFrameCount;
+},{}],"20200501/calcUpdate/currentPosArray.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcCurrentPosArray = exports.calcCurrentPos = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+var _calcInit = require("../calcInit.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var calcCurrentPos = function calcCurrentPos(currentCurrentPos, pointIndex) {
+  return function (params, targetPosArray, initEasingFactor, easingFactorReducRate) {
+    var easingFactor = initEasingFactor * Math.pow(easingFactorReducRate, pointIndex + 1);
+
+    var diff = _p.default.Vector.sub(targetPosArray[pointIndex], currentCurrentPos);
+
+    var displacementVec = _p.default.Vector.mult(diff, easingFactor);
+
+    return _p.default.Vector.add(currentCurrentPos, displacementVec);
+  };
+};
+
+exports.calcCurrentPos = calcCurrentPos;
+
+var calcCurrentPosArray = function calcCurrentPosArray(currentCurrentPosArray, status, snakeIndex, params, targetPosArray, initEasingFactor, easingFactorReducRate) {
+  if (status == 'restart') return (0, _calcInit.calcInitStretchedSnakePosArray)(snakeIndex, params);
+  var curryArray = currentCurrentPosArray.map(function (point, pointIndex) {
+    return calcCurrentPos(point, pointIndex);
+  });
+  return curryArray.map(function (func) {
+    return func(params, targetPosArray, initEasingFactor, easingFactorReducRate);
+  });
+};
+
+exports.calcCurrentPosArray = calcCurrentPosArray;
+},{"p5":"node_modules/p5/lib/p5.min.js","../calcInit.js":"20200501/calcInit.js"}],"20200501/calcUpdate/targetPosArray.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcTargetPosArray = exports.calcStretchedSnakePosArray = exports.calcStretchedSnakePos = exports.calcShrinkedSnakePosArray = exports.calcShrinkedSnakePos = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+var _calcInit = require("../calcInit.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var calcShrinkedSnakePos = function calcShrinkedSnakePos(currentTargetPos, pointIndex) {
+  return function (params) {
+    var xIncrement = params.waveLength / 4 * pointIndex;
+    return _p.default.Vector.add(currentTargetPos, new _p.default.Vector(xIncrement, 0));
+  };
+};
+
+exports.calcShrinkedSnakePos = calcShrinkedSnakePos;
+
+var calcShrinkedSnakePosArray = function calcShrinkedSnakePosArray(currentTargetPosArray, params) {
+  var arrayFunc = currentTargetPosArray.map(function (currentTargetPos, pointIndex) {
+    return calcShrinkedSnakePos(currentTargetPos, pointIndex);
+  });
+  return arrayFunc.map(function (func) {
+    return func(params);
+  });
+};
+
+exports.calcShrinkedSnakePosArray = calcShrinkedSnakePosArray;
+
+var calcStretchedSnakePos = function calcStretchedSnakePos(currentTargetPos, pointIndex, currentTargetPosArray) {
+  return function (params) {
+    var xIncrement = params.waveLength / 4 * (currentTargetPosArray.length - pointIndex - 1);
+    return _p.default.Vector.add(currentTargetPos, new _p.default.Vector(xIncrement, 0));
+  };
+};
+
+exports.calcStretchedSnakePos = calcStretchedSnakePos;
+
+var calcStretchedSnakePosArray = function calcStretchedSnakePosArray(currentTargetPosArray, params) {
+  var arrayFunc = currentTargetPosArray.map(function (currentTargetPos, pointIndex, self) {
+    return calcStretchedSnakePos(currentTargetPos, pointIndex, self);
+  });
+  return arrayFunc.map(function (func) {
+    return func(params);
+  });
+};
+
+exports.calcStretchedSnakePosArray = calcStretchedSnakePosArray;
+
+var calcTargetPosArray = function calcTargetPosArray(currentTargetPosArray, snakeIndex, params, status) {
+  if (status == 'restart') return (0, _calcInit.calcInitStretchedSnakePosArray)(snakeIndex, params);
+  if (status == 'keep') return currentTargetPosArray;
+  if (status == 'shrink') return calcShrinkedSnakePosArray(currentTargetPosArray, params);
+  if (status == 'stretch') return calcStretchedSnakePosArray(currentTargetPosArray, params);
+};
+
+exports.calcTargetPosArray = calcTargetPosArray;
+},{"p5":"node_modules/p5/lib/p5.min.js","../calcInit.js":"20200501/calcInit.js"}],"20200501/calcUpdate.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calcUpdate = void 0;
+
+var _status = require("./calcUpdate/status.js");
+
+var _frameCount = require("./calcUpdate/frameCount.js");
+
+var _calcInit = require("./calcInit.js");
+
+var _currentPosArray = require("./calcUpdate/currentPosArray.js");
+
+var _targetPosArray = require("./calcUpdate/targetPosArray.js");
+
+var calcUpdate = function calcUpdate(currentSnake, snakeIndex) {
+  return function (params) {
+    var updateSnake = {};
+    updateSnake.statusSwitchDuration = (0, _calcInit.calcStatusSwitchDuration)(params);
+    updateSnake.initEasingFactor = (0, _calcInit.calcInitEasingFactor)(params);
+    updateSnake.easingFactorReducRate = (0, _calcInit.calcEasingFactorReducRate)(params);
+    updateSnake.status = (0, _status.calcStatus)(params, currentSnake.frameCount, updateSnake.statusSwitchDuration, currentSnake.currentPosArray);
+    updateSnake.frameCount = (0, _frameCount.calcFrameCount)(currentSnake.frameCount, updateSnake.status);
+    updateSnake.targetPosArray = (0, _targetPosArray.calcTargetPosArray)(currentSnake.targetPosArray, snakeIndex, params, updateSnake.status);
+    updateSnake.currentPosArray = (0, _currentPosArray.calcCurrentPosArray)(currentSnake.currentPosArray, updateSnake.status, snakeIndex, params, updateSnake.targetPosArray, updateSnake.initEasingFactor, updateSnake.easingFactorReducRate);
+    return updateSnake;
+  };
+};
+
+exports.calcUpdate = calcUpdate;
+},{"./calcUpdate/status.js":"20200501/calcUpdate/status.js","./calcUpdate/frameCount.js":"20200501/calcUpdate/frameCount.js","./calcInit.js":"20200501/calcInit.js","./calcUpdate/currentPosArray.js":"20200501/calcUpdate/currentPosArray.js","./calcUpdate/targetPosArray.js":"20200501/calcUpdate/targetPosArray.js"}],"20200501/index.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.sketch = void 0;
+
+var _getParams = require("./getParams.js");
+
+var _calcInit = require("./calcInit.js");
+
+var _calcUpdate = require("./calcUpdate.js");
+
+var sketch = function sketch(props) {
+  return function (s) {
+    var canvasDiv = document.getElementById('canvas');
+    var params = (0, _getParams.getParams)(canvasDiv.clientWidth);
+    var colorPalette = {
+      green: s.color('green'),
+      pink: s.color('pink')
+    };
+    var snakes = Array.from(Array(params.snakeNum), function (snake, snakeIndex) {
+      return (0, _calcInit.calcInit)(snakeIndex);
+    });
+    snakes = snakes.map(function (func) {
+      return func(params);
+    });
+
+    var setPane = function setPane(props) {
+      var f1 = props.get('pane').addFolder({
+        title: 'Control'
+      });
+      var stopButton = f1.addButton({
+        title: 'start/stop'
+      });
+      stopButton.on('click', function () {
+        s.isLooping() ? s.noLoop() : s.loop();
+      });
+    };
+
+    s.setup = function () {
+      s.createCanvas(params.canvasSize, params.canvasSize);
+      setPane(props);
+      s.noLoop();
+    };
+
+    s.draw = function () {
+      // update snakes
+      snakes = snakes.map(function (currentSnake, snakeIndex) {
+        return (0, _calcUpdate.calcUpdate)(currentSnake, snakeIndex);
+      });
+      snakes = snakes.map(function (func) {
+        return func(params);
+      }); // draw background
+
+      s.background(255); // draw frame
+      // s.noFill();
+      // s.rect(0, 0, params.canvasSize, params.canvasSize);
+      // draw snake
+
+      s.push();
+      s.stroke(0);
+      s.noFill();
+      snakes.forEach(function (snake, snakeIndex) {
+        var posArray = snake.currentPosArray;
+        var length = posArray.length; // draw line
+
+        var initPos = posArray[0];
+        var lastPos = posArray[length - 1];
+        var colorIndex = 1.0 / params.snakeNum * snakeIndex * 1.5;
+        var snakeColor = s.lerpColor(colorPalette.green, colorPalette.pink, colorIndex);
+
+        var _loop = function _loop(lineIndex) {
+          var alpha = 255 / 5 * (lineIndex + 1);
+          s.push();
+          s.noFill();
+          snakeColor.setAlpha(alpha);
+          s.stroke(snakeColor);
+          s.beginShape();
+          s.curveVertex(initPos.x + lineIndex, initPos.y);
+          posArray.forEach(function (pos) {
+            s.curveVertex(pos.x + lineIndex, pos.y);
+          });
+          s.curveVertex(lastPos.x + lineIndex, lastPos.y);
+          s.endShape();
+          s.pop();
+        };
+
+        for (var lineIndex = 0; lineIndex < params.lineNum; lineIndex++) {
+          _loop(lineIndex);
+        }
+      });
+    };
+  };
+};
+
+exports.sketch = sketch;
+},{"./getParams.js":"20200501/getParams.js","./calcInit.js":"20200501/calcInit.js","./calcUpdate.js":"20200501/calcUpdate.js"}],"20200501/p5_20200501.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.p5_20200501 = void 0;
+
+var _index = require("./index.js");
+
+var p5_20200501 = function p5_20200501() {
+  var p5_map = new Map();
+  p5_map.set('date', '20200501');
+  p5_map.set('title', 'snake');
+  p5_map.set('note', 'This is a test sketch to develop coverpage.');
+  p5_map.set('sketch', _index.sketch);
+  return p5_map;
+};
+
+exports.p5_20200501 = p5_20200501;
+},{"./index.js":"20200501/index.js"}],"20210201/initParams.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33816,8 +34231,6 @@ var sketch = function sketch(props) {
       s.strokeWeight(1);
       s.noFill();
       s.rect(0, 0, params.canvasSize, params.canvasSize);
-      s.line(0, 0, params.canvasSize, params.canvasSize);
-      s.line(params.canvasSize, 0, 0, params.canvasSize);
       s.pop();
     };
 
@@ -33826,23 +34239,25 @@ var sketch = function sketch(props) {
         title: 'Control'
       });
       var stopButton = f1.addButton({
-        title: 'stop'
+        title: 'start/stop'
       });
       stopButton.on('click', function () {
-        console.log('clicked stop button');
+        s.isLooping() ? s.noLoop() : s.loop();
       });
     };
 
     s.setup = function () {
       s.createCanvas(params.canvasSize, params.canvasSize);
       setPane(props);
-      console.log('read setup()');
+      s.noLoop();
     };
 
     s.draw = function () {
       s.background(255);
       drawFrame();
-      s.noLoop();
+      s.frameRate(2);
+      s.textSize(50);
+      s.text(s.frameCount, params.canvasSize / 2, params.canvasSize / 2);
     };
   };
 };
@@ -33876,16 +34291,19 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getP5maps = void 0;
 
-var _p5_ = require("./20210201/p5_20210201.js");
+var _p5_ = require("./20200501/p5_20200501.js");
+
+var _p5_2 = require("./20210201/p5_20210201.js");
 
 var getP5maps = function getP5maps() {
   var p5maps = [];
-  p5maps.push((0, _p5_.p5_20210201)());
+  p5maps.push((0, _p5_2.p5_20210201)());
+  p5maps.push((0, _p5_.p5_20200501)());
   return p5maps;
 };
 
 exports.getP5maps = getP5maps;
-},{"./20210201/p5_20210201.js":"20210201/p5_20210201.js"}],"createCoverPage.js":[function(require,module,exports) {
+},{"./20200501/p5_20200501.js":"20200501/p5_20200501.js","./20210201/p5_20210201.js":"20210201/p5_20210201.js"}],"createCoverPage.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -34028,7 +34446,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62062" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62277" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

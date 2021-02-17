@@ -15,8 +15,6 @@ export const sketch = (props) => {
 			s.strokeWeight(1);
 			s.noFill();
 			s.rect(0, 0, params.canvasSize, params.canvasSize);
-			s.line(0, 0, params.canvasSize, params.canvasSize);
-			s.line(params.canvasSize, 0, 0, params.canvasSize);
 			s.pop();
 		}
 
@@ -25,23 +23,25 @@ export const sketch = (props) => {
 				title: 'Control',
 			});
 			const stopButton = f1.addButton({
-				title: 'stop',
+				title: 'start/stop',
 			});
 			stopButton.on('click', () => {
-				console.log('clicked stop button');
+				s.isLooping() ? s.noLoop() : s.loop();
 			});
 		}
 
 		s.setup = () => {
 			s.createCanvas(params.canvasSize, params.canvasSize);
 			setPane(props);
-			console.log('read setup()');
+			s.noLoop();
 		}
 
 		s.draw = () => {
 			s.background(255);
 			drawFrame();
-			s.noLoop();
+			s.frameRate(2);
+			s.textSize(50);
+			s.text(s.frameCount, params.canvasSize/2, params.canvasSize/2);
 		}
 	}
 }
