@@ -33888,46 +33888,27 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var createCoverPageDOM = function createCoverPageDOM() {
   return function (s) {
     s.setup = function () {
-      s.noCanvas();
-      var div_container = s.createDiv();
-      div_container.class('container');
-      var div_row = s.createDiv();
-      div_row.class('row');
-      div_row.parent(div_container);
-      var div_rowTitle = s.createDiv();
-      div_rowTitle.class('one-half column');
-      div_rowTitle.style('margin-top: 25%');
-      div_rowTitle.parent(div_row);
-      var h2_title = s.createElement('h2', 'Sketch List');
-      h2_title.parent(div_rowTitle); // header
+      s.noCanvas(); // title
 
-      var div_rowHeader = s.createDiv();
-      div_rowHeader.class('row');
-      div_rowHeader.parent(div_rowTitle);
-      var div_dateHeader = s.createDiv('Date');
-      div_dateHeader.class('four columns');
-      div_dateHeader.parent(div_rowHeader);
-      var div_titleHeader = s.createDiv('Title');
-      div_titleHeader.class('four columns');
-      div_titleHeader.parent(div_rowHeader); // line
+      var titleContainer = s.createDiv().class('container');
+      var titleRow = s.createDiv().class('row').parent(titleContainer);
+      var titleColumn = s.createDiv().class('one-half column').style('margin-top: 25%').parent(titleRow);
+      s.createElement('h2', 'Sketch List').parent(titleColumn); // table template
 
-      var div_line = s.createDiv('<br>');
-      div_line.class('row');
-      div_line.parent(div_rowHeader);
-      var line = s.createElement('hr');
-      line.parent(div_line); // sketch
+      var table = s.createElement('table').class('u-full-width').parent(titleContainer); // needToEdit
+      // header
 
-      var p5_map = (0, _p5_.p5_20210201)();
-      var div_row20210201 = s.createDiv();
-      div_row20210201.class('row');
-      div_row20210201.parent(div_rowHeader);
-      var div_date20210201 = s.createDiv(p5_map.get('date'));
-      div_date20210201.class('four columns');
-      div_date20210201.parent(div_row20210201);
-      var div_title20210201 = s.createA('javascript: void(0);', p5_map.get('title'));
-      div_title20210201.class('four columns');
-      div_title20210201.mousePressed(createP5_20210201);
-      div_title20210201.parent(div_row20210201);
+      var thead = s.createElement('thead').parent(table);
+      var theadTr = s.createElement('tr').parent(thead);
+      s.createElement('th', 'Date').parent(theadTr);
+      s.createElement('th', 'Name').parent(theadTr); // get p5 element
+
+      var p5_map = (0, _p5_.p5_20210201)(); // contents
+
+      var tbody = s.createElement('tbody').parent(table);
+      var tbodyTr = s.createElement('tr').parent(tbody);
+      s.createElement('td', p5_map.get('date')).parent(tbodyTr);
+      s.createElement('td', p5_map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5_20210201);
 
       function createP5_20210201() {
         _index.divs.coverPage.remove();
@@ -34029,7 +34010,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64233" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53877" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
