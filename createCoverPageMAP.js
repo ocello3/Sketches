@@ -1,9 +1,9 @@
 import P5 from 'p5';
 import Tweakpane from 'tweakpane';
 import { p5_20210201 } from './20210201/p5_20210201.js';
-import { divs } from './index.js';
+// import { props } from './index.js';
 
-export const createCoverPageMap = () => {
+export const createCoverPageMap = (props) => {
 
 	const coverPageMap = new Map();
 
@@ -33,34 +33,35 @@ export const createCoverPageMap = () => {
 			s.createElement('td', p5_map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5_20210201);
 
 			function createP5_20210201 () {
-				divs.coverPage.remove();
+				props.coverPage.remove();
 
-				divs.canvasHeader = s.createDiv();
-				divs.canvasHeader.class('container');
+				props.canvasHeader = s.createDiv();
+				props.canvasHeader.class('container');
 
-				divs.canvasDiv = s.createDiv();
-				divs.canvasDiv.class('row');
-				divs.canvasDiv.parent(divs.canvasHeader);
+				props.canvasDiv = s.createDiv();
+				props.canvasDiv.class('row');
+				props.canvasDiv.parent(props.canvasHeader);
 
-				divs.canvasDiv_p5 = s.createDiv();
-				divs.canvasDiv_p5.style('margin-top: 12%');
-				divs.canvasDiv_p5.class('one-half column');
-				divs.canvasDiv_p5.id('canvas');
-				divs.canvasDiv_p5.parent(divs.canvasDiv);
+				props.canvasDiv_p5 = s.createDiv();
+				props.canvasDiv_p5.style('margin-top: 12%');
+				props.canvasDiv_p5.class('one-half column');
+				props.canvasDiv_p5.id('canvas');
+				props.canvasDiv_p5.parent(props.canvasDiv);
 
-				divs.canvasDiv_pane = s.createDiv();
-				divs.canvasDiv_pane.style('margin-top: 12%');
-				divs.canvasDiv_pane.class('one-half column');
-				divs.canvasDiv_pane.id('pane');
-				divs.canvasDiv_pane.parent(divs.canvasDiv);
+				props.canvasDiv_pane = s.createDiv();
+				props.canvasDiv_pane.style('margin-top: 12%');
+				props.canvasDiv_pane.class('one-half column');
+				props.canvasDiv_pane.id('pane');
+				props.canvasDiv_pane.parent(props.canvasDiv);
 
-				divs.pane = new Tweakpane({
+				props.pane = new Tweakpane({
 					container: document.getElementById('pane'),
 				});
-				divs.p5_20210201 = new P5(p5_map.get('sketch'), 'canvas');
+				const sketchFunc = p5_map.get('sketch');
+				props.p5_20210201 = new P5(sketchFunc(props), 'canvas');
 
-				divs.removeDiv_p5 = s.createA('javascript: void(0);', 'back to top');
-				divs.removeDiv_p5.parent(divs.canvasHeader);
+				props.removeDiv_p5 = s.createA('javascript: void(0);', 'back to top');
+				props.removeDiv_p5.parent(props.canvasHeader);
 			}
 		}
 	}

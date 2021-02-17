@@ -33805,50 +33805,50 @@ exports.sketch = void 0;
 
 var _initParams = require("./initParams.js");
 
-var _index = require("../index.js");
+var sketch = function sketch(props) {
+  return function (s) {
+    var canvasDiv = document.getElementById('canvas');
+    var params = (0, _initParams.initParams)(canvasDiv.clientWidth);
 
-var sketch = function sketch(s) {
-  var canvasDiv = document.getElementById('canvas');
-  var params = (0, _initParams.initParams)(canvasDiv.clientWidth);
+    var drawFrame = function drawFrame() {
+      s.push();
+      s.stroke('black');
+      s.strokeWeight(1);
+      s.noFill();
+      s.rect(0, 0, params.canvasSize, params.canvasSize);
+      s.line(0, 0, params.canvasSize, params.canvasSize);
+      s.line(params.canvasSize, 0, 0, params.canvasSize);
+      s.pop();
+    };
 
-  var drawFrame = function drawFrame() {
-    s.push();
-    s.stroke('black');
-    s.strokeWeight(1);
-    s.noFill();
-    s.rect(0, 0, params.canvasSize, params.canvasSize);
-    s.line(0, 0, params.canvasSize, params.canvasSize);
-    s.line(params.canvasSize, 0, 0, params.canvasSize);
-    s.pop();
-  };
+    var setPane = function setPane(props) {
+      var f1 = props.pane.addFolder({
+        title: 'Control'
+      });
+      var stopButton = f1.addButton({
+        title: 'stop'
+      });
+      stopButton.on('click', function () {
+        console.log('clicked stop button');
+      });
+    };
 
-  var setPane = function setPane(divs) {
-    var f1 = divs.pane.addFolder({
-      title: 'Control'
-    });
-    var stopButton = f1.addButton({
-      title: 'stop'
-    });
-    stopButton.on('click', function () {
-      console.log('clicked stop button');
-    });
-  };
+    s.setup = function () {
+      s.createCanvas(params.canvasSize, params.canvasSize);
+      setPane(props);
+      console.log('read setup()');
+    };
 
-  s.setup = function () {
-    s.createCanvas(params.canvasSize, params.canvasSize);
-    setPane(_index.divs);
-    console.log('read setup()');
-  };
-
-  s.draw = function () {
-    s.background(255);
-    drawFrame();
-    s.noLoop();
+    s.draw = function () {
+      s.background(255);
+      drawFrame();
+      s.noLoop();
+    };
   };
 };
 
 exports.sketch = sketch;
-},{"./initParams.js":"20210201/initParams.js","../index.js":"index.js"}],"20210201/p5_20210201.js":[function(require,module,exports) {
+},{"./initParams.js":"20210201/initParams.js"}],"20210201/p5_20210201.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33881,11 +33881,10 @@ var _tweakpane = _interopRequireDefault(require("tweakpane"));
 
 var _p5_ = require("./20210201/p5_20210201.js");
 
-var _index = require("./index.js");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createCoverPageMap = function createCoverPageMap() {
+// import { props } from './index.js';
+var createCoverPageMap = function createCoverPageMap(props) {
   var coverPageMap = new Map();
 
   var coverPage = function coverPage(s) {
@@ -33913,45 +33912,29 @@ var createCoverPageMap = function createCoverPageMap() {
       s.createElement('td', p5_map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5_20210201);
 
       function createP5_20210201() {
-        _index.divs.coverPage.remove();
-
-        _index.divs.canvasHeader = s.createDiv();
-
-        _index.divs.canvasHeader.class('container');
-
-        _index.divs.canvasDiv = s.createDiv();
-
-        _index.divs.canvasDiv.class('row');
-
-        _index.divs.canvasDiv.parent(_index.divs.canvasHeader);
-
-        _index.divs.canvasDiv_p5 = s.createDiv();
-
-        _index.divs.canvasDiv_p5.style('margin-top: 12%');
-
-        _index.divs.canvasDiv_p5.class('one-half column');
-
-        _index.divs.canvasDiv_p5.id('canvas');
-
-        _index.divs.canvasDiv_p5.parent(_index.divs.canvasDiv);
-
-        _index.divs.canvasDiv_pane = s.createDiv();
-
-        _index.divs.canvasDiv_pane.style('margin-top: 12%');
-
-        _index.divs.canvasDiv_pane.class('one-half column');
-
-        _index.divs.canvasDiv_pane.id('pane');
-
-        _index.divs.canvasDiv_pane.parent(_index.divs.canvasDiv);
-
-        _index.divs.pane = new _tweakpane.default({
+        props.coverPage.remove();
+        props.canvasHeader = s.createDiv();
+        props.canvasHeader.class('container');
+        props.canvasDiv = s.createDiv();
+        props.canvasDiv.class('row');
+        props.canvasDiv.parent(props.canvasHeader);
+        props.canvasDiv_p5 = s.createDiv();
+        props.canvasDiv_p5.style('margin-top: 12%');
+        props.canvasDiv_p5.class('one-half column');
+        props.canvasDiv_p5.id('canvas');
+        props.canvasDiv_p5.parent(props.canvasDiv);
+        props.canvasDiv_pane = s.createDiv();
+        props.canvasDiv_pane.style('margin-top: 12%');
+        props.canvasDiv_pane.class('one-half column');
+        props.canvasDiv_pane.id('pane');
+        props.canvasDiv_pane.parent(props.canvasDiv);
+        props.pane = new _tweakpane.default({
           container: document.getElementById('pane')
         });
-        _index.divs.p5_20210201 = new _p.default(p5_map.get('sketch'), 'canvas');
-        _index.divs.removeDiv_p5 = s.createA('javascript: void(0);', 'back to top');
-
-        _index.divs.removeDiv_p5.parent(_index.divs.canvasHeader);
+        var sketchFunc = p5_map.get('sketch');
+        props.p5_20210201 = new _p.default(sketchFunc(props), 'canvas');
+        props.removeDiv_p5 = s.createA('javascript: void(0);', 'back to top');
+        props.removeDiv_p5.parent(props.canvasHeader);
       }
     };
   };
@@ -33961,13 +33944,13 @@ var createCoverPageMap = function createCoverPageMap() {
 };
 
 exports.createCoverPageMap = createCoverPageMap;
-},{"p5":"node_modules/p5/lib/p5.min.js","tweakpane":"node_modules/tweakpane/dist/tweakpane.js","./20210201/p5_20210201.js":"20210201/p5_20210201.js","./index.js":"index.js"}],"index.js":[function(require,module,exports) {
+},{"p5":"node_modules/p5/lib/p5.min.js","tweakpane":"node_modules/tweakpane/dist/tweakpane.js","./20210201/p5_20210201.js":"20210201/p5_20210201.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.divs = void 0;
+exports.props = void 0;
 
 var _p = _interopRequireDefault(require("p5"));
 
@@ -33975,15 +33958,15 @@ var _createCoverPageMap = require("./createCoverPageMap.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var divs = {};
-exports.divs = divs;
+var props = {};
+exports.props = props;
 
 var sketch = function sketch(s) {
   s.setup = function () {
     s.noCanvas();
-    var coverPageMap = (0, _createCoverPageMap.createCoverPageMap)();
+    var coverPageMap = (0, _createCoverPageMap.createCoverPageMap)(props);
     var coverPage = coverPageMap.get('coverPage');
-    divs.coverPage = new _p.default(coverPage);
+    props.coverPage = new _p.default(coverPage);
   };
 };
 
@@ -34016,7 +33999,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63869" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64588" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
