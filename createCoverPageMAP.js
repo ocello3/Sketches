@@ -35,24 +35,10 @@ export const createCoverPageMap = (props) => {
 			function createP5_20210201 () {
 				props.coverPage.remove();
 
-				props.canvasHeader = s.createDiv();
-				props.canvasHeader.class('container');
-
-				props.canvasDiv = s.createDiv();
-				props.canvasDiv.class('row');
-				props.canvasDiv.parent(props.canvasHeader);
-
-				props.canvasDiv_p5 = s.createDiv();
-				props.canvasDiv_p5.style('margin-top: 12%');
-				props.canvasDiv_p5.class('one-half column');
-				props.canvasDiv_p5.id('canvas');
-				props.canvasDiv_p5.parent(props.canvasDiv);
-
-				props.canvasDiv_pane = s.createDiv();
-				props.canvasDiv_pane.style('margin-top: 12%');
-				props.canvasDiv_pane.class('one-half column');
-				props.canvasDiv_pane.id('pane');
-				props.canvasDiv_pane.parent(props.canvasDiv);
+				const container = s.createDiv().class('container');
+				const row = s.createDiv().class('row').parent(container);
+				s.createDiv().style('margin-top: 12%').class('one-half column').id('canvas').parent(row);
+				s.createDiv().style('margin-top: 12%').class('one-half column').id('pane').parent(row);
 
 				props.pane = new Tweakpane({
 					container: document.getElementById('pane'),
@@ -60,8 +46,7 @@ export const createCoverPageMap = (props) => {
 				const sketchFunc = p5_map.get('sketch');
 				props.p5_20210201 = new P5(sketchFunc(props), 'canvas');
 
-				props.removeDiv_p5 = s.createA('javascript: void(0);', 'back to top');
-				props.removeDiv_p5.parent(props.canvasHeader);
+				s.createDiv('back to top').parent(container).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer');
 			}
 		}
 	}
