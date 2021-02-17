@@ -33822,7 +33822,7 @@ var sketch = function sketch(props) {
     };
 
     var setPane = function setPane(props) {
-      var f1 = props.pane.addFolder({
+      var f1 = props.get('pane').addFolder({
         title: 'Control'
       });
       var stopButton = f1.addButton({
@@ -33885,9 +33885,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // import { props } from './index.js';
 var createCoverPageMap = function createCoverPageMap(props) {
-  var coverPageMap = new Map();
-
-  var coverPage = function coverPage(s) {
+  return function (s) {
     s.setup = function () {
       s.noCanvas(); // title
 
@@ -33912,34 +33910,31 @@ var createCoverPageMap = function createCoverPageMap(props) {
       s.createElement('td', p5map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5_20210201);
 
       function createP5_20210201() {
-        props.coverPage.remove();
+        props.get('coverPage').remove();
         var container = s.createDiv().class('container');
         var row = s.createDiv().class('row').parent(container);
         s.createDiv().style('margin-top: 12%').class('one-half column').id('canvas').parent(row);
         s.createDiv().style('margin-top: 12%').class('one-half column').id('pane').parent(row);
-        props.pane = new _tweakpane.default({
+        props.set('pane', new _tweakpane.default({
           container: document.getElementById('pane')
-        });
-        props.p5_20210201 = new _p.default(p5map.get('sketch')(props), 'canvas');
-        s.createDiv('back to top').parent(container).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer'); // function backToTop () {
-        // 	props.get
-        // }
+        }));
+        props.set('p5_20210201', new _p.default(p5map.get('sketch')(props), 'canvas'));
+        s.createDiv('back to top').parent(container).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
+
+        function backToTop() {
+          props.get('pane').dispose();
+          props.get('p5_20210201').remove();
+          props.get('coverPage').remove();
+          location.reload(false);
+        }
       }
     };
   };
-
-  coverPageMap.set('coverPage', coverPage);
-  return coverPageMap;
 };
 
 exports.createCoverPageMap = createCoverPageMap;
 },{"p5":"node_modules/p5/lib/p5.min.js","tweakpane":"node_modules/tweakpane/dist/tweakpane.js","./20210201/p5_20210201.js":"20210201/p5_20210201.js"}],"index.js":[function(require,module,exports) {
 "use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.props = void 0;
 
 var _p = _interopRequireDefault(require("p5"));
 
@@ -33947,14 +33942,12 @@ var _createCoverPageMap = require("./createCoverPageMap.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var props = {};
-exports.props = props;
-
 var sketch = function sketch(s) {
   s.setup = function () {
     s.noCanvas();
-    var coverPageMap = (0, _createCoverPageMap.createCoverPageMap)(props);
-    props.coverPage = new _p.default(coverPageMap.get('coverPage'));
+    var props = new Map();
+    var coverPage = (0, _createCoverPageMap.createCoverPageMap)(props);
+    props.set('coverPage', new _p.default(coverPage));
   };
 };
 
@@ -33987,7 +33980,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56001" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58020" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

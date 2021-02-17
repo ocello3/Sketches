@@ -21,7 +21,7 @@ export const sketch = (props) => {
 		}
 
 		const setPane = (props) => {
-			const f1 = props.pane.addFolder({
+			const f1 = props.get('pane').addFolder({
 				title: 'Control',
 			});
 			const stopButton = f1.addButton({
