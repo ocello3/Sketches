@@ -1,13 +1,14 @@
 import P5 from 'p5';
-import { createCoverPageDOM } from './createCoverPageDOM.js';
+import { createCoverPageMap } from './createCoverPageMap.js';
 
 export const divs = {};
 
 const sketch = (s) => {
 	s.setup = () => {
 		s.noCanvas();
-		const createCoverPage = createCoverPageDOM();
-		divs.coverPage = new P5(createCoverPage);
+		const coverPageMap = createCoverPageMap();
+		const coverPage = coverPageMap.get('coverPage');
+		divs.coverPage = new P5(coverPage);
 	}
 }
 

@@ -33867,13 +33867,13 @@ var p5_20210201 = function p5_20210201() {
 };
 
 exports.p5_20210201 = p5_20210201;
-},{"./index.js":"20210201/index.js"}],"createCoverPageDOM.js":[function(require,module,exports) {
+},{"./index.js":"20210201/index.js"}],"createCoverPageMap.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.createCoverPageDOM = void 0;
+exports.createCoverPageMap = void 0;
 
 var _p = _interopRequireDefault(require("p5"));
 
@@ -33885,8 +33885,10 @@ var _index = require("./index.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var createCoverPageDOM = function createCoverPageDOM() {
-  return function (s) {
+var createCoverPageMap = function createCoverPageMap() {
+  var coverPageMap = new Map();
+
+  var coverPage = function coverPage(s) {
     s.setup = function () {
       s.noCanvas(); // title
 
@@ -33953,9 +33955,12 @@ var createCoverPageDOM = function createCoverPageDOM() {
       }
     };
   };
+
+  coverPageMap.set('coverPage', coverPage);
+  return coverPageMap;
 };
 
-exports.createCoverPageDOM = createCoverPageDOM;
+exports.createCoverPageMap = createCoverPageMap;
 },{"p5":"node_modules/p5/lib/p5.min.js","tweakpane":"node_modules/tweakpane/dist/tweakpane.js","./20210201/p5_20210201.js":"20210201/p5_20210201.js","./index.js":"index.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
@@ -33966,7 +33971,7 @@ exports.divs = void 0;
 
 var _p = _interopRequireDefault(require("p5"));
 
-var _createCoverPageDOM = require("./createCoverPageDOM.js");
+var _createCoverPageMap = require("./createCoverPageMap.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33976,13 +33981,14 @@ exports.divs = divs;
 var sketch = function sketch(s) {
   s.setup = function () {
     s.noCanvas();
-    var createCoverPage = (0, _createCoverPageDOM.createCoverPageDOM)();
-    divs.coverPage = new _p.default(createCoverPage);
+    var coverPageMap = (0, _createCoverPageMap.createCoverPageMap)();
+    var coverPage = coverPageMap.get('coverPage');
+    divs.coverPage = new _p.default(coverPage);
   };
 };
 
 new _p.default(sketch, 'p5js');
-},{"p5":"node_modules/p5/lib/p5.min.js","./createCoverPageDOM.js":"createCoverPageDOM.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"p5":"node_modules/p5/lib/p5.min.js","./createCoverPageMap.js":"createCoverPageMap.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -34010,7 +34016,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53877" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63869" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

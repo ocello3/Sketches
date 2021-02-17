@@ -3,9 +3,11 @@ import Tweakpane from 'tweakpane';
 import { p5_20210201 } from './20210201/p5_20210201.js';
 import { divs } from './index.js';
 
-export const createCoverPageDOM = () => {
+export const createCoverPageMap = () => {
 
-	return (s) => {
+	const coverPageMap = new Map();
+
+	const coverPage = (s) => {
 		s.setup = () => {
 			s.noCanvas();
 
@@ -62,4 +64,6 @@ export const createCoverPageDOM = () => {
 			}
 		}
 	}
+	coverPageMap.set('coverPage', coverPage);
+	return coverPageMap;
 }
