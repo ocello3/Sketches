@@ -34885,14 +34885,15 @@ var createCoverPage = function createCoverPage(props) {
         return function createP5() {
           props.get('coverPage').remove();
           var container = s.createDiv().class('container');
-          var row = s.createDiv().class('row').parent(container);
-          s.createDiv().style('margin-top: 12%').class('one-half column').id('canvas').parent(row);
-          s.createDiv().style('margin-top: 12%').class('one-half column').id('pane').parent(row);
+          var sketchRow = s.createDiv().class('row').parent(container).style('margin-top: 12%');
+          s.createDiv().class('one-half column').id('canvas').parent(sketchRow);
+          s.createDiv().class('one-half column').id('pane').parent(sketchRow);
           props.set('pane', new _tweakpane.default({
             container: document.getElementById('pane')
           }));
           props.set('sketchPage', new _p.default(p5map.get('sketch')(props), 'canvas'));
-          s.createDiv('back to top').parent(container).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
+          var buttonRow = s.createDiv().class('row').parent(container).style('margin-top: 2%');
+          s.createDiv('back to top').parent(buttonRow).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
 
           function backToTop() {
             props.get('pane').dispose();
@@ -34980,7 +34981,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56871" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50204" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
