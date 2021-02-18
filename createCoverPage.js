@@ -42,12 +42,19 @@ export const createCoverPage = (props) => {
 					
 					const buttonRow = s.createDiv().class('row').parent(container).style('margin-top: 2%');
 					s.createDiv('back to top').parent(buttonRow).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
-
 					function backToTop () {
 						props.get('pane').dispose();
 						props.get('sketchPage').remove();
 						props.get('coverPage').remove();
 						props.set('coverPage', new P5(initSketch));
+					}
+
+					const contentRow = s.createDiv().class('row').parent(container).style('margin-top: 6%');
+					s.createElement('h5', p5map.get('title')).parent(contentRow);
+					if (p5map.get('content') != null) {
+						s.createP(p5map.get('content')).parent(contentRow);
+					} else {
+						s.createP(p5map.get('note')).parent(contentRow);
 					}
 				}
 			}

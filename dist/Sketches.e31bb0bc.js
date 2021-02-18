@@ -34803,6 +34803,7 @@ var p5_20210201 = function p5_20210201() {
   p5_map.set('date', '20210201');
   p5_map.set('title', 'div test');
   p5_map.set('note', 'This is a test sketch to develop coverpage.');
+  p5_map.set('content', 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.');
   p5_map.set('sketch', _index.sketch);
   return p5_map;
 };
@@ -34901,6 +34902,15 @@ var createCoverPage = function createCoverPage(props) {
             props.get('coverPage').remove();
             props.set('coverPage', new _p.default(_index.initSketch));
           }
+
+          var contentRow = s.createDiv().class('row').parent(container).style('margin-top: 6%');
+          s.createElement('h5', p5map.get('title')).parent(contentRow);
+
+          if (p5map.get('content') != null) {
+            s.createP(p5map.get('content')).parent(contentRow);
+          } else {
+            s.createP(p5map.get('note')).parent(contentRow);
+          }
         };
       }; // contents
 
@@ -34981,7 +34991,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50204" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58890" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
