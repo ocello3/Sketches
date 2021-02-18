@@ -1,8 +1,8 @@
 'use strict';
 
-export const getParams = (windowSize) => {
+export const getParams = (width) => {
 	const params = {};
-	params.canvasSize = (windowSize < 500) ? windowSize : windowSize * 0.6;
+	params.canvasSize = width;
 	return params;
 };
 
