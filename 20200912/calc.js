@@ -1,8 +1,8 @@
 import P5 from 'p5';
 
-export const getParams = (windowSize) => {
+export const getParams = (width) => {
 	
-	const canvasSize = (windowSize < 500) ? windowSize : windowSize * 0.6;
+	const canvasSize = width;
 
 	return {
 		canvasSize: canvasSize,

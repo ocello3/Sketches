@@ -34187,7 +34187,200 @@ var p5_20200501 = function p5_20200501() {
 };
 
 exports.p5_20200501 = p5_20200501;
-},{"./index.js":"20200501/index.js"}],"20210201/initParams.js":[function(require,module,exports) {
+},{"./index.js":"20200501/index.js"}],"20200912/calc.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateFlag = exports.initFlag = exports.getParams = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var getParams = function getParams(width) {
+  var canvasSize = width;
+  return {
+    canvasSize: canvasSize,
+    margin: {
+      x: (window.innerWidth - canvasSize) / 2,
+      y: (window.innerHeight - canvasSize) / 2
+    },
+    flagCount: 3,
+    ctrlInitAngles: [0, Math.PI / 2, Math.PI],
+    anchorInitAngles: [Math.PI / 4, Math.PI * 3 / 4, Math.PI * 5 / 4],
+    ctrlAngleIncs: [Math.PI / 100, Math.PI / 60, Math.PI / 80],
+    ctrlMaxes: [1 / 8 * canvasSize, 1 / 10 * canvasSize, 12 / 80 * canvasSize],
+    anchorMaxes: [110 / 800 * canvasSize, 90 / 800 * canvasSize, 130 / 800 * canvasSize],
+    anchorAngleIncs: [Math.PI / 100, Math.PI / 60, Math.PI / 70],
+    flagWidth: 0.125 * canvasSize,
+    flagHeight: 0.25 * canvasSize
+  };
+};
+
+exports.getParams = getParams;
+
+var initFlag = function initFlag(index) {
+  return function (params) {
+    var initStartPos = function initStartPos(params) {
+      var totalMargin = params.canvasSize - params.flagWidth * params.flagCount;
+      var margin = totalMargin / (params.flagCount + 1);
+      var xPos = margin * (index + 1) + params.flagWidth * index - 0.1 * params.canvasSize;
+      var yPos = (params.canvasSize - params.flagHeight) / 2;
+      return new _p.default.Vector(xPos, yPos);
+    };
+
+    var initFlag = {};
+    initFlag.ctrlAngle = params.ctrlInitAngles[index];
+    initFlag.anchorAngle = params.anchorInitAngles[index];
+    initFlag.startPos = initStartPos(params);
+    initFlag.endPos = new _p.default.Vector(params.flagWidth, 0);
+    initFlag.leftCtrl = new _p.default.Vector(0, params.flagHeight);
+    initFlag.leftAnchor = new _p.default.Vector(0, params.flagHeight);
+    initFlag.rightCtrl = new _p.default.Vector(initFlag.endPos.x, params.flagHeight);
+    initFlag.rightAnchor = new _p.default.Vector(initFlag.endPos.x, params.flagHeight);
+    return initFlag;
+  };
+};
+
+exports.initFlag = initFlag;
+
+var updateFlag = function updateFlag(flag, index) {
+  return function (params) {
+    var updateLeftCtrl = function updateLeftCtrl(flag, params, ctrlAngle) {
+      var diff = params.ctrlMaxes[index] * (Math.sin(ctrlAngle) + 1) / 2;
+      return new _p.default.Vector(diff, params.flagHeight - diff);
+    };
+
+    var updateLeftAnchor = function updateLeftAnchor(flag, index, anchorAngle) {
+      var diff = params.anchorMaxes[index] * (Math.sin(anchorAngle) + 1) / 2;
+      return new _p.default.Vector(diff, params.flagHeight - diff);
+    };
+
+    var updateRightCtrl = function updateRightCtrl(flag, params, endPos, ctrlAngle) {
+      var diff = params.ctrlMaxes[index] * (Math.sin(ctrlAngle) + 1) / 2;
+      return new _p.default.Vector(endPos.x + diff, params.flagHeight - diff);
+    };
+
+    var updateRightAnchor = function updateRightAnchor(flag, params, endPos, anchorAngle) {
+      var diff = params.anchorMaxes[index] * (Math.sin(anchorAngle) + 1) / 2;
+      return new _p.default.Vector(endPos.x + diff, params.flagHeight - diff);
+    };
+
+    var updateFlag = {};
+    updateFlag.ctrlAngle = flag.ctrlAngle + params.ctrlAngleIncs[index];
+    updateFlag.anchorAngle = flag.anchorAngle + params.anchorAngleIncs[index];
+    updateFlag.startPos = flag.startPos;
+    updateFlag.endPos = flag.endPos;
+    updateFlag.leftCtrl = updateLeftCtrl(flag, params, updateFlag.ctrlAngle);
+    updateFlag.leftAnchor = updateLeftAnchor(flag, index, updateFlag.anchorAngle);
+    updateFlag.rightCtrl = updateRightCtrl(flag, params, updateFlag.endPos, updateFlag.ctrlAngle);
+    updateFlag.rightAnchor = updateRightAnchor(flag, params, updateFlag.endPos, updateFlag.anchorAngle);
+    return updateFlag;
+  };
+};
+
+exports.updateFlag = updateFlag;
+},{"p5":"node_modules/p5/lib/p5.min.js"}],"20200912/index.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.sketch = void 0;
+
+var calc = _interopRequireWildcard(require("./calc.js"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+var sketch = function sketch(props) {
+  return function (s) {
+    var canvasDiv = document.getElementById('canvas');
+    var params = calc.getParams(canvasDiv.clientWidth);
+    var colorPalette = [s.color(108, 160, 220), s.color(249, 228, 236), s.color(119, 221, 119)];
+    var flags = Array.from(Array(3), function (flag, index) {
+      return calc.initFlag(index);
+    });
+    flags = flags.map(function (func) {
+      return func(params);
+    });
+
+    var setPane = function setPane(props) {
+      var f1 = props.get('pane').addFolder({
+        title: 'Control'
+      });
+      var stopButton = f1.addButton({
+        title: 'start/stop'
+      });
+      stopButton.on('click', function () {
+        s.isLooping() ? s.noLoop() : s.loop();
+      });
+    };
+
+    s.setup = function () {
+      s.createCanvas(params.canvasSize, params.canvasSize);
+      setPane(props);
+      s.noLoop();
+    };
+
+    s.draw = function () {
+      // calc
+      flags = flags.map(function (flag, index) {
+        return calc.updateFlag(flag, index);
+      });
+      flags = flags.map(function (func) {
+        return func(params);
+      }); // draw background
+
+      s.background(255); // draw bar
+
+      s.push();
+      s.stroke(0);
+      s.strokeWeight(1);
+      s.line(0, flags[0].startPos.y, params.canvasSize, flags[0].startPos.y);
+      s.pop(); // draw flags
+
+      flags.forEach(function (flag, index) {
+        s.push();
+        s.fill(colorPalette[index]);
+        s.translate(flag.startPos.x, flag.startPos.y);
+        s.beginShape();
+        s.vertex(0, 0);
+        s.quadraticVertex(flag.leftCtrl.x, flag.leftCtrl.y, flag.leftAnchor.x, flag.leftAnchor.y);
+        s.quadraticVertex(flag.rightCtrl.x, flag.rightCtrl.y, flag.rightAnchor.x, flag.rightAnchor.y);
+        s.vertex(flag.endPos.x, flag.endPos.y);
+        s.endShape(s.CLOSE);
+        s.pop();
+      });
+    };
+  };
+};
+
+exports.sketch = sketch;
+},{"./calc.js":"20200912/calc.js"}],"20200912/p5_20200912.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.p5_20200912 = void 0;
+
+var _index = require("./index.js");
+
+var p5_20200912 = function p5_20200912() {
+  var p5_map = new Map();
+  p5_map.set('date', '20200912');
+  p5_map.set('title', 'flags');
+  p5_map.set('note', 'This is a test sketch to develop coverpage.');
+  p5_map.set('sketch', _index.sketch);
+  return p5_map;
+};
+
+exports.p5_20200912 = p5_20200912;
+},{"./index.js":"20200912/index.js"}],"20210201/initParams.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34293,17 +34486,20 @@ exports.getP5maps = void 0;
 
 var _p5_ = require("./20200501/p5_20200501.js");
 
-var _p5_2 = require("./20210201/p5_20210201.js");
+var _p5_2 = require("./20200912/p5_20200912.js");
+
+var _p5_3 = require("./20210201/p5_20210201.js");
 
 var getP5maps = function getP5maps() {
   var p5maps = [];
-  p5maps.push((0, _p5_2.p5_20210201)());
+  p5maps.push((0, _p5_3.p5_20210201)());
+  p5maps.push((0, _p5_2.p5_20200912)());
   p5maps.push((0, _p5_.p5_20200501)());
   return p5maps;
 };
 
 exports.getP5maps = getP5maps;
-},{"./20200501/p5_20200501.js":"20200501/p5_20200501.js","./20210201/p5_20210201.js":"20210201/p5_20210201.js"}],"createCoverPage.js":[function(require,module,exports) {
+},{"./20200501/p5_20200501.js":"20200501/p5_20200501.js","./20200912/p5_20200912.js":"20200912/p5_20200912.js","./20210201/p5_20210201.js":"20210201/p5_20210201.js"}],"createCoverPage.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -34446,7 +34642,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62277" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53862" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
