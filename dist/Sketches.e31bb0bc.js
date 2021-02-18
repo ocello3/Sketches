@@ -34483,7 +34483,236 @@ var p5_20201023 = function p5_20201023() {
 };
 
 exports.p5_20201023 = p5_20201023;
-},{"./index.js":"20201023/index.js"}],"20210201/initParams.js":[function(require,module,exports) {
+},{"./index.js":"20201023/index.js"}],"20201231/initParams.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initParams = void 0;
+
+var initParams = function initParams(width) {
+  var params = {};
+  params.windowSize = width;
+  params.canvasSize = width;
+  params.ballNum = 3; // params.isStart = confirm("Turn sound on?");
+
+  return params;
+};
+
+exports.initParams = initParams;
+},{}],"20201231/initBall.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initBall = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var initBall = function initBall(index) {
+  return function (params) {
+    var ball = {};
+    ball.cycleLength = 60 + 10 * index;
+    ball.frameVal = 0;
+    ball.angle = 0;
+    ball.marginRate = new _p.default.Vector(0.2, 0.2);
+
+    var calcLeftEdge = function calcLeftEdge() {
+      var x = params.canvasSize * ball.marginRate.x;
+      var y = params.canvasSize / 2;
+      return new _p.default.Vector(x, y);
+    };
+
+    ball.leftEdge = calcLeftEdge();
+
+    var calcRightEdge = function calcRightEdge() {
+      var margin = params.canvasSize * ball.marginRate.x;
+      var x = params.canvasSize - margin;
+      var y = params.canvasSize / 2;
+      return new _p.default.Vector(x, y);
+    };
+
+    ball.rightEdge = calcRightEdge();
+
+    var calcAmp = function calcAmp() {
+      var margin = params.canvasSize * ball.marginRate.y;
+      var effectiveHeight = params.canvasSize - margin * 2;
+      return effectiveHeight;
+    };
+
+    ball.amp = calcAmp();
+
+    var calcPos = function calcPos() {
+      var margin = params.canvasSize * ball.marginRate.x;
+      var effectiveWidth = params.canvasSize - margin * 2;
+      var eachWidth = effectiveWidth / (params.ballNum + 1);
+      var x = margin + eachWidth * (index + 1);
+      var y = 0;
+      return new _p.default.Vector(x, y);
+    };
+
+    ball.pos = calcPos();
+    return ball;
+  };
+};
+
+exports.initBall = initBall;
+},{"p5":"node_modules/p5/lib/p5.min.js"}],"20201231/updateBall.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateBall = void 0;
+
+var _p = _interopRequireDefault(require("p5"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var updateBall = function updateBall(ball) {
+  return function (params, frameCount) {
+    var updatedBall = {};
+    updatedBall.cycleLength = ball.cycleLength;
+    updatedBall.frameVal = frameCount % ball.cycleLength;
+    updatedBall.angle = ball.frameVal * 2 * Math.PI / ball.cycleLength;
+    updatedBall.marginRate = ball.marginRate;
+    updatedBall.leftEdge = ball.leftEdge;
+    updatedBall.rightEdge = ball.rightEdge;
+    updatedBall.amp = ball.amp;
+
+    var calcPos = function calcPos() {
+      var x = ball.pos.x;
+      var margin = params.canvasSize * updatedBall.marginRate.y;
+      var y = margin + updatedBall.amp * (Math.sin(updatedBall.angle) + 1) / 2;
+      return new _p.default.Vector(x, y);
+    };
+
+    updatedBall.pos = calcPos();
+    return updatedBall;
+  };
+};
+
+exports.updateBall = updateBall;
+},{"p5":"node_modules/p5/lib/p5.min.js"}],"20201231/index.js":[function(require,module,exports) {
+'use strict'; // import * as Tone from 'tone';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.sketch = void 0;
+
+var _initParams = require("./initParams.js");
+
+var _initBall = require("./initBall.js");
+
+var _updateBall = require("./updateBall.js");
+
+// import { amSynth } from './sound.js';
+var sketch = function sketch(props) {
+  return function (s) {
+    var canvasDiv = document.getElementById('canvas');
+    var params = (0, _initParams.initParams)(canvasDiv.clientWidth); // const synth = {};
+
+    var balls = Array.from(Array(params.ballNum), function (ball, index) {
+      return (0, _initBall.initBall)(index)(params);
+    });
+
+    var setPane = function setPane(props) {
+      var f1 = props.get('pane').addFolder({
+        title: 'Control'
+      });
+      var stopButton = f1.addButton({
+        title: 'start/stop'
+      });
+      stopButton.on('click', function () {
+        s.isLooping() ? s.noLoop() : s.loop();
+      });
+    };
+
+    var drawFrame = function drawFrame(params) {
+      s.push();
+      s.stroke('black');
+      s.strokeWeight(1);
+      s.noFill();
+      s.rect(0, 0, params.canvasSize, params.canvasSize);
+      s.pop();
+    };
+
+    var drawBalls = function drawBalls(balls) {
+      var edgeBall = balls[0];
+      s.push();
+      s.noFill();
+      s.stroke(0);
+      s.strokeWeight(1);
+      s.beginShape();
+      s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
+      s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
+      balls.forEach(function (ball) {
+        s.curveVertex(ball.pos.x, ball.pos.y);
+      });
+      s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
+      s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
+      s.endShape();
+      s.pop();
+    }; // const soundOn = () => {
+    // 	synth.amSynth = new Tone.AMOscillator({
+    // 		frequency: 880,
+    // 		volume: -4,
+    // 	}).toDestination().start();
+    // 	dialog.close();
+    // }
+    // const soundOff = () => {
+    // 	Tone.Master.mute = true;
+    // 	dialog.close();
+    // }
+
+
+    s.setup = function () {
+      s.createCanvas(params.canvasSize, params.canvasSize);
+      setPane(props);
+      s.noLoop();
+    };
+
+    s.draw = function () {
+      balls = balls.map(function (ball) {
+        return (0, _updateBall.updateBall)(ball)(params, s.frameCount);
+      });
+      s.background(255);
+      drawFrame(params);
+      drawBalls(balls);
+    }; // s.mouseClicked = () => {
+    // 	Tone.start();
+    // }
+
+  };
+};
+
+exports.sketch = sketch;
+},{"./initParams.js":"20201231/initParams.js","./initBall.js":"20201231/initBall.js","./updateBall.js":"20201231/updateBall.js"}],"20201231/p5_20201231.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.p5_20201231 = void 0;
+
+var _index = require("./index.js");
+
+var p5_20201231 = function p5_20201231() {
+  var p5_map = new Map();
+  p5_map.set('date', '20201231');
+  p5_map.set('title', 'hello tone');
+  p5_map.set('note', 'This is a test sketch to develop coverpage.');
+  p5_map.set('sketch', _index.sketch);
+  return p5_map;
+};
+
+exports.p5_20201231 = p5_20201231;
+},{"./index.js":"20201231/index.js"}],"20210201/initParams.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -34593,11 +34822,14 @@ var _p5_2 = require("./20200912/p5_20200912.js");
 
 var _p5_3 = require("./20201023/p5_20201023.js");
 
-var _p5_4 = require("./20210201/p5_20210201.js");
+var _p5_4 = require("./20201231/p5_20201231.js");
+
+var _p5_5 = require("./20210201/p5_20210201.js");
 
 var getP5maps = function getP5maps() {
   var p5maps = [];
-  p5maps.push((0, _p5_4.p5_20210201)());
+  p5maps.push((0, _p5_5.p5_20210201)());
+  p5maps.push((0, _p5_4.p5_20201231)());
   p5maps.push((0, _p5_3.p5_20201023)());
   p5maps.push((0, _p5_2.p5_20200912)());
   p5maps.push((0, _p5_.p5_20200501)());
@@ -34605,7 +34837,7 @@ var getP5maps = function getP5maps() {
 };
 
 exports.getP5maps = getP5maps;
-},{"./20200501/p5_20200501.js":"20200501/p5_20200501.js","./20200912/p5_20200912.js":"20200912/p5_20200912.js","./20201023/p5_20201023.js":"20201023/p5_20201023.js","./20210201/p5_20210201.js":"20210201/p5_20210201.js"}],"createCoverPage.js":[function(require,module,exports) {
+},{"./20200501/p5_20200501.js":"20200501/p5_20200501.js","./20200912/p5_20200912.js":"20200912/p5_20200912.js","./20201023/p5_20201023.js":"20201023/p5_20201023.js","./20201231/p5_20201231.js":"20201231/p5_20201231.js","./20210201/p5_20210201.js":"20210201/p5_20210201.js"}],"createCoverPage.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -34748,7 +34980,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56870" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52059" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

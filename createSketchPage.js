@@ -15,7 +15,7 @@ export const getCreateP5 = (props, p5map) => {
 		}));
 		props.set('p5_20210201', new P5(p5map.get('sketch')(props), 'canvas'));
 
-		s.createDiv('back to top').parent(container).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
+		s.createDiv('back to top').parent(container).style('line-height: 2').style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
 
 		function backToTop () {
 			props.get('pane').dispose();
