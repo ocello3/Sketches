@@ -1,27 +1,35 @@
 'use strict';
 
-// import * as Tone from 'tone';
+import * as Tone from 'tone';
 import { initParams } from './initParams.js';
 import { initBall } from './initBall.js';
 import { updateBall } from './updateBall.js';
-// import { amSynth } from './sound.js';
 
 export const sketch = (props) => {
 	return (s) => {
 
+		const synths = props.get('synths');
 		const canvasDiv = document.getElementById('canvas');
 		const params = initParams(canvasDiv.clientWidth);
-		// const synth = {};
 		let balls = Array.from(Array(params.ballNum), (ball, index) => initBall(index)(params));
 
-		const setPane = (props) => {
+		const setPane = (props, params) => {
 			const f1 = props.get('pane').addFolder({
 				title: 'Control',
 			});
-			const stopButton = f1.addButton({
+			const ctrlButton = f1.addButton({
 				title: 'start/stop',
 			});
-			stopButton.on('click', () => {
+			ctrlButton.on('click', () => {	
+				// synths.get('amSynth').start()
+				if (!s.isLooping() && !params.isStarted) {
+					for (const value of synths.values()) {
+						value.start();
+					}
+					params.isStarted = true;
+				}
+				if (!s.isLooping() && params.isStarted) Tone.Master.mute = false;
+				if (s.isLooping()) Tone.Master.mute = true;
 				s.isLooping() ? s.noLoop() : s.loop();
 			});
 		}
@@ -53,21 +61,10 @@ export const sketch = (props) => {
 			s.pop();
 		}
 
-		// const soundOn = () => {
-		// 	synth.amSynth = new Tone.AMOscillator({
-		// 		frequency: 880,
-		// 		volume: -4,
-		// 	}).toDestination().start();
-		// 	dialog.close();
-		// }
-		// const soundOff = () => {
-		// 	Tone.Master.mute = true;
-		// 	dialog.close();
-		// }
 		s.setup = () => {
 			s.createCanvas(params.canvasSize, params.canvasSize);
-			setPane(props);
 			s.noLoop();
+			setPane(props, params);
 		};
 
 		s.draw = () => {
@@ -76,9 +73,5 @@ export const sketch = (props) => {
 			drawFrame(params);
 			drawBalls(balls);
 		}
-
-		// s.mouseClicked = () => {
-		// 	Tone.start();
-		// }
 	}
 }

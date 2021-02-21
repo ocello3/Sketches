@@ -29,32 +29,44 @@ export const createCoverPage = (props) => {
 			const p5maps = getP5maps();
 			const getCreateP5 = (p5map) => {
 				return function createP5 () {
+					// remove coverPage
 					props.get('coverPage').remove();
-
+					// create divs
 					const container = s.createDiv().class('container');
 					const sketchRow = s.createDiv().class('row').parent(container).style('margin-top: 12%');
 					s.createDiv().class('one-half column').id('canvas').parent(sketchRow);
 					s.createDiv().class('one-half column').id('pane').parent(sketchRow);
-					props.set('pane', new Tweakpane({
-						container: document.getElementById('pane'),
-					}));
-					props.set('sketchPage', new P5(p5map.get('sketch')(props), 'canvas'));
-					
 					const buttonRow = s.createDiv().class('row').parent(container).style('margin-top: 2%');
 					s.createDiv('back to top').parent(buttonRow).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
-					function backToTop () {
-						props.get('pane').dispose();
-						props.get('sketchPage').remove();
-						props.get('coverPage').remove();
-						props.set('coverPage', new P5(initSketch));
-					}
-
 					const contentRow = s.createDiv().class('row').parent(container).style('margin-top: 6%');
 					s.createElement('h5', p5map.get('title')).parent(contentRow);
 					if (p5map.get('content') != null) {
 						s.createP(p5map.get('content')).parent(contentRow);
 					} else {
 						s.createP(p5map.get('note')).parent(contentRow);
+					}
+					// add synths to props
+					if (p5map.get('synths') != null) {
+						const synthMap = p5map.get('synths')();
+						props.set('synths', synthMap);
+					}
+					// add tweakpane to props
+					props.set('pane', new Tweakpane({
+						container: document.getElementById('pane'),
+					}));
+					// add p5js to props
+					props.set('sketchPage', new P5(p5map.get('sketch')(props), 'canvas'));
+					// prepare back to top function
+					function backToTop () {
+						const synths = props.get('synths');
+						props.get('pane').dispose();
+						for (const value of synths.values()) {
+							value.dispose();
+						}
+						props.get('sketchPage').remove();
+						props.get('coverPage').remove();
+						props.clear();
+						props.set('coverPage', new P5(initSketch));
 					}
 				}
 			}
