@@ -40,29 +40,23 @@ export const createCoverPage = (props) => {
 					s.createDiv('back to top').parent(buttonRow).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
 					const contentRow = s.createDiv().class('row').parent(container).style('margin-top: 6%');
 					s.createElement('h5', p5map.get('title')).parent(contentRow);
-					if (p5map.get('content') != null) {
-						s.createP(p5map.get('content')).parent(contentRow);
-					} else {
-						s.createP(p5map.get('note')).parent(contentRow);
-					}
+					p5map.has('content')? s.createP(p5map.get('content')).parent(contentRow) : s.createP(p5map.get('note')).parent(contentRow);
 					// add synths to props
-					if (p5map.get('synths') != null) {
+					if (p5map.has('synths')) {
 						const synthMap = p5map.get('synths')();
 						props.set('synths', synthMap);
 					}
 					// add tweakpane to props
-					props.set('pane', new Tweakpane({
-						container: document.getElementById('pane'),
-					}));
+					props.set('pane', new Tweakpane({ container: document.getElementById('pane') }));
 					// add p5js to props
 					props.set('sketchPage', new P5(p5map.get('sketch')(props), 'canvas'));
 					// prepare back to top function
 					function backToTop () {
-						const synths = props.get('synths');
-						props.get('pane').dispose();
-						for (const value of synths.values()) {
-							value.dispose();
+						if (props.has('synths')) {
+							const synths = props.get('synths');
+							for (const value of synths.values()) value.dispose();
 						}
+						props.get('pane').dispose();
 						props.get('sketchPage').remove();
 						props.get('coverPage').remove();
 						props.clear();

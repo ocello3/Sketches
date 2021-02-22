@@ -21,16 +21,16 @@ export const sketch = (props) => {
 				title: 'start/stop',
 			});
 			ctrlButton.on('click', () => {	
-				// synths.get('amSynth').start()
 				if (!s.isLooping() && !params.isStarted) {
-					for (const value of synths.values()) {
-						value.start();
-					}
+					for (const value of synths.values()) value.start();
 					params.isStarted = true;
 				}
-				if (!s.isLooping() && params.isStarted) Tone.Master.mute = false;
-				if (s.isLooping()) Tone.Master.mute = true;
+				if (!s.isLooping() && params.isStarted) Tone.Destination.mute = false;
+				if (s.isLooping()) Tone.Destination.mute = true;
 				s.isLooping() ? s.noLoop() : s.loop();
+			});
+			f1.addMonitor(params, 'frameRate', {
+				interval: 1000,
 			});
 		}
 
@@ -72,6 +72,7 @@ export const sketch = (props) => {
 			s.background(255);
 			drawFrame(params);
 			drawBalls(balls);
+			params.frameRate = s.frameRate();
 		}
 	}
 }

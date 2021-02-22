@@ -85805,11 +85805,10 @@ exports.initParams = void 0;
 
 var initParams = function initParams(width) {
   var params = {};
-  params.windowSize = width;
   params.canvasSize = width;
+  params.frameRate = 0;
   params.isStarted = false;
-  params.ballNum = 3; // params.isStart = confirm("Turn sound on?");
-
+  params.ballNum = 3;
   return params;
 };
 
@@ -85953,7 +85952,6 @@ var sketch = function sketch(props) {
         title: 'start/stop'
       });
       ctrlButton.on('click', function () {
-        // synths.get('amSynth').start()
         if (!s.isLooping() && !params.isStarted) {
           var _iterator = _createForOfIteratorHelper(synths.values()),
               _step;
@@ -85972,9 +85970,12 @@ var sketch = function sketch(props) {
           params.isStarted = true;
         }
 
-        if (!s.isLooping() && params.isStarted) Tone.Master.mute = false;
-        if (s.isLooping()) Tone.Master.mute = true;
+        if (!s.isLooping() && params.isStarted) Tone.Destination.mute = false;
+        if (s.isLooping()) Tone.Destination.mute = true;
         s.isLooping() ? s.noLoop() : s.loop();
+      });
+      f1.addMonitor(params, 'frameRate', {
+        interval: 1000
       });
     };
 
@@ -86018,6 +86019,7 @@ var sketch = function sketch(props) {
       s.background(255);
       drawFrame(params);
       drawBalls(balls);
+      params.frameRate = s.frameRate();
     };
   };
 };
@@ -86253,15 +86255,9 @@ var createCoverPage = function createCoverPage(props) {
           s.createDiv('back to top').parent(buttonRow).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
           var contentRow = s.createDiv().class('row').parent(container).style('margin-top: 6%');
           s.createElement('h5', p5map.get('title')).parent(contentRow);
+          p5map.has('content') ? s.createP(p5map.get('content')).parent(contentRow) : s.createP(p5map.get('note')).parent(contentRow); // add synths to props
 
-          if (p5map.get('content') != null) {
-            s.createP(p5map.get('content')).parent(contentRow);
-          } else {
-            s.createP(p5map.get('note')).parent(contentRow);
-          } // add synths to props
-
-
-          if (p5map.get('synths') != null) {
+          if (p5map.has('synths')) {
             var synthMap = p5map.get('synths')();
             props.set('synths', synthMap);
           } // add tweakpane to props
@@ -86274,23 +86270,25 @@ var createCoverPage = function createCoverPage(props) {
           props.set('sketchPage', new _p.default(p5map.get('sketch')(props), 'canvas')); // prepare back to top function
 
           function backToTop() {
-            var synths = props.get('synths');
-            props.get('pane').dispose();
+            if (props.has('synths')) {
+              var synths = props.get('synths');
 
-            var _iterator = _createForOfIteratorHelper(synths.values()),
-                _step;
+              var _iterator = _createForOfIteratorHelper(synths.values()),
+                  _step;
 
-            try {
-              for (_iterator.s(); !(_step = _iterator.n()).done;) {
-                var value = _step.value;
-                value.dispose();
+              try {
+                for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                  var value = _step.value;
+                  value.dispose();
+                }
+              } catch (err) {
+                _iterator.e(err);
+              } finally {
+                _iterator.f();
               }
-            } catch (err) {
-              _iterator.e(err);
-            } finally {
-              _iterator.f();
             }
 
+            props.get('pane').dispose();
             props.get('sketchPage').remove();
             props.get('coverPage').remove();
             props.clear();
@@ -86376,7 +86374,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64909" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55001" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
