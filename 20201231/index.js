@@ -30,7 +30,7 @@ export const sketch = (props) => {
 				s.isLooping() ? s.noLoop() : s.loop();
 			});
 			f1.addMonitor(params, 'frameRate', {
-				interval: 1000,
+				interval: 500,
 			});
 		}
 
@@ -50,13 +50,13 @@ export const sketch = (props) => {
 			s.stroke(0);
 			s.strokeWeight(1);
 			s.beginShape();
-			s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
-			s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
+			s.curveVertex(edgeBall.get('leftEdge').x, edgeBall.get('leftEdge').y);
+			s.curveVertex(edgeBall.get('leftEdge').x, edgeBall.get('leftEdge').y);
 			balls.forEach((ball) => {
-				s.curveVertex(ball.pos.x, ball.pos.y);
+				s.curveVertex(ball.get('pos').x, ball.get('pos').y);
 			});
-			s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
-			s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
+			s.curveVertex(edgeBall.get('rightEdge').x, edgeBall.get('rightEdge').y);
+			s.curveVertex(edgeBall.get('rightEdge').x, edgeBall.get('rightEdge').y);
 			s.endShape();
 			s.pop();
 		}

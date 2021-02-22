@@ -85827,39 +85827,39 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var initBall = function initBall(index) {
   return function (params) {
-    var ball = {};
-    ball.cycleLength = 60 + 10 * index;
-    ball.frameVal = 0;
-    ball.angle = 0;
-    ball.marginRate = new _p.default.Vector(0.2, 0.2);
+    var ball = new Map();
+    ball.set('cycleLength', 60 + 10 * index);
+    ball.set('frameVal', 0);
+    ball.set('angle', 0);
+    ball.set('marginRate', new _p.default.Vector(0.2, 0.2));
 
     var calcLeftEdge = function calcLeftEdge() {
-      var x = params.canvasSize * ball.marginRate.x;
+      var x = params.canvasSize * ball.get('marginRate').x;
       var y = params.canvasSize / 2;
       return new _p.default.Vector(x, y);
     };
 
-    ball.leftEdge = calcLeftEdge();
+    ball.set('leftEdge', calcLeftEdge());
 
     var calcRightEdge = function calcRightEdge() {
-      var margin = params.canvasSize * ball.marginRate.x;
+      var margin = params.canvasSize * ball.get('marginRate').x;
       var x = params.canvasSize - margin;
       var y = params.canvasSize / 2;
       return new _p.default.Vector(x, y);
     };
 
-    ball.rightEdge = calcRightEdge();
+    ball.set('rightEdge', calcRightEdge());
 
     var calcAmp = function calcAmp() {
-      var margin = params.canvasSize * ball.marginRate.y;
+      var margin = params.canvasSize * ball.get('marginRate').y;
       var effectiveHeight = params.canvasSize - margin * 2;
       return effectiveHeight;
     };
 
-    ball.amp = calcAmp();
+    ball.set('amp', calcAmp());
 
     var calcPos = function calcPos() {
-      var margin = params.canvasSize * ball.marginRate.x;
+      var margin = params.canvasSize * ball.get('marginRate').x;
       var effectiveWidth = params.canvasSize - margin * 2;
       var eachWidth = effectiveWidth / (params.ballNum + 1);
       var x = margin + eachWidth * (index + 1);
@@ -85867,7 +85867,7 @@ var initBall = function initBall(index) {
       return new _p.default.Vector(x, y);
     };
 
-    ball.pos = calcPos();
+    ball.set('pos', calcPos());
     return ball;
   };
 };
@@ -85887,23 +85887,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var updateBall = function updateBall(ball) {
   return function (params, frameCount) {
-    var updatedBall = {};
-    updatedBall.cycleLength = ball.cycleLength;
-    updatedBall.frameVal = frameCount % ball.cycleLength;
-    updatedBall.angle = ball.frameVal * 2 * Math.PI / ball.cycleLength;
-    updatedBall.marginRate = ball.marginRate;
-    updatedBall.leftEdge = ball.leftEdge;
-    updatedBall.rightEdge = ball.rightEdge;
-    updatedBall.amp = ball.amp;
+    var updatedBall = new Map();
+    updatedBall.set('cycleLength', ball.get('cycleLength'));
+    updatedBall.set('frameVal', frameCount % ball.get('cycleLength'));
+    updatedBall.set('angle', ball.get('frameVal') * 2 * Math.PI / ball.get('cycleLength'));
+    updatedBall.set('marginRate', ball.get('marginRate'));
+    updatedBall.set('leftEdge', ball.get('leftEdge'));
+    updatedBall.set('rightEdge', ball.get('rightEdge'));
+    updatedBall.set('amp', ball.get('amp'));
 
     var calcPos = function calcPos() {
-      var x = ball.pos.x;
-      var margin = params.canvasSize * updatedBall.marginRate.y;
-      var y = margin + updatedBall.amp * (Math.sin(updatedBall.angle) + 1) / 2;
+      var x = ball.get('pos').x;
+      var margin = params.canvasSize * updatedBall.get('marginRate').y;
+      var y = margin + updatedBall.get('amp') * (Math.sin(updatedBall.get('angle')) + 1) / 2;
       return new _p.default.Vector(x, y);
     };
 
-    updatedBall.pos = calcPos();
+    updatedBall.set('pos', calcPos());
     return updatedBall;
   };
 };
@@ -85975,7 +85975,7 @@ var sketch = function sketch(props) {
         s.isLooping() ? s.noLoop() : s.loop();
       });
       f1.addMonitor(params, 'frameRate', {
-        interval: 1000
+        interval: 500
       });
     };
 
@@ -85995,13 +85995,13 @@ var sketch = function sketch(props) {
       s.stroke(0);
       s.strokeWeight(1);
       s.beginShape();
-      s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
-      s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
+      s.curveVertex(edgeBall.get('leftEdge').x, edgeBall.get('leftEdge').y);
+      s.curveVertex(edgeBall.get('leftEdge').x, edgeBall.get('leftEdge').y);
       balls.forEach(function (ball) {
-        s.curveVertex(ball.pos.x, ball.pos.y);
+        s.curveVertex(ball.get('pos').x, ball.get('pos').y);
       });
-      s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
-      s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
+      s.curveVertex(edgeBall.get('rightEdge').x, edgeBall.get('rightEdge').y);
+      s.curveVertex(edgeBall.get('rightEdge').x, edgeBall.get('rightEdge').y);
       s.endShape();
       s.pop();
     };
@@ -86374,7 +86374,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55001" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60095" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

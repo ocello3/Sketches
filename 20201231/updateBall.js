@@ -3,22 +3,23 @@
 import P5 from 'p5';
 
 export const updateBall = (ball) => (params, frameCount) => {
-	const updatedBall = {};
-	updatedBall.cycleLength = ball.cycleLength;
-	updatedBall.frameVal = frameCount % ball.cycleLength;
-	updatedBall.angle = ball.frameVal * 2 * Math.PI / ball.cycleLength;
-	updatedBall.marginRate = ball.marginRate;
-	updatedBall.leftEdge = ball.leftEdge;
-	updatedBall.rightEdge = ball.rightEdge;
-	updatedBall.amp = ball.amp;
+	const updatedBall = new Map();
+
+	updatedBall.set('cycleLength', ball.get('cycleLength'));
+	updatedBall.set('frameVal', frameCount % ball.get('cycleLength'));
+	updatedBall.set('angle', ball.get('frameVal') * 2 * Math.PI / ball.get('cycleLength'));
+	updatedBall.set('marginRate', ball.get('marginRate'));
+	updatedBall.set('leftEdge', ball.get('leftEdge'));
+	updatedBall.set('rightEdge', ball.get('rightEdge'));
+	updatedBall.set('amp', ball.get('amp'));
 	
 	const calcPos = () => {
-		const x = ball.pos.x;
-		const margin = params.canvasSize * updatedBall.marginRate.y;
-		const y = margin + updatedBall.amp * (Math.sin(updatedBall.angle) + 1)/2;
+		const x = ball.get('pos').x;
+		const margin = params.canvasSize * updatedBall.get('marginRate').y;
+		const y = margin + updatedBall.get('amp') * (Math.sin(updatedBall.get('angle')) + 1)/2;
 		return new P5.Vector(x, y);
 	}
-	updatedBall.pos = calcPos();
+	updatedBall.set('pos', calcPos());
 
 	return updatedBall;
 }
