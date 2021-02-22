@@ -9,6 +9,7 @@ export const initBall = (index) => (params) => {
 	ball.set('frameVal', 0);
 	ball.set('angle', 0);
 	ball.set('marginRate', new P5.Vector(0.2, 0.2));
+	ball.set('volume', 0);
 
 	const calcLeftEdge = () => {
 		const x = params.canvasSize * ball.get('marginRate').x;

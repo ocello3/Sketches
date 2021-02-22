@@ -85832,6 +85832,7 @@ var initBall = function initBall(index) {
     ball.set('frameVal', 0);
     ball.set('angle', 0);
     ball.set('marginRate', new _p.default.Vector(0.2, 0.2));
+    ball.set('volume', 0);
 
     var calcLeftEdge = function calcLeftEdge() {
       var x = params.canvasSize * ball.get('marginRate').x;
@@ -85904,6 +85905,22 @@ var updateBall = function updateBall(ball) {
     };
 
     updatedBall.set('pos', calcPos());
+
+    var normYPos = function normYPos() {
+      var yPos = updatedBall.get('pos').y;
+      var min = 0;
+      var max = params.canvasSize;
+      return (yPos - min) / (max - min);
+    };
+
+    var calcVolume = function calcVolume() {
+      var normedYPos = normYPos();
+      var min = -60;
+      var max = -15;
+      return normedYPos * (max - min) + min;
+    };
+
+    updatedBall.set('volume', calcVolume());
     return updatedBall;
   };
 };
@@ -86019,6 +86036,9 @@ var sketch = function sketch(props) {
       s.background(255);
       drawFrame(params);
       drawBalls(balls);
+      synths.get('amSynth').set({
+        volume: balls[1].get('volume')
+      });
       params.frameRate = s.frameRate();
     };
   };
@@ -86374,7 +86394,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60095" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58330" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

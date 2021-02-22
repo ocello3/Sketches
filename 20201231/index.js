@@ -72,6 +72,7 @@ export const sketch = (props) => {
 			s.background(255);
 			drawFrame(params);
 			drawBalls(balls);
+			synths.get('amSynth').set({ volume: balls[1].get('volume') });
 			params.frameRate = s.frameRate();
 		}
 	}

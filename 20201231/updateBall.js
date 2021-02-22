@@ -21,6 +21,20 @@ export const updateBall = (ball) => (params, frameCount) => {
 	}
 	updatedBall.set('pos', calcPos());
 
+	const normYPos = () => {
+		const yPos = updatedBall.get('pos').y;
+		const min = 0;
+		const max = params.canvasSize;
+		return (yPos - min) / (max - min);
+	}
+	const calcVolume = () => {
+		const normedYPos = normYPos();
+		const min = -60;
+		const max = -15;
+		return normedYPos * (max - min) + min;
+	}
+	updatedBall.set('volume', calcVolume());
+
 	return updatedBall;
 }
 
