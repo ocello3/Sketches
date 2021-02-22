@@ -29,8 +29,8 @@ export const updateBall = (ball) => (params, frameCount) => {
 	}
 	const calcVolume = () => {
 		const normedYPos = normYPos();
-		const min = -60;
-		const max = -15;
+		const min = -50;
+		const max = -10;
 		return normedYPos * (max - min) + min;
 	}
 	updatedBall.set('volume', calcVolume());

@@ -85915,8 +85915,8 @@ var updateBall = function updateBall(ball) {
 
     var calcVolume = function calcVolume() {
       var normedYPos = normYPos();
-      var min = -60;
-      var max = -15;
+      var min = -50;
+      var max = -10;
       return normedYPos * (max - min) + min;
     };
 
@@ -86036,8 +86036,14 @@ var sketch = function sketch(props) {
       s.background(255);
       drawFrame(params);
       drawBalls(balls);
-      synths.get('amSynth').set({
+      synths.get('amSynth_0').set({
+        volume: balls[0].get('volume')
+      });
+      synths.get('amSynth_1').set({
         volume: balls[1].get('volume')
+      });
+      synths.get('amSynth_2').set({
+        volume: balls[2].get('volume')
       });
       params.frameRate = s.frameRate();
     };
@@ -86061,9 +86067,17 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 var synths = function synths() {
   var synthMap = new Map();
-  synthMap.set('amSynth', new Tone.AMOscillator({
+  synthMap.set('amSynth_0', new Tone.AMOscillator({
+    frequency: 220,
+    volume: -60
+  }).toDestination());
+  synthMap.set('amSynth_1', new Tone.AMOscillator({
+    frequency: 440,
+    volume: -60
+  }).toDestination());
+  synthMap.set('amSynth_2', new Tone.AMOscillator({
     frequency: 880,
-    volume: -16
+    volume: -60
   }).toDestination());
   return synthMap;
 };
@@ -86394,7 +86408,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58330" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61999" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

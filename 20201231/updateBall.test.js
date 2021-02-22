@@ -30,9 +30,9 @@ test('confirm pos for fisrt cycle', () => {
 	});
 });
 
-test('confirm volume between -60 and -15', () => {
+test('confirm volume between -50 and -10', () => {
 	balls_1.forEach((ball) => {
-		expect(ball.get('volume')).toBeGreaterThan(-60);
-		expect(ball.get('volume')).toBeLessThan(-15);
+		expect(ball.get('volume')).toBeGreaterThan(-50);
+		expect(ball.get('volume')).toBeLessThan(-10);
 	})
 })
