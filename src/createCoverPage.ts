@@ -3,8 +3,9 @@ import Tweakpane from 'tweakpane';
 import { initSketch } from './index.js';
 import { getP5maps } from './getP5maps.js';
 
-export const createCoverPage = (props) => {
+export const createCoverPage = (props: any) => {
 
+// @ts-expect-error ts-migrate(7006) FIXME: Parameter 's' implicitly has an 'any' type.
 	return (s) => {
 		s.setup = () => {
 			s.noCanvas();
@@ -27,6 +28,7 @@ export const createCoverPage = (props) => {
 			
 			// prepare p5 sketch page
 			const p5maps = getP5maps();
+// @ts-expect-error ts-migrate(7006) FIXME: Parameter 'p5map' implicitly has an 'any' type.
 			const getCreateP5 = (p5map) => {
 				return function createP5 () {
 					// remove coverPage
@@ -47,8 +49,10 @@ export const createCoverPage = (props) => {
 						props.set('synths', synthMap);
 					}
 					// add tweakpane to props
+// @ts-expect-error ts-migrate(2322) FIXME: Type 'HTMLElement | null' is not assignable to typ... Remove this comment to see the full error message
 					props.set('pane', new Tweakpane({ container: document.getElementById('pane') }));
 					// add p5js to props
+// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '"canvas"' is not assignable to p... Remove this comment to see the full error message
 					props.set('sketchPage', new P5(p5map.get('sketch')(props), 'canvas'));
 					// prepare back to top function
 					function backToTop () {

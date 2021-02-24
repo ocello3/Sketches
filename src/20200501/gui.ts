@@ -1,4 +1,4 @@
-const gui = (props) => {
+const gui = (props: any) => {
 	const f1 = props.get('pane').addFolder({
 		title: 'Control',
 	});
@@ -6,6 +6,7 @@ const gui = (props) => {
 		title: 'start/stop',
 	});
 	stopButton.on('click', () => {
+// @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 's'.
 		s.isLooping() ? s.noLoop() : s.loop();
 	});
 }

@@ -2,7 +2,7 @@
 
 import P5 from 'p5';
 
-export const updateBall = (ball) => (params, frameCount) => {
+export const updateBall = (ball: any) => (params: any, frameCount: any) => {
 	const updatedBall = new Map();
 
 	updatedBall.set('cycleLength', ball.get('cycleLength'));
@@ -17,6 +17,7 @@ export const updateBall = (ball) => (params, frameCount) => {
 		const x = ball.get('pos').x;
 		const margin = params.canvasSize * updatedBall.get('marginRate').y;
 		const y = margin + updatedBall.get('amp') * (Math.sin(updatedBall.get('angle')) + 1)/2;
+// @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
 		return new P5.Vector(x, y);
 	}
 	updatedBall.set('pos', calcPos());

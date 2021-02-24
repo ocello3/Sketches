@@ -2,7 +2,7 @@ import P5 from 'p5';
 import { createCoverPage } from './createCoverPage.js';
 
 
-export const initSketch = (s) => {
+export const initSketch = (s: any) => {
 	s.setup = () => {
 		s.noCanvas();
 		const props = new Map();
