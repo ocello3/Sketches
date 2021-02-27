@@ -1,6 +1,6 @@
 import P5 from 'p5';
-import { getParams } from '../getParams.js';
-import * as target from './currentPosArray.js';
+import { getParams } from '../getParams';
+import * as target from './currentPosArray';
 const params = getParams(300);
 const pointNum = (params as any).waveNum * 4 + 1;
 const initEasingFactor = 0.4;

@@ -1,6 +1,6 @@
 'use strict';
 
-import { sketch } from './index.js';
+import { sketch } from './index';
 
 export const p5_20200501 = () => {
 	const p5_map = new Map();

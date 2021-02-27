@@ -1,8 +1,8 @@
 'use strict';
 import * as Tone from 'tone';
-import { initParams } from './initParams.js';
-import { initBall } from './initBall.js';
-import { updateBall } from './updateBall.js';
+import { initParams } from './initParams';
+import { initBall } from './initBall';
+import { updateBall } from './updateBall';
 export const sketch = (props: any) => {
     // @ts-expect-error ts-migrate(7006) FIXME: Parameter 's' implicitly has an 'any' type.
     return (s) => {

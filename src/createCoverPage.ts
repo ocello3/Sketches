@@ -1,7 +1,7 @@
 import P5 from 'p5';
 import Tweakpane from 'tweakpane';
-import { initSketch } from './index.js';
-import { getP5maps } from './getP5maps.js';
+import { initSketch } from './index';
+import { getP5maps } from './getP5maps';
 
 export const createCoverPage = (props: any) => {
 

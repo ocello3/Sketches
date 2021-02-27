@@ -1,7 +1,7 @@
 // "use strict";
 
 // @ts-expect-error ts-migrate(2305) FIXME: Module '"./index.js"' has no exported member 's'.
-import { s } from './index.js';
+import { s } from './index';
 
 export const frame = () => {
 	s.push();

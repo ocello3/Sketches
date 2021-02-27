@@ -1,6 +1,6 @@
 import P5 from 'p5';
-import { getParams } from '../getParams.js';
-import * as target from './targetPosArray.js';
+import { getParams } from '../getParams';
+import * as target from './targetPosArray';
 const params = getParams(300);
 const pointNum = (params as any).waveNum * 4 + 1;
 // @ts-expect-error ts-migrate(2582) FIXME: Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message

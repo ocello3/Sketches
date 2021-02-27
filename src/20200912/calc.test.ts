@@ -1,4 +1,4 @@
-import * as calc from './calc.js';
+import * as calc from './calc';
 const params = calc.getParams(500);
 const index = 0;
 const initFlagFunc = calc.initFlag(index);

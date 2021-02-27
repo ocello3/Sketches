@@ -1,10 +1,10 @@
-import { calcStatus } from './calcUpdate/status.js';
-import { calcFrameCount } from './calcUpdate/frameCount.js';
-import { calcStatusSwitchDuration } from './calcInit.js';
-import { calcInitEasingFactor } from './calcInit.js';
-import { calcEasingFactorReducRate } from './calcInit.js';
-import { calcCurrentPosArray } from './calcUpdate/currentPosArray.js';
-import { calcTargetPosArray } from './calcUpdate/targetPosArray.js';
+import { calcStatus } from './calcUpdate/status';
+import { calcFrameCount } from './calcUpdate/frameCount';
+import { calcStatusSwitchDuration } from './calcInit';
+import { calcInitEasingFactor } from './calcInit';
+import { calcEasingFactorReducRate } from './calcInit';
+import { calcCurrentPosArray } from './calcUpdate/currentPosArray';
+import { calcTargetPosArray } from './calcUpdate/targetPosArray';
 export const calcUpdate = (currentSnake: any, snakeIndex: any) => (params: any) => {
     const updateSnake = {};
     (updateSnake as any).statusSwitchDuration = calcStatusSwitchDuration(params);

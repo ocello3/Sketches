@@ -1,5 +1,5 @@
-import { getParams } from './getParams.js';
-import * as target from './calcInit.js';
+import { getParams } from './getParams';
+import * as target from './calcInit';
 const params = getParams(300);
 const pointNum = target.calcPointNum(params);
 // @ts-expect-error ts-migrate(2582) FIXME: Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message

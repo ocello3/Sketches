@@ -1,4 +1,4 @@
-import * as target from './frameCount.js';
+import * as target from './frameCount';
 
 // @ts-expect-error ts-migrate(2582) FIXME: Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
 test('calcFrameCount when restart', () => {

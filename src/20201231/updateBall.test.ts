@@ -1,7 +1,7 @@
 'use strict';
-import { initParams } from './initParams.js';
-import { initBall } from './initBall.js';
-import { updateBall } from './updateBall.js';
+import { initParams } from './initParams';
+import { initBall } from './initBall';
+import { updateBall } from './updateBall';
 const params = initParams(100);
 const balls = Array.from(Array((params as any).ballNum), (ball, index) => initBall(index)(params));
 const frameCount_init = 0;

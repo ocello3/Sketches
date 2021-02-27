@@ -1,6 +1,6 @@
 'use strict';
-import { initParams } from './initParams.js';
-import { initBall } from './initBall.js';
+import { initParams } from './initParams';
+import { initBall } from './initBall';
 const params = initParams(100);
 const balls = Array.from(Array((params as any).ballNum), (ball, index) => initBall(index)(params));
 // @ts-expect-error ts-migrate(2582) FIXME: Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message

@@ -1,5 +1,5 @@
 'use strict';
-import { getParams } from './getParams.js';
+import { getParams } from './getParams';
 // @ts-expect-error ts-migrate(2307) FIXME: Cannot find module './shader/shader.vert' or its c... Remove this comment to see the full error message
 import vert from './shader/shader.vert';
 // @ts-expect-error ts-migrate(2307) FIXME: Cannot find module './shader/shader.frag' or its c... Remove this comment to see the full error message

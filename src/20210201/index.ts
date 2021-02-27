@@ -1,5 +1,5 @@
 'use strict';
-import { initParams } from './initParams.js';
+import { initParams } from './initParams';
 export const sketch = (props: any) => {
     // @ts-expect-error ts-migrate(7006) FIXME: Parameter 's' implicitly has an 'any' type.
     return (s) => {

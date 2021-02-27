@@ -1,7 +1,7 @@
 'use strict';
 
-import { sketch } from './index.js';
-import { synths } from './synths.js';
+import { sketch } from './index';
+import { synths } from './synths';
 
 export const p5_20201231 = () => {
 	const p5map = new Map();
