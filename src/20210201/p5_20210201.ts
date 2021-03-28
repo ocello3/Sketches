@@ -1,5 +1,3 @@
-'use strict';
-
 import { sketch } from './index';
 
 export const p5_20210201 = () => {

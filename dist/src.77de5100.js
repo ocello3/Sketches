@@ -86295,7 +86295,7 @@ var p5_20201231 = function p5_20201231() {
 
 exports.p5_20201231 = p5_20201231;
 },{"./index":"20201231/index.ts","./synths":"20201231/synths.ts"}],"20210201/initParams.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -86303,22 +86303,16 @@ Object.defineProperty(exports, "__esModule", {
 exports.initParams = void 0;
 
 var initParams = function initParams(width) {
-  // const divSize = (width, height) => {
-  // 	return (width < height) ? width : height;
-  // };
-  // const canvasSize = (windowSize) => {
-  // 	return (windowSize < 500) ? windowSize : Math.round(windowSize * 0.6);
-  // };
-  var params = {};
-  params.windowSize = width; // params.canvasSize = canvasSize(params.windowSize);
-
-  params.canvasSize = width;
-  return params;
+  var initParams = {
+    windowSize: width,
+    canvasSize: width
+  };
+  return initParams;
 };
 
 exports.initParams = initParams;
 },{}],"20210201/index.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -86328,10 +86322,8 @@ exports.sketch = void 0;
 var initParams_1 = require("./initParams");
 
 var sketch = function sketch(props) {
-  // @ts-expect-error ts-migrate(7006) FIXME: Parameter 's' implicitly has an 'any' type.
   return function (s) {
-    var canvasDiv = document.getElementById('canvas'); // @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-
+    var canvasDiv = document.getElementById('canvas');
     var params = initParams_1.initParams(canvasDiv.clientWidth);
 
     var drawFrame = function drawFrame() {
@@ -86341,8 +86333,7 @@ var sketch = function sketch(props) {
       s.noFill();
       s.rect(0, 0, params.canvasSize, params.canvasSize);
       s.pop();
-    }; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'props' implicitly has an 'any' type.
-
+    };
 
     var setPane = function setPane(props) {
       var f1 = props.get('pane').addFolder({
@@ -86374,7 +86365,7 @@ var sketch = function sketch(props) {
 
 exports.sketch = sketch;
 },{"./initParams":"20210201/initParams.ts"}],"20210201/p5_20210201.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -86463,7 +86454,6 @@ var index_1 = require("./index");
 var getP5maps_1 = require("./getP5maps");
 
 var createCoverPage = function createCoverPage(props) {
-  // @ts-expect-error ts-migrate(7006) FIXME: Parameter 's' implicitly has an 'any' type.
   return function (s) {
     s.setup = function () {
       var e_1, _a;
@@ -86472,7 +86462,7 @@ var createCoverPage = function createCoverPage(props) {
 
       var titleContainer = s.createDiv().class('container');
       var titleRow = s.createDiv().class('row').parent(titleContainer);
-      var titleColumn = s.createDiv().class('one-half column').style('margin-top: 25%').parent(titleRow);
+      var titleColumn = s.createDiv().class('one-half column').parent(titleRow).style('margin-top: 25%');
       s.createElement('h2', 'Sketch List').parent(titleColumn); // table template
 
       var table = s.createElement('table').class('u-full-width').parent(titleContainer); // header
@@ -86483,7 +86473,7 @@ var createCoverPage = function createCoverPage(props) {
       s.createElement('th', 'Name').parent(theadTr);
       s.createElement('th', 'Note').parent(theadTr); // prepare p5 sketch page
 
-      var p5maps = getP5maps_1.getP5maps(); // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'p5map' implicitly has an 'any' type.
+      var p5maps = getP5maps_1.getP5maps();
 
       var getCreateP5 = function getCreateP5(p5map) {
         return function createP5() {
@@ -86504,7 +86494,6 @@ var createCoverPage = function createCoverPage(props) {
             var synthMap = p5map.get('synths')();
             props.set('synths', synthMap);
           } // add tweakpane to props
-          // @ts-expect-error ts-migrate(2322) FIXME: Type 'HTMLElement | null' is not assignable to typ... Remove this comment to see the full error message
 
 
           props.set('pane', new tweakpane_1.default({
@@ -86631,7 +86620,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60126" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60300" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,7 +1,7 @@
 import P5 from "p5";
 import { createCoverPage } from "./createCoverPage";
 
-export const initSketch = (s: any) => {
+export const initSketch = (s: P5): void => {
   s.setup = () => {
     s.noCanvas();
     const props = new Map();
