@@ -49,8 +49,7 @@ export const createCoverPage = (props: any) => {
 					// add tweakpane to props
 					props.set('pane', new Tweakpane({ container: document.getElementById('pane') }));
 					// add p5js to props
-// @ts-expect-error ts-migrate(2345) FIXME: Argument of type '"canvas"' is not assignable to p... Remove this comment to see the full error message
-					props.set('sketchPage', new P5(p5map.get('sketch')(props), 'canvas'));
+					props.set('sketchPage', new P5(p5map.get('sketch')(props), document.getElementById('canvas')));
 					// prepare back to top function
 					function backToTop () {
 						if (props.has('synths')) {

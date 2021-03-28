@@ -86499,9 +86499,8 @@ var createCoverPage = function createCoverPage(props) {
           props.set('pane', new tweakpane_1.default({
             container: document.getElementById('pane')
           })); // add p5js to props
-          // @ts-expect-error ts-migrate(2345) FIXME: Argument of type '"canvas"' is not assignable to p... Remove this comment to see the full error message
 
-          props.set('sketchPage', new p5_1.default(p5map.get('sketch')(props), 'canvas')); // prepare back to top function
+          props.set('sketchPage', new p5_1.default(p5map.get('sketch')(props), document.getElementById('canvas'))); // prepare back to top function
 
           function backToTop() {
             var e_2, _a;
@@ -86620,7 +86619,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60300" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61869" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
