@@ -5,8 +5,8 @@ export const p5_20200912 = ():p5map => {
 	const p5map: p5map = {
 		date: '20200912',
 		title: 'flags',
-		note: 'This is a test sketch to develop coverpage.',
-		content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+		note: 'Three flags using quadraticVertex',
+		content: 'Three flags are created using quadraticVertex. Each quadraticVertex points are moving vertical. The cycle for the right flag is shifting little by little.',
 		sketch: sketch,
 	}
 	return p5map;

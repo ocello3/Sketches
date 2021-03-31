@@ -4,9 +4,9 @@ import { p5map } from '../types/p5map';
 export const p5_20210201 = ():p5map => {
 	const p5map: p5map = {
 		date: '20210201',
-		title: 'div test',
-		note: 'This is a test sketch to develop coverpage.',
-		content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+		title: 'hello P5.Element',
+		note: 'Created this whole pages with P5.Element',
+		content: 'Using P5.Element, all doms for this whole pages are created. Refer <a href="https://scrapbox.io/ocello3blog/Simple_website_with_P5.Elements" target="_blank" rel="noopener noreferrer">this link</a> to see how to implement them.',
 		sketch: sketch,
 	}
 	return p5map;

@@ -1,7 +1,5 @@
-# How to start new sketch
-1. Copy previous sketch folder by `cp -r "previous directory name" "new directory name"
-1. Remove files in `pub` and `node_module` directory by `rm -rf "directory name"`
-	- Do not remove `package-lock.json
-1. Install dependencies libraries first by `npm run preinstall`
-1. Install all libraries by `npm install`
-
+This repositry is published using github pages [here](https://ocello3.github.io/Sketches/). Mainly the following resources are used for this website.
+- [p5.js](https://p5js.org/)
+- [Tone.js](https://tonejs.github.io/)
+- [Tweakpane](https://cocopon.github.io/tweakpane/)
+- [skelton.css](http://getskeleton.com/)
