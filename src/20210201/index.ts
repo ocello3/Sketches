@@ -1,7 +1,8 @@
-import { eP5 } from '../eP5';
+import { eP5 } from '../types/eP5';
 import { params, initParams } from './initParams';
+import { props } from '../types/props';
 
-export const sketch = (props: any) => {
+export const sketch = (props: props) => {
 	return (s: eP5): void => {
 		const canvasDiv = document.getElementById('canvas');
 		const params: params = initParams(canvasDiv.clientWidth);
@@ -10,11 +11,11 @@ export const sketch = (props: any) => {
 			s.stroke('black');
 			s.strokeWeight(1);
 			s.noFill();
-			s.rect(0, 0, (params as any).canvasSize, (params as any).canvasSize);
+			s.rect(0, 0, params.canvasSize, params.canvasSize);
 			s.pop();
 		};
-		const setPane = (props) => {
-			const f1 = props.get('pane').addFolder({
+		const setPane = (props: props) => {
+			const f1 = props.pane.addFolder({
 				title: 'Control',
 			});
 			const stopButton = f1.addButton({
@@ -25,7 +26,7 @@ export const sketch = (props: any) => {
 			});
 		};
 		s.setup = () => {
-			s.createCanvas((params as any).canvasSize, (params as any).canvasSize);
+			s.createCanvas(params.canvasSize, params.canvasSize);
 			setPane(props);
 			s.noLoop();
 		};
@@ -34,7 +35,7 @@ export const sketch = (props: any) => {
 			drawFrame();
 			s.frameRate(2);
 			s.textSize(50);
-			s.text(s.frameCount, (params as any).canvasSize / 2, (params as any).canvasSize / 2);
+			s.text(s.frameCount, params.canvasSize / 2, params.canvasSize / 2);
 		};
 	};
 };

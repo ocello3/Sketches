@@ -1,42 +1,40 @@
 import P5 from 'p5';
-import { getParams } from './getParams';
+import { params, getParams } from './getParams';
 import * as target from './calcUpdate';
+import { snake } from './snake';
+
 const params = getParams(300);
-const pointNum = (params as any).waveNum * 4 + 1;
-const currentSnake = {};
-(currentSnake as any).status = 'keep';
-(currentSnake as any).frameCount = 1;
-// @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-(currentSnake as any).targetPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-// @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-(currentSnake as any).currentPosArray = Array.from(Array(pointNum), () => new P5.Vector(0, 0));
-// @ts-expect-error ts-migrate(2582) FIXME: Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
+const pointNum = params.waveNum * 4 + 1;
+const currentSnake: snake = {
+	statusSwitchDuration: 0,
+	initEasingFactor: 0,
+	easingFactorReducRate: 0,
+	status: 'keep',
+	frameCount: 1,
+	targetPosArray: Array.from(Array(pointNum), () => new P5.Vector().set(0, 0)),
+	currentPosArray: Array.from(Array(pointNum), () => new P5.Vector().set(0, 0)),
+};
+
 test('status for restart', () => {
-    // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-    (currentSnake as any).currentPosArray = Array.from(Array(pointNum), () => new P5.Vector((params as any).canvasSize + 50, (params as any).canvasSize / 2));
-    for (let snakeIndex = 0; snakeIndex < (params as any).snakeNum; snakeIndex++) {
+    currentSnake.currentPosArray = Array.from(Array(pointNum), () => new P5.Vector().set(params.canvasSize + 50, params.canvasSize / 2));
+    for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
         const updateSnakeFunc = target.calcUpdate(currentSnake, snakeIndex);
         const updateSnake = updateSnakeFunc(params);
-        // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'expect'.
-        expect((updateSnake as any).status).toBe('restart');
+        expect(updateSnake.status).toBe('restart');
     }
 });
-// @ts-expect-error ts-migrate(2582) FIXME: Cannot find name 'test'. Do you need to install ty... Remove this comment to see the full error message
+
 test('currentPosArray for restart', () => {
-    (currentSnake as any).frameCount = 1000;
-    // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-    (currentSnake as any).currentPosArray = Array.from(Array(pointNum), () => new P5.Vector((params as any).canvasSize + 50, 100));
-    for (let snakeIndex = 0; snakeIndex < (params as any).snakeNum; snakeIndex++) {
+    currentSnake.frameCount = 1000;
+    currentSnake.currentPosArray = Array.from(Array(pointNum), () => new P5.Vector().set((params.canvasSize + 50, 100)));
+    for (let snakeIndex = 0; snakeIndex < params.snakeNum; snakeIndex++) {
         const updateSnakeFunc = target.calcUpdate(currentSnake, snakeIndex);
         const updateSnake = updateSnakeFunc(params);
-        // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'currentPos' implicitly has an 'any' typ... Remove this comment to see the full error message
-        (updateSnake as any).currentPosArray.forEach(currentPos => {
-            // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'expect'.
-            expect(currentPos.x).toBeLessThanOrEqual(0);
-            // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'expect'.
-            expect(currentPos.y).toBeGreaterThan(0);
-            // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'expect'.
-            expect(currentPos.y).toBeLessThan((params as any).canvasSize);
+        updateSnake.currentPosArray.forEach(currentPos => {
+            expect(currentPos.x).toBeGreaterThanOrEqual(0);
+            expect(currentPos.y).toBeGreaterThanOrEqual(0);
+            expect(currentPos.y).toBeLessThan(params.canvasSize);
         });
     }
 });
+

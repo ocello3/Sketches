@@ -1,15 +1,16 @@
-'use strict';
-
 import { sketch } from './index';
 import { synths } from './synths';
+import { p5map } from '../types/p5map';
 
-export const p5_20201231 = () => {
-	const p5map = new Map();
-	p5map.set('date', '20201231');
-	p5map.set('title', 'hello tone');
-	p5map.set('note', 'This is a test sketch to develop coverpage.')
-	p5map.set('sketch', sketch);
-	p5map.set('synths', synths);
+export const p5_20201231 = ():p5map => {
+	const p5map: p5map = {
+		date: '20201231',
+		title: 'hello tone',
+		note: 'This is a test sketch to develop coverpage.',
+		content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+		sketch: sketch,
+		synths: synths,
+	}
 	return p5map;
 }
 

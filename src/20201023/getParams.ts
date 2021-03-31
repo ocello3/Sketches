@@ -1,6 +1,11 @@
-'use strict';
-export const getParams = (width: any) => {
-    const params = {};
-    (params as any).canvasSize = width;
-    return params;
+export interface params {
+	canvasSize: number;
+}
+
+export const getParams = (width: number): params => {
+	const params: params = {
+		canvasSize: width,
+	}
+	return params;
 };
+

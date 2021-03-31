@@ -1,9 +1,16 @@
-'use strict';
-export const initParams = (width: any) => {
-    const params = {};
-    (params as any).canvasSize = width;
-    (params as any).frameRate = 0;
-    (params as any).isStarted = false;
-    (params as any).ballNum = 3;
-    return params;
+export interface params {
+	canvasSize: number;
+	frameRate: number;
+	isStarted: boolean;
+	ballNum: number;
+}
+
+export const initParams = (width: number): params => {
+	const params: params = {
+	canvasSize: width,
+	frameRate: 0,
+	isStarted: false,
+	ballNum: 3,
+	};
+	return params;
 };

@@ -3,7 +3,7 @@ export interface params {
 	canvasSize: number;
 }
 
-export const initParams = (width: number) => {
+export const initParams = (width: number):params => {
 	
 	const initParams: params = {
 		windowSize: width,

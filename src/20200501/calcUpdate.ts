@@ -5,14 +5,25 @@ import { calcInitEasingFactor } from './calcInit';
 import { calcEasingFactorReducRate } from './calcInit';
 import { calcCurrentPosArray } from './calcUpdate/currentPosArray';
 import { calcTargetPosArray } from './calcUpdate/targetPosArray';
-export const calcUpdate = (currentSnake: any, snakeIndex: any) => (params: any) => {
-    const updateSnake = {};
-    (updateSnake as any).statusSwitchDuration = calcStatusSwitchDuration(params);
-    (updateSnake as any).initEasingFactor = calcInitEasingFactor(params);
-    (updateSnake as any).easingFactorReducRate = calcEasingFactorReducRate(params);
-    (updateSnake as any).status = calcStatus(params, currentSnake.frameCount, (updateSnake as any).statusSwitchDuration, currentSnake.currentPosArray);
-    (updateSnake as any).frameCount = calcFrameCount(currentSnake.frameCount, (updateSnake as any).status);
-    (updateSnake as any).targetPosArray = calcTargetPosArray(currentSnake.targetPosArray, snakeIndex, params, (updateSnake as any).status);
-    (updateSnake as any).currentPosArray = calcCurrentPosArray(currentSnake.currentPosArray, (updateSnake as any).status, snakeIndex, params, (updateSnake as any).targetPosArray, (updateSnake as any).initEasingFactor, (updateSnake as any).easingFactorReducRate);
-    return updateSnake;
-};
+import { params } from './getParams';
+import { snake } from './snake';
+
+export const calcUpdate = (currentSnake: snake, snakeIndex: number) => (params: params) => {
+	const statusSwitchDuration = calcStatusSwitchDuration(params);
+	const initEasingFactor = calcInitEasingFactor(params);
+	const easingFactorReducRate = calcEasingFactorReducRate(params);
+	const status = calcStatus(params, currentSnake.frameCount, statusSwitchDuration, currentSnake.currentPosArray);
+	const frameCount = calcFrameCount(currentSnake.frameCount, status);
+	const targetPosArray = calcTargetPosArray(currentSnake.targetPosArray, snakeIndex, params, status);
+	const currentPosArray = calcCurrentPosArray(currentSnake.currentPosArray, status, snakeIndex, params, targetPosArray, initEasingFactor, easingFactorReducRate);
+	const updateSnake:snake = {
+		statusSwitchDuration: statusSwitchDuration,
+		initEasingFactor: initEasingFactor,
+		easingFactorReducRate: easingFactorReducRate,
+		status: status,
+		frameCount: frameCount,
+		targetPosArray: targetPosArray,
+		currentPosArray: currentPosArray,
+	}
+	return updateSnake;
+}

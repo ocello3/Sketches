@@ -2,8 +2,10 @@ import P5 from 'p5';
 import Tweakpane from 'tweakpane';
 import { initSketch } from './index';
 import { getP5maps } from './getP5maps';
+import { p5map } from './types/p5map';
+import { props } from './types/props';
 
-export const createCoverPage = (props: any) => {
+export const createCoverPage = (props: props) => {
 
 	return (s: P5) => {
 		s.setup = () => {
@@ -26,11 +28,11 @@ export const createCoverPage = (props: any) => {
 			s.createElement('th', 'Note').parent(theadTr);
 			
 			// prepare p5 sketch page
-			const p5maps = getP5maps();
-			const getCreateP5 = (p5map: any) => {
+			const p5maps:p5map[] = getP5maps();
+			const getCreateP5 = (p5map: p5map) => {
 				return function createP5 () {
 					// remove coverPage
-					props.get('coverPage').remove();
+					props.coverPage.remove();
 					// create divs
 					const container = s.createDiv().class('container');
 					const sketchRow = s.createDiv().class('row').parent(container).style('margin-top: 12%');
@@ -39,28 +41,28 @@ export const createCoverPage = (props: any) => {
 					const buttonRow = s.createDiv().class('row').parent(container).style('margin-top: 2%');
 					s.createDiv('back to top').parent(buttonRow).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
 					const contentRow = s.createDiv().class('row').parent(container).style('margin-top: 6%');
-					s.createElement('h5', p5map.get('title')).parent(contentRow);
-					p5map.has('content')? s.createP(p5map.get('content')).parent(contentRow) : s.createP(p5map.get('note')).parent(contentRow);
+					s.createElement('h5', p5map.title).parent(contentRow);
+					(p5map.content != null)? s.createP(p5map.content).parent(contentRow) : s.createP(p5map.note).parent(contentRow);
 					// add synths to props
-					if (p5map.has('synths')) {
-						const synthMap = p5map.get('synths')();
-						props.set('synths', synthMap);
+					if (p5map.synths != null) {
+						const synthMap = p5map.synths();
+						props.synths = synthMap;
 					}
 					// add tweakpane to props
-					props.set('pane', new Tweakpane({ container: document.getElementById('pane') }));
+					props.pane = new Tweakpane({ container: document.getElementById('pane') });
 					// add p5js to props
-					props.set('sketchPage', new P5(p5map.get('sketch')(props), document.getElementById('canvas')));
+					props.sketchPage = new P5(p5map.sketch(props), document.getElementById('canvas'));
 					// prepare back to top function
 					function backToTop () {
-						if (props.has('synths')) {
-							const synths = props.get('synths');
+						if (props.synths != null) {
+							const synths = props.synths;
 							for (const value of synths.values()) value.dispose();
 						}
-						props.get('pane').dispose();
-						props.get('sketchPage').remove();
-						props.get('coverPage').remove();
-						props.clear();
-						props.set('coverPage', new P5(initSketch));
+						props.pane.dispose();
+						props.sketchPage.remove();
+						props.coverPage.remove();
+						props = { init: true };
+						props.coverPage = new P5(initSketch);
 					}
 				}
 			}
@@ -69,9 +71,9 @@ export const createCoverPage = (props: any) => {
 				const createP5 = getCreateP5(p5map);
 				const tbody = s.createElement('tbody').parent(table);
 				const tbodyTr = s.createElement('tr').parent(tbody);
-				s.createElement('td', p5map.get('date')).parent(tbodyTr);
-				s.createElement('td', p5map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5);
-				s.createElement('td', p5map.get('note')).parent(tbodyTr);
+				s.createElement('td', p5map.date).parent(tbodyTr);
+				s.createElement('td', p5map.title).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5);
+				s.createElement('td', p5map.note).parent(tbodyTr);
 			}
 		}
 	}

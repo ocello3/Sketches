@@ -1,5 +1,3 @@
-'use strict';
-
 import * as Tone from 'tone';
 
 export const synths = () => {

@@ -33773,7 +33773,7 @@ var process = require("process");
   );
 });
 },{"process":"../node_modules/process/browser.js"}],"20200501/getParams.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -33781,26 +33781,29 @@ Object.defineProperty(exports, "__esModule", {
 exports.getParams = void 0;
 
 var getParams = function getParams(width) {
-  var params = {};
-  params.canvasSize = width;
-  params.statusSwitchDuration = {
-    min: 5,
-    max: 200
+  var canvasSize = width;
+  var snakeNum = 5;
+  var params = {
+    canvasSize: width,
+    statusSwitchDuration: {
+      min: 5,
+      max: 200
+    },
+    snakeNum: 5,
+    waveNum: 3,
+    waveLength: 1 / 30 * canvasSize,
+    headWaveAmp: canvasSize / (snakeNum + 1) * 0.8,
+    waveAmpReducRate: 0.7,
+    initEasingFactor: {
+      min: 0.1,
+      max: 0.5
+    },
+    easingFactorReducRate: {
+      min: 0.7,
+      max: 1.0
+    },
+    lineNum: 8
   };
-  params.snakeNum = 5;
-  params.waveNum = 3;
-  params.waveLength = 1 / 30 * params.canvasSize;
-  params.headWaveAmp = params.canvasSize / (params.snakeNum + 1) * 0.8;
-  params.waveAmpReducRate = 0.7;
-  params.initEasingFactor = {
-    min: 0.1,
-    max: 0.5
-  };
-  params.easingFactorReducRate = {
-    min: 0.7,
-    max: 1.0
-  };
-  params.lineNum = 8;
   return params;
 };
 
@@ -33827,62 +33830,62 @@ var calcStatusSwitchDuration = function calcStatusSwitchDuration(params) {
   return Math.floor(floatDuration);
 };
 
-exports.calcStatusSwitchDuration = calcStatusSwitchDuration; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'params' implicitly has an 'any' type.
+exports.calcStatusSwitchDuration = calcStatusSwitchDuration;
 
 var calcInitEasingFactor = function calcInitEasingFactor(params) {
   var diff = params.initEasingFactor.max - params.initEasingFactor.min;
   return Math.random() * diff + params.initEasingFactor.min;
 };
 
-exports.calcInitEasingFactor = calcInitEasingFactor; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'params' implicitly has an 'any' type.
+exports.calcInitEasingFactor = calcInitEasingFactor;
 
 var calcEasingFactorReducRate = function calcEasingFactorReducRate(params) {
   var diff = params.easingFactorReducRate.max - params.easingFactorReducRate.min;
   return Math.random() * diff + params.easingFactorReducRate.min;
 };
 
-exports.calcEasingFactorReducRate = calcEasingFactorReducRate; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'params' implicitly has an 'any' type.
+exports.calcEasingFactorReducRate = calcEasingFactorReducRate;
 
 var calcPointNum = function calcPointNum(params) {
   return params.waveNum * 4 + 1;
 };
 
-exports.calcPointNum = calcPointNum; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'snakeIndex' implicitly has an 'any' typ... Remove this comment to see the full error message
+exports.calcPointNum = calcPointNum;
 
 var calcStretchedSnakeHeadPos = function calcStretchedSnakeHeadPos(snakeIndex, params) {
+  var pos = new p5_1.default.Vector();
   var x = 0;
-  var y = params.canvasSize / (params.snakeNum + 1) * (snakeIndex + 1); // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-  return new p5_1.default.Vector(x, y);
+  var y = params.canvasSize / (params.snakeNum + 1) * (snakeIndex + 1);
+  return pos.set(x, y);
 };
 
-exports.calcStretchedSnakeHeadPos = calcStretchedSnakeHeadPos; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'pointIndex' implicitly has an 'any' typ... Remove this comment to see the full error message
+exports.calcStretchedSnakeHeadPos = calcStretchedSnakeHeadPos;
 
 var calcStretchedSnakePosAngle = function calcStretchedSnakePosAngle(pointIndex) {
   return Math.PI / 2 * pointIndex;
 };
 
-exports.calcStretchedSnakePosAngle = calcStretchedSnakePosAngle; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'pointIndex' implicitly has an 'any' typ... Remove this comment to see the full error message
+exports.calcStretchedSnakePosAngle = calcStretchedSnakePosAngle;
 
 var calcWaveAmp = function calcWaveAmp(pointIndex, params) {
   return params.headWaveAmp * Math.pow(params.waveAmpReducRate, pointIndex);
 };
 
-exports.calcWaveAmp = calcWaveAmp; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'pointIndex' implicitly has an 'any' typ... Remove this comment to see the full error message
+exports.calcWaveAmp = calcWaveAmp;
 
 var calcInitStretchedSnakePos = function calcInitStretchedSnakePos(pointIndex) {
   return function (snakeIndex, params) {
+    var pos = new p5_1.default.Vector();
     var stretchedSnakeHeadPos = exports.calcStretchedSnakeHeadPos(snakeIndex, params);
     var stretchedSnakePosAngle = exports.calcStretchedSnakePosAngle(pointIndex);
     var waveAmp = exports.calcWaveAmp(pointIndex, params);
     var x = stretchedSnakeHeadPos.x - params.waveLength / 2 * pointIndex;
-    var y = stretchedSnakeHeadPos.y + waveAmp * Math.sin(stretchedSnakePosAngle); // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-    return new p5_1.default.Vector(x, y);
+    var y = stretchedSnakeHeadPos.y + waveAmp * Math.sin(stretchedSnakePosAngle);
+    return pos.set(x, y);
   };
 };
 
-exports.calcInitStretchedSnakePos = calcInitStretchedSnakePos; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'snakeIndex' implicitly has an 'any' typ... Remove this comment to see the full error message
+exports.calcInitStretchedSnakePos = calcInitStretchedSnakePos;
 
 var calcInitStretchedSnakePosArray = function calcInitStretchedSnakePosArray(snakeIndex, params) {
   var pointNum = exports.calcPointNum(params);
@@ -33894,18 +33897,23 @@ var calcInitStretchedSnakePosArray = function calcInitStretchedSnakePosArray(sna
   });
 };
 
-exports.calcInitStretchedSnakePosArray = calcInitStretchedSnakePosArray; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'snakeIndex' implicitly has an 'any' typ... Remove this comment to see the full error message
+exports.calcInitStretchedSnakePosArray = calcInitStretchedSnakePosArray;
 
 var calcInit = function calcInit(snakeIndex) {
   return function (params) {
-    var initSnake = {};
-    initSnake.statusSwitchDuration = exports.calcStatusSwitchDuration(params);
-    initSnake.initEasingFactor = exports.calcInitEasingFactor(params);
-    initSnake.easingFactorReducRate = exports.calcEasingFactorReducRate(params);
-    initSnake.status = 'keep';
-    initSnake.frameCount = 1;
-    initSnake.targetPosArray = exports.calcInitStretchedSnakePosArray(snakeIndex, params);
-    initSnake.currentPosArray = initSnake.targetPosArray;
+    var statusSwitchDuration = exports.calcStatusSwitchDuration(params);
+    var initEasingFactor = exports.calcInitEasingFactor(params);
+    var easingFactorReducRate = exports.calcEasingFactorReducRate(params);
+    var targetPosArray = exports.calcInitStretchedSnakePosArray(snakeIndex, params);
+    var initSnake = {
+      statusSwitchDuration: statusSwitchDuration,
+      initEasingFactor: initEasingFactor,
+      easingFactorReducRate: easingFactorReducRate,
+      status: 'keep',
+      frameCount: 1,
+      targetPosArray: targetPosArray,
+      currentPosArray: targetPosArray
+    };
     return initSnake;
   };
 };
@@ -33968,16 +33976,13 @@ var calcCurrentPos = function calcCurrentPos(currentCurrentPos, pointIndex) {
   };
 };
 
-exports.calcCurrentPos = calcCurrentPos; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'currentCurrentPosArray' implicitly has ... Remove this comment to see the full error message
+exports.calcCurrentPos = calcCurrentPos;
 
 var calcCurrentPosArray = function calcCurrentPosArray(currentCurrentPosArray, status, snakeIndex, params, targetPosArray, initEasingFactor, easingFactorReducRate) {
-  if (status == 'restart') return calcInit_1.calcInitStretchedSnakePosArray(snakeIndex, params); // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'point' implicitly has an 'any' type.
-
-  var curryArray = currentCurrentPosArray.map(function (point, pointIndex) {
+  if (status == 'restart') return calcInit_1.calcInitStretchedSnakePosArray(snakeIndex, params);
+  return currentCurrentPosArray.map(function (point, pointIndex) {
     return exports.calcCurrentPos(point, pointIndex);
-  }); // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'func' implicitly has an 'any' type.
-
-  return curryArray.map(function (func) {
+  }).map(function (func) {
     return func(params, targetPosArray, initEasingFactor, easingFactorReducRate);
   });
 };
@@ -34003,49 +34008,43 @@ var calcInit_1 = require("../calcInit");
 
 var calcShrinkedSnakePos = function calcShrinkedSnakePos(currentTargetPos, pointIndex) {
   return function (params) {
-    var xIncrement = params.waveLength / 4 * pointIndex; // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-    return p5_1.default.Vector.add(currentTargetPos, new p5_1.default.Vector(xIncrement, 0));
+    var xIncrement = params.waveLength / 4 * pointIndex;
+    var increment = new p5_1.default.Vector();
+    return p5_1.default.Vector.add(currentTargetPos, increment.set(xIncrement, 0));
   };
 };
 
-exports.calcShrinkedSnakePos = calcShrinkedSnakePos; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'currentTargetPosArray' implicitly has a... Remove this comment to see the full error message
+exports.calcShrinkedSnakePos = calcShrinkedSnakePos;
 
 var calcShrinkedSnakePosArray = function calcShrinkedSnakePosArray(currentTargetPosArray, params) {
-  // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'currentTargetPos' implicitly has an 'an... Remove this comment to see the full error message
-  var arrayFunc = currentTargetPosArray.map(function (currentTargetPos, pointIndex) {
+  return currentTargetPosArray.map(function (currentTargetPos, pointIndex) {
     return exports.calcShrinkedSnakePos(currentTargetPos, pointIndex);
-  }); // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'func' implicitly has an 'any' type.
-
-  return arrayFunc.map(function (func) {
+  }).map(function (func) {
     return func(params);
   });
 };
 
-exports.calcShrinkedSnakePosArray = calcShrinkedSnakePosArray; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'currentTargetPos' implicitly has an 'an... Remove this comment to see the full error message
+exports.calcShrinkedSnakePosArray = calcShrinkedSnakePosArray;
 
 var calcStretchedSnakePos = function calcStretchedSnakePos(currentTargetPos, pointIndex, currentTargetPosArray) {
   return function (params) {
-    var xIncrement = params.waveLength / 4 * (currentTargetPosArray.length - pointIndex - 1); // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-    return p5_1.default.Vector.add(currentTargetPos, new p5_1.default.Vector(xIncrement, 0));
+    var xIncrement = params.waveLength / 4 * (currentTargetPosArray.length - pointIndex - 1);
+    var increment = new p5_1.default.Vector();
+    return p5_1.default.Vector.add(currentTargetPos, increment.set(xIncrement, 0));
   };
 };
 
-exports.calcStretchedSnakePos = calcStretchedSnakePos; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'currentTargetPosArray' implicitly has a... Remove this comment to see the full error message
+exports.calcStretchedSnakePos = calcStretchedSnakePos;
 
 var calcStretchedSnakePosArray = function calcStretchedSnakePosArray(currentTargetPosArray, params) {
-  // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'currentTargetPos' implicitly has an 'an... Remove this comment to see the full error message
-  var arrayFunc = currentTargetPosArray.map(function (currentTargetPos, pointIndex, self) {
+  return currentTargetPosArray.map(function (currentTargetPos, pointIndex, self) {
     return exports.calcStretchedSnakePos(currentTargetPos, pointIndex, self);
-  }); // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'func' implicitly has an 'any' type.
-
-  return arrayFunc.map(function (func) {
+  }).map(function (func) {
     return func(params);
   });
 };
 
-exports.calcStretchedSnakePosArray = calcStretchedSnakePosArray; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'currentTargetPosArray' implicitly has a... Remove this comment to see the full error message
+exports.calcStretchedSnakePosArray = calcStretchedSnakePosArray;
 
 var calcTargetPosArray = function calcTargetPosArray(currentTargetPosArray, snakeIndex, params, status) {
   if (status == 'restart') return calcInit_1.calcInitStretchedSnakePosArray(snakeIndex, params);
@@ -34079,21 +34078,29 @@ var targetPosArray_1 = require("./calcUpdate/targetPosArray");
 
 var calcUpdate = function calcUpdate(currentSnake, snakeIndex) {
   return function (params) {
-    var updateSnake = {};
-    updateSnake.statusSwitchDuration = calcInit_1.calcStatusSwitchDuration(params);
-    updateSnake.initEasingFactor = calcInit_2.calcInitEasingFactor(params);
-    updateSnake.easingFactorReducRate = calcInit_3.calcEasingFactorReducRate(params);
-    updateSnake.status = status_1.calcStatus(params, currentSnake.frameCount, updateSnake.statusSwitchDuration, currentSnake.currentPosArray);
-    updateSnake.frameCount = frameCount_1.calcFrameCount(currentSnake.frameCount, updateSnake.status);
-    updateSnake.targetPosArray = targetPosArray_1.calcTargetPosArray(currentSnake.targetPosArray, snakeIndex, params, updateSnake.status);
-    updateSnake.currentPosArray = currentPosArray_1.calcCurrentPosArray(currentSnake.currentPosArray, updateSnake.status, snakeIndex, params, updateSnake.targetPosArray, updateSnake.initEasingFactor, updateSnake.easingFactorReducRate);
+    var statusSwitchDuration = calcInit_1.calcStatusSwitchDuration(params);
+    var initEasingFactor = calcInit_2.calcInitEasingFactor(params);
+    var easingFactorReducRate = calcInit_3.calcEasingFactorReducRate(params);
+    var status = status_1.calcStatus(params, currentSnake.frameCount, statusSwitchDuration, currentSnake.currentPosArray);
+    var frameCount = frameCount_1.calcFrameCount(currentSnake.frameCount, status);
+    var targetPosArray = targetPosArray_1.calcTargetPosArray(currentSnake.targetPosArray, snakeIndex, params, status);
+    var currentPosArray = currentPosArray_1.calcCurrentPosArray(currentSnake.currentPosArray, status, snakeIndex, params, targetPosArray, initEasingFactor, easingFactorReducRate);
+    var updateSnake = {
+      statusSwitchDuration: statusSwitchDuration,
+      initEasingFactor: initEasingFactor,
+      easingFactorReducRate: easingFactorReducRate,
+      status: status,
+      frameCount: frameCount,
+      targetPosArray: targetPosArray,
+      currentPosArray: currentPosArray
+    };
     return updateSnake;
   };
 };
 
 exports.calcUpdate = calcUpdate;
 },{"./calcUpdate/status":"20200501/calcUpdate/status.ts","./calcUpdate/frameCount":"20200501/calcUpdate/frameCount.ts","./calcInit":"20200501/calcInit.ts","./calcUpdate/currentPosArray":"20200501/calcUpdate/currentPosArray.ts","./calcUpdate/targetPosArray":"20200501/calcUpdate/targetPosArray.ts"}],"20200501/index.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -34107,25 +34114,21 @@ var calcInit_1 = require("./calcInit");
 var calcUpdate_1 = require("./calcUpdate");
 
 var sketch = function sketch(props) {
-  // @ts-expect-error ts-migrate(7006) FIXME: Parameter 's' implicitly has an 'any' type.
   return function (s) {
-    var canvasDiv = document.getElementById('canvas'); // @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-
+    var canvasDiv = document.getElementById('canvas');
     var params = getParams_1.getParams(canvasDiv.clientWidth);
     var colorPalette = {
       green: s.color('green'),
       pink: s.color('pink')
     };
-    var snakes = Array.from(Array(params.snakeNum), function (snake, snakeIndex) {
+    var snakes = Array.from(Array(params.snakeNum), function (_, snakeIndex) {
       return calcInit_1.calcInit(snakeIndex);
-    }); // @ts-expect-error ts-migrate(2322) FIXME: Type '{}[]' is not assignable to type '((params: a... Remove this comment to see the full error message
-
-    snakes = snakes.map(function (func) {
+    }).map(function (func) {
       return func(params);
-    }); // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'props' implicitly has an 'any' type.
+    });
 
     var setPane = function setPane(props) {
-      var f1 = props.get('pane').addFolder({
+      var f1 = props.pane.addFolder({
         title: 'Control'
       });
       var stopButton = f1.addButton({
@@ -34146,9 +34149,7 @@ var sketch = function sketch(props) {
       // update snakes
       snakes = snakes.map(function (currentSnake, snakeIndex) {
         return calcUpdate_1.calcUpdate(currentSnake, snakeIndex);
-      }); // @ts-expect-error ts-migrate(2322) FIXME: Type '{}[]' is not assignable to type '((params: a... Remove this comment to see the full error message
-
-      snakes = snakes.map(function (func) {
+      }).map(function (func) {
         return func(params);
       }); // draw background
 
@@ -34176,8 +34177,7 @@ var sketch = function sketch(props) {
           snakeColor.setAlpha(alpha);
           s.stroke(snakeColor);
           s.beginShape();
-          s.curveVertex(initPos.x + lineIndex, initPos.y); // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'pos' implicitly has an 'any' type.
-
+          s.curveVertex(initPos.x + lineIndex, initPos.y);
           posArray.forEach(function (pos) {
             s.curveVertex(pos.x + lineIndex, pos.y);
           });
@@ -34196,7 +34196,7 @@ var sketch = function sketch(props) {
 
 exports.sketch = sketch;
 },{"./getParams":"20200501/getParams.ts","./calcInit":"20200501/calcInit.ts","./calcUpdate":"20200501/calcUpdate.ts"}],"20200501/p5_20200501.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -34206,12 +34206,14 @@ exports.p5_20200501 = void 0;
 var index_1 = require("./index");
 
 var p5_20200501 = function p5_20200501() {
-  var p5_map = new Map();
-  p5_map.set('date', '20200501');
-  p5_map.set('title', 'snake');
-  p5_map.set('note', 'This is a test sketch to develop coverpage.');
-  p5_map.set('sketch', index_1.sketch);
-  return p5_map;
+  var p5map = {
+    date: '20200501',
+    title: 'snake',
+    note: 'This is a test sketch to develop coverpage.',
+    content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+    sketch: index_1.sketch
+  };
+  return p5map;
 };
 
 exports.p5_20200501 = p5_20200501;
@@ -34251,86 +34253,89 @@ var getParams = function getParams(width) {
   };
 };
 
-exports.getParams = getParams; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'index' implicitly has an 'any' type.
+exports.getParams = getParams;
 
 var initFlag = function initFlag(index) {
   return function (params) {
-    // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'params' implicitly has an 'any' type.
     var initStartPos = function initStartPos(params) {
       var totalMargin = params.canvasSize - params.flagWidth * params.flagCount;
       var margin = totalMargin / (params.flagCount + 1);
       var xPos = margin * (index + 1) + params.flagWidth * index - 0.1 * params.canvasSize;
-      var yPos = (params.canvasSize - params.flagHeight) / 2; // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-      return new p5_1.default.Vector(xPos, yPos);
+      var yPos = (params.canvasSize - params.flagHeight) / 2;
+      return new p5_1.default.Vector().set(xPos, yPos);
     };
 
-    var initFlag = {};
-    initFlag.ctrlAngle = params.ctrlInitAngles[index];
-    initFlag.anchorAngle = params.anchorInitAngles[index];
-    initFlag.startPos = initStartPos(params); // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-    initFlag.endPos = new p5_1.default.Vector(params.flagWidth, 0); // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-    initFlag.leftCtrl = new p5_1.default.Vector(0, params.flagHeight); // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-    initFlag.leftAnchor = new p5_1.default.Vector(0, params.flagHeight); // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-    initFlag.rightCtrl = new p5_1.default.Vector(initFlag.endPos.x, params.flagHeight); // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-    initFlag.rightAnchor = new p5_1.default.Vector(initFlag.endPos.x, params.flagHeight);
+    var ctrlAngle = params.ctrlInitAngles[index];
+    var anchorAngle = params.anchorInitAngles[index];
+    var startPos = initStartPos(params);
+    var endPos = new p5_1.default.Vector().set(params.flagWidth, 0);
+    var leftCtrl = new p5_1.default.Vector().set(0, params.flagHeight);
+    var leftAnchor = new p5_1.default.Vector().set(0, params.flagHeight);
+    var rightCtrl = new p5_1.default.Vector().set(endPos.x, params.flagHeight);
+    var rightAnchor = new p5_1.default.Vector().set(endPos.x, params.flagHeight);
+    var initFlag = {
+      ctrlAngle: ctrlAngle,
+      anchorAngle: anchorAngle,
+      startPos: startPos,
+      endPos: endPos,
+      leftCtrl: leftCtrl,
+      leftAnchor: leftAnchor,
+      rightCtrl: rightCtrl,
+      rightAnchor: rightAnchor
+    };
     return initFlag;
   };
 };
 
-exports.initFlag = initFlag; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'flag' implicitly has an 'any' type.
+exports.initFlag = initFlag;
 
 var updateFlag = function updateFlag(flag, index) {
   return function (params) {
-    // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'flag' implicitly has an 'any' type.
     var updateLeftCtrl = function updateLeftCtrl(flag, params, ctrlAngle) {
-      var diff = params.ctrlMaxes[index] * (Math.sin(ctrlAngle) + 1) / 2; // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-      return new p5_1.default.Vector(diff, params.flagHeight - diff);
-    }; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'flag' implicitly has an 'any' type.
-
-
-    var updateLeftAnchor = function updateLeftAnchor(flag, index, anchorAngle) {
-      var diff = params.anchorMaxes[index] * (Math.sin(anchorAngle) + 1) / 2; // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-      return new p5_1.default.Vector(diff, params.flagHeight - diff);
-    }; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'flag' implicitly has an 'any' type.
-
-
-    var updateRightCtrl = function updateRightCtrl(flag, params, endPos, ctrlAngle) {
-      var diff = params.ctrlMaxes[index] * (Math.sin(ctrlAngle) + 1) / 2; // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-      return new p5_1.default.Vector(endPos.x + diff, params.flagHeight - diff);
-    }; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'flag' implicitly has an 'any' type.
-
-
-    var updateRightAnchor = function updateRightAnchor(flag, params, endPos, anchorAngle) {
-      var diff = params.anchorMaxes[index] * (Math.sin(anchorAngle) + 1) / 2; // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-      return new p5_1.default.Vector(endPos.x + diff, params.flagHeight - diff);
+      var diff = params.ctrlMaxes[index] * (Math.sin(ctrlAngle) + 1) / 2;
+      return new p5_1.default.Vector().set(diff, params.flagHeight - diff);
     };
 
-    var updateFlag = {};
-    updateFlag.ctrlAngle = flag.ctrlAngle + params.ctrlAngleIncs[index];
-    updateFlag.anchorAngle = flag.anchorAngle + params.anchorAngleIncs[index];
-    updateFlag.startPos = flag.startPos;
-    updateFlag.endPos = flag.endPos;
-    updateFlag.leftCtrl = updateLeftCtrl(flag, params, updateFlag.ctrlAngle);
-    updateFlag.leftAnchor = updateLeftAnchor(flag, index, updateFlag.anchorAngle);
-    updateFlag.rightCtrl = updateRightCtrl(flag, params, updateFlag.endPos, updateFlag.ctrlAngle);
-    updateFlag.rightAnchor = updateRightAnchor(flag, params, updateFlag.endPos, updateFlag.anchorAngle);
+    var updateLeftAnchor = function updateLeftAnchor(flag, index, anchorAngle) {
+      var diff = params.anchorMaxes[index] * (Math.sin(anchorAngle) + 1) / 2;
+      return new p5_1.default.Vector().set(diff, params.flagHeight - diff);
+    };
+
+    var updateRightCtrl = function updateRightCtrl(flag, params, endPos, ctrlAngle) {
+      var diff = params.ctrlMaxes[index] * (Math.sin(ctrlAngle) + 1) / 2;
+      return new p5_1.default.Vector().set(endPos.x + diff, params.flagHeight - diff);
+    };
+
+    var updateRightAnchor = function updateRightAnchor(flag, params, endPos, anchorAngle) {
+      var diff = params.anchorMaxes[index] * (Math.sin(anchorAngle) + 1) / 2;
+      return new p5_1.default.Vector().set(endPos.x + diff, params.flagHeight - diff);
+    };
+
+    var ctrlAngle = flag.ctrlAngle + params.ctrlAngleIncs[index];
+    var anchorAngle = flag.anchorAngle + params.anchorAngleIncs[index];
+    var startPos = flag.startPos;
+    var endPos = flag.endPos;
+    var leftCtrl = updateLeftCtrl(flag, params, ctrlAngle);
+    var leftAnchor = updateLeftAnchor(flag, index, anchorAngle);
+    var rightCtrl = updateRightCtrl(flag, params, endPos, ctrlAngle);
+    var rightAnchor = updateRightAnchor(flag, params, endPos, anchorAngle);
+    var updateFlag = {
+      ctrlAngle: ctrlAngle,
+      anchorAngle: anchorAngle,
+      startPos: startPos,
+      endPos: endPos,
+      leftCtrl: leftCtrl,
+      leftAnchor: leftAnchor,
+      rightCtrl: rightCtrl,
+      rightAnchor: rightAnchor
+    };
     return updateFlag;
   };
 };
 
 exports.updateFlag = updateFlag;
 },{"p5":"../node_modules/p5/lib/p5.min.js"}],"20200912/index.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
@@ -34374,22 +34379,18 @@ exports.sketch = void 0;
 var calc = __importStar(require("./calc"));
 
 var sketch = function sketch(props) {
-  // @ts-expect-error ts-migrate(7006) FIXME: Parameter 's' implicitly has an 'any' type.
   return function (s) {
-    var canvasDiv = document.getElementById('canvas'); // @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-
+    var canvasDiv = document.getElementById('canvas');
     var params = calc.getParams(canvasDiv.clientWidth);
     var colorPalette = [s.color(108, 160, 220), s.color(249, 228, 236), s.color(119, 221, 119)];
-    var flags = Array.from(Array(3), function (flag, index) {
+    var flags = Array.from(Array(3), function (_, index) {
       return calc.initFlag(index);
-    }); // @ts-expect-error ts-migrate(2322) FIXME: Type '{}[]' is not assignable to type '((params: a... Remove this comment to see the full error message
-
-    flags = flags.map(function (func) {
+    }).map(function (func) {
       return func(params);
-    }); // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'props' implicitly has an 'any' type.
+    });
 
     var setPane = function setPane(props) {
-      var f1 = props.get('pane').addFolder({
+      var f1 = props.pane.addFolder({
         title: 'Control'
       });
       var stopButton = f1.addButton({
@@ -34410,9 +34411,7 @@ var sketch = function sketch(props) {
       // calc
       flags = flags.map(function (flag, index) {
         return calc.updateFlag(flag, index);
-      }); // @ts-expect-error ts-migrate(2322) FIXME: Type '{}[]' is not assignable to type '((params: a... Remove this comment to see the full error message
-
-      flags = flags.map(function (func) {
+      }).map(function (func) {
         return func(params);
       }); // draw background
 
@@ -34442,7 +34441,7 @@ var sketch = function sketch(props) {
 
 exports.sketch = sketch;
 },{"./calc":"20200912/calc.ts"}],"20200912/p5_20200912.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -34452,17 +34451,19 @@ exports.p5_20200912 = void 0;
 var index_1 = require("./index");
 
 var p5_20200912 = function p5_20200912() {
-  var p5_map = new Map();
-  p5_map.set('date', '20200912');
-  p5_map.set('title', 'flags');
-  p5_map.set('note', 'This is a test sketch to develop coverpage.');
-  p5_map.set('sketch', index_1.sketch);
-  return p5_map;
+  var p5map = {
+    date: '20200912',
+    title: 'flags',
+    note: 'This is a test sketch to develop coverpage.',
+    content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+    sketch: index_1.sketch
+  };
+  return p5map;
 };
 
 exports.p5_20200912 = p5_20200912;
 },{"./index":"20200912/index.ts"}],"20201023/getParams.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -34470,8 +34471,9 @@ Object.defineProperty(exports, "__esModule", {
 exports.getParams = void 0;
 
 var getParams = function getParams(width) {
-  var params = {};
-  params.canvasSize = width;
+  var params = {
+    canvasSize: width
+  };
   return params;
 };
 
@@ -34481,7 +34483,7 @@ module.exports = "#ifdef GL_ES\nprecision mediump float;\n#define GLSLIFY 1\n#en
 },{}],"20201023/shader/shader.frag":[function(require,module,exports) {
 module.exports = "#ifdef GL_ES\nprecision mediump float;\n#define GLSLIFY 1\n#endif\n\n#define PI 3.14159265359\n#define TWO_PI 6.28318530718\n\nuniform vec2 u_resolution;\nuniform float u_time;\nuniform float u_mouse;\n\nvec3 rgb(float r, float g, float b){\n  return vec3(r / 255.0, g / 255.0, b / 255.0);\n}\n\nvec4 poly(vec2 center, float size, float sides, float rotation, vec3 col){\n\tvec2 pos = gl_FragCoord.xy - center; // move to drawingg pos\n\tfloat angle = atan(pos.x, pos.y) + PI + rotation; // angle of a pixel relative to pos\n\tfloat radius = TWO_PI / sides; // size of shape\n\tfloat d = cos(floor(0.5 + angle / radius) * radius - angle) * length(pos);\n\td = 1.0 - smoothstep(size*0.5, size*0.5+1.0, d); // use the smoothstep to get soft edge\n\treturn vec4(col, d); // / return the color with the shape as the alpha channel\n}\n\nvoid main () {\n\tvec2 center = u_resolution; // draw shape at center\n  float size = u_resolution.y * 0.5; // shape size is a quarter of the screen height\n  float sides = mod(floor(u_mouse), 7.0) + 3.0; // increase the sides\n  float rotation = u_time; // rotation is in radians\n\n\tvec3 grn = rgb(255.0, 255.0, 255.0);\n\n\tvec4 poly = poly(center, size, sides, rotation, grn);\n\n\tpoly.rgb = mix(1.0 - grn, poly.rgb, poly.a); // mix the polygon with the opposite of the green color according to the shapes alpha\n\n\tvec2 pos = gl_FragCoord.xy / u_resolution.xy;\n\tgl_FragColor = vec4(poly.rgb, 1.0);\n}\n\n";
 },{}],"20201023/index.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
@@ -34494,25 +34496,20 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.sketch = void 0;
 
-var getParams_1 = require("./getParams"); // @ts-expect-error ts-migrate(2307) FIXME: Cannot find module './shader/shader.vert' or its c... Remove this comment to see the full error message
+var getParams_1 = require("./getParams");
 
-
-var shader_vert_1 = __importDefault(require("./shader/shader.vert")); // @ts-expect-error ts-migrate(2307) FIXME: Cannot find module './shader/shader.frag' or its c... Remove this comment to see the full error message
-
+var shader_vert_1 = __importDefault(require("./shader/shader.vert"));
 
 var shader_frag_1 = __importDefault(require("./shader/shader.frag"));
 
 var sketch = function sketch(props) {
-  // @ts-expect-error ts-migrate(7006) FIXME: Parameter 's' implicitly has an 'any' type.
   return function (s) {
-    var canvasDiv = document.getElementById('canvas'); // @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-
-    var params = getParams_1.getParams(canvasDiv.clientWidth); // @ts-expect-error ts-migrate(7034) FIXME: Variable 'theShader' implicitly has type 'any' in ... Remove this comment to see the full error message
-
-    var theShader; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'props' implicitly has an 'any' type.
+    var canvasDiv = document.getElementById('canvas');
+    var params = getParams_1.getParams(canvasDiv.clientWidth);
+    var theShader;
 
     var setPane = function setPane(props) {
-      var f1 = props.get('pane').addFolder({
+      var f1 = props.pane.addFolder({
         title: 'Control'
       });
       var stopButton = f1.addButton({
@@ -34536,20 +34533,16 @@ var sketch = function sketch(props) {
       // s.background(255);
 
       /*
-          // draw frame
+      // draw frame
       s.push();
       s.noFill();
       s.rect(0, 0, params.canvasSize, params.canvasSize);
       s.pop();
-      */
+       */
       // shader
-      // @ts-expect-error ts-migrate(7005) FIXME: Variable 'theShader' implicitly has an 'any' type.
-      s.shader(theShader); // @ts-expect-error ts-migrate(7005) FIXME: Variable 'theShader' implicitly has an 'any' type.
-
-      theShader.setUniform('u_resolution', [params.canvasSize, params.canvasSize]); // @ts-expect-error ts-migrate(7005) FIXME: Variable 'theShader' implicitly has an 'any' type.
-
-      theShader.setUniform("u_mouse", s.map(s.mouseX, 0, params.canvasSize, 0, 7)); // @ts-expect-error ts-migrate(7005) FIXME: Variable 'theShader' implicitly has an 'any' type.
-
+      s.shader(theShader);
+      theShader.setUniform('u_resolution', [params.canvasSize, params.canvasSize]);
+      theShader.setUniform("u_mouse", s.map(s.mouseX, 0, params.canvasSize, 0, 7));
       theShader.setUniform('u_time', s.frameCount * 0.01);
       s.rect(0, 0, params.windowSize, params.windowSize);
     };
@@ -34558,7 +34551,7 @@ var sketch = function sketch(props) {
 
 exports.sketch = sketch;
 },{"./getParams":"20201023/getParams.ts","./shader/shader.vert":"20201023/shader/shader.vert","./shader/shader.frag":"20201023/shader/shader.frag"}],"20201023/p5_20201023.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -34568,12 +34561,14 @@ exports.p5_20201023 = void 0;
 var index_1 = require("./index");
 
 var p5_20201023 = function p5_20201023() {
-  var p5_map = new Map();
-  p5_map.set('date', '20201023');
-  p5_map.set('title', 'hello shader');
-  p5_map.set('note', 'This is a test sketch to develop coverpage.');
-  p5_map.set('sketch', index_1.sketch);
-  return p5_map;
+  var p5map = {
+    date: '20201023',
+    title: 'hello shader',
+    note: 'This is a test sketch to develop coverpage.',
+    content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+    sketch: index_1.sketch
+  };
+  return p5map;
 };
 
 exports.p5_20201023 = p5_20201023;
@@ -85890,7 +85885,7 @@ exports.Buffers = Buffers;
 const BufferSource = _ToneBufferSource.ToneBufferSource;
 exports.BufferSource = BufferSource;
 },{"./core/Global":"../node_modules/tone/build/esm/core/Global.js","./classes":"../node_modules/tone/build/esm/classes.js","./version":"../node_modules/tone/build/esm/version.js","./core/context/ToneAudioBuffer":"../node_modules/tone/build/esm/core/context/ToneAudioBuffer.js","./core/context/AudioContext":"../node_modules/tone/build/esm/core/context/AudioContext.js","./core/context/ToneAudioBuffers":"../node_modules/tone/build/esm/core/context/ToneAudioBuffers.js","./source/buffer/ToneBufferSource":"../node_modules/tone/build/esm/source/buffer/ToneBufferSource.js"}],"20201231/initParams.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -85898,17 +85893,18 @@ Object.defineProperty(exports, "__esModule", {
 exports.initParams = void 0;
 
 var initParams = function initParams(width) {
-  var params = {};
-  params.canvasSize = width;
-  params.frameRate = 0;
-  params.isStarted = false;
-  params.ballNum = 3;
+  var params = {
+    canvasSize: width,
+    frameRate: 0,
+    isStarted: false,
+    ballNum: 3
+  };
   return params;
 };
 
 exports.initParams = initParams;
 },{}],"20201231/initBall.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
@@ -85925,59 +85921,58 @@ var p5_1 = __importDefault(require("p5"));
 
 var initBall = function initBall(index) {
   return function (params) {
-    var ball = new Map();
-    ball.set('cycleLength', 60 + 10 * index);
-    ball.set('frameVal', 0);
-    ball.set('angle', 0); // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-    ball.set('marginRate', new p5_1.default.Vector(0.2, 0.2));
-    ball.set('volume', 0);
+    var cycleLength = 60 + 10 * index;
+    var frameVal = 0;
+    var angle = 0;
+    var marginRate = new p5_1.default.Vector().set(0.2, 0.2);
+    var volume = 0;
 
     var calcLeftEdge = function calcLeftEdge() {
-      var x = params.canvasSize * ball.get('marginRate').x;
-      var y = params.canvasSize / 2; // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-      return new p5_1.default.Vector(x, y);
+      var x = params.canvasSize * marginRate.x;
+      var y = params.canvasSize / 2;
+      return new p5_1.default.Vector().set(x, y);
     };
-
-    ball.set('leftEdge', calcLeftEdge());
 
     var calcRightEdge = function calcRightEdge() {
-      var margin = params.canvasSize * ball.get('marginRate').x;
+      var margin = params.canvasSize * marginRate.x;
       var x = params.canvasSize - margin;
-      var y = params.canvasSize / 2; // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-      return new p5_1.default.Vector(x, y);
+      var y = params.canvasSize / 2;
+      return new p5_1.default.Vector().set(x, y);
     };
 
-    ball.set('rightEdge', calcRightEdge());
-
     var calcAmp = function calcAmp() {
-      var margin = params.canvasSize * ball.get('marginRate').y;
+      var margin = params.canvasSize * marginRate.y;
       var effectiveHeight = params.canvasSize - margin * 2;
       return effectiveHeight;
     };
 
-    ball.set('amp', calcAmp());
-
     var calcPos = function calcPos() {
-      var margin = params.canvasSize * ball.get('marginRate').x;
+      var margin = params.canvasSize * marginRate.x;
       var effectiveWidth = params.canvasSize - margin * 2;
       var eachWidth = effectiveWidth / (params.ballNum + 1);
       var x = margin + eachWidth * (index + 1);
-      var y = 0; // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-      return new p5_1.default.Vector(x, y);
+      var y = 0;
+      return new p5_1.default.Vector().set(x, y);
     };
 
-    ball.set('pos', calcPos());
-    return ball;
+    var initBall = {
+      cycleLength: cycleLength,
+      frameVal: frameVal,
+      angle: angle,
+      marginRate: marginRate,
+      volume: volume,
+      leftEdge: calcLeftEdge(),
+      rightEdge: calcRightEdge(),
+      amp: calcAmp(),
+      pos: calcPos()
+    };
+    return initBall;
   };
 };
 
 exports.initBall = initBall;
 },{"p5":"../node_modules/p5/lib/p5.min.js"}],"20201231/updateBall.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
@@ -85994,27 +85989,25 @@ var p5_1 = __importDefault(require("p5"));
 
 var updateBall = function updateBall(ball) {
   return function (params, frameCount) {
-    var updatedBall = new Map();
-    updatedBall.set('cycleLength', ball.get('cycleLength'));
-    updatedBall.set('frameVal', frameCount % ball.get('cycleLength'));
-    updatedBall.set('angle', ball.get('frameVal') * 2 * Math.PI / ball.get('cycleLength'));
-    updatedBall.set('marginRate', ball.get('marginRate'));
-    updatedBall.set('leftEdge', ball.get('leftEdge'));
-    updatedBall.set('rightEdge', ball.get('rightEdge'));
-    updatedBall.set('amp', ball.get('amp'));
+    var cycleLength = ball.cycleLength;
+    var frameVal = frameCount % ball.cycleLength;
+    var angle = ball.frameVal * 2 * Math.PI / ball.cycleLength;
+    var marginRate = ball.marginRate;
+    var leftEdge = ball.leftEdge;
+    var rightEdge = ball.rightEdge;
+    var amp = ball.amp;
 
     var calcPos = function calcPos() {
-      var x = ball.get('pos').x;
-      var margin = params.canvasSize * updatedBall.get('marginRate').y;
-      var y = margin + updatedBall.get('amp') * (Math.sin(updatedBall.get('angle')) + 1) / 2; // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-
-      return new p5_1.default.Vector(x, y);
+      var x = ball.pos.x;
+      var margin = params.canvasSize * marginRate.y;
+      var y = margin + amp * (Math.sin(angle) + 1) / 2;
+      return new p5_1.default.Vector().set(x, y);
     };
 
-    updatedBall.set('pos', calcPos());
+    var pos = calcPos();
 
     var normYPos = function normYPos() {
-      var yPos = updatedBall.get('pos').y;
+      var yPos = pos.y;
       var min = 0;
       var max = params.canvasSize;
       return (yPos - min) / (max - min);
@@ -86027,14 +86020,25 @@ var updateBall = function updateBall(ball) {
       return normedYPos * (max - min) + min;
     };
 
-    updatedBall.set('volume', calcVolume());
+    var volume = calcVolume();
+    var updatedBall = {
+      cycleLength: cycleLength,
+      frameVal: frameVal,
+      angle: angle,
+      marginRate: marginRate,
+      volume: volume,
+      leftEdge: leftEdge,
+      rightEdge: rightEdge,
+      amp: amp,
+      pos: pos
+    };
     return updatedBall;
   };
 };
 
 exports.updateBall = updateBall;
 },{"p5":"../node_modules/p5/lib/p5.min.js"}],"20201231/index.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
@@ -86101,18 +86105,16 @@ var initBall_1 = require("./initBall");
 var updateBall_1 = require("./updateBall");
 
 var sketch = function sketch(props) {
-  // @ts-expect-error ts-migrate(7006) FIXME: Parameter 's' implicitly has an 'any' type.
   return function (s) {
-    var synths = props.get('synths');
-    var canvasDiv = document.getElementById('canvas'); // @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-
+    var synths = props.synths;
+    var canvasDiv = document.getElementById('canvas');
     var params = initParams_1.initParams(canvasDiv.clientWidth);
     var balls = Array.from(Array(params.ballNum), function (ball, index) {
       return initBall_1.initBall(index)(params);
-    }); // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'props' implicitly has an 'any' type.
+    });
 
     var setPane = function setPane(props, params) {
-      var f1 = props.get('pane').addFolder({
+      var f1 = props.pane.addFolder({
         title: 'Control'
       });
       var ctrlButton = f1.addButton({
@@ -86149,8 +86151,7 @@ var sketch = function sketch(props) {
       f1.addMonitor(params, 'frameRate', {
         interval: 500
       });
-    }; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'params' implicitly has an 'any' type.
-
+    };
 
     var drawFrame = function drawFrame(params) {
       s.push();
@@ -86159,8 +86160,7 @@ var sketch = function sketch(props) {
       s.noFill();
       s.rect(0, 0, params.canvasSize, params.canvasSize);
       s.pop();
-    }; // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'balls' implicitly has an 'any' type.
-
+    };
 
     var drawBalls = function drawBalls(balls) {
       var edgeBall = balls[0];
@@ -86169,14 +86169,13 @@ var sketch = function sketch(props) {
       s.stroke(0);
       s.strokeWeight(1);
       s.beginShape();
-      s.curveVertex(edgeBall.get('leftEdge').x, edgeBall.get('leftEdge').y);
-      s.curveVertex(edgeBall.get('leftEdge').x, edgeBall.get('leftEdge').y); // @ts-expect-error ts-migrate(7006) FIXME: Parameter 'ball' implicitly has an 'any' type.
-
+      s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
+      s.curveVertex(edgeBall.leftEdge.x, edgeBall.leftEdge.y);
       balls.forEach(function (ball) {
-        s.curveVertex(ball.get('pos').x, ball.get('pos').y);
+        s.curveVertex(ball.pos.x, ball.pos.y);
       });
-      s.curveVertex(edgeBall.get('rightEdge').x, edgeBall.get('rightEdge').y);
-      s.curveVertex(edgeBall.get('rightEdge').x, edgeBall.get('rightEdge').y);
+      s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
+      s.curveVertex(edgeBall.rightEdge.x, edgeBall.rightEdge.y);
       s.endShape();
       s.pop();
     };
@@ -86195,13 +86194,13 @@ var sketch = function sketch(props) {
       drawFrame(params);
       drawBalls(balls);
       synths.get('amSynth_0').set({
-        volume: balls[0].get('volume')
+        volume: balls[0].volume
       });
       synths.get('amSynth_1').set({
-        volume: balls[1].get('volume')
+        volume: balls[1].volume
       });
       synths.get('amSynth_2').set({
-        volume: balls[2].get('volume')
+        volume: balls[2].volume
       });
       params.frameRate = s.frameRate();
     };
@@ -86210,7 +86209,7 @@ var sketch = function sketch(props) {
 
 exports.sketch = sketch;
 },{"tone":"../node_modules/tone/build/esm/index.js","./initParams":"20201231/initParams.ts","./initBall":"20201231/initBall.ts","./updateBall":"20201231/updateBall.ts"}],"20201231/synths.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
@@ -86272,7 +86271,7 @@ var synths = function synths() {
 
 exports.synths = synths;
 },{"tone":"../node_modules/tone/build/esm/index.js"}],"20201231/p5_20201231.ts":[function(require,module,exports) {
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -86284,12 +86283,14 @@ var index_1 = require("./index");
 var synths_1 = require("./synths");
 
 var p5_20201231 = function p5_20201231() {
-  var p5map = new Map();
-  p5map.set('date', '20201231');
-  p5map.set('title', 'hello tone');
-  p5map.set('note', 'This is a test sketch to develop coverpage.');
-  p5map.set('sketch', index_1.sketch);
-  p5map.set('synths', synths_1.synths);
+  var p5map = {
+    date: '20201231',
+    title: 'hello tone',
+    note: 'This is a test sketch to develop coverpage.',
+    content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+    sketch: index_1.sketch,
+    synths: synths_1.synths
+  };
   return p5map;
 };
 
@@ -86336,7 +86337,7 @@ var sketch = function sketch(props) {
     };
 
     var setPane = function setPane(props) {
-      var f1 = props.get('pane').addFolder({
+      var f1 = props.pane.addFolder({
         title: 'Control'
       });
       var stopButton = f1.addButton({
@@ -86375,13 +86376,14 @@ exports.p5_20210201 = void 0;
 var index_1 = require("./index");
 
 var p5_20210201 = function p5_20210201() {
-  var p5_map = new Map();
-  p5_map.set('date', '20210201');
-  p5_map.set('title', 'div test');
-  p5_map.set('note', 'This is a test sketch to develop coverpage.');
-  p5_map.set('content', 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.');
-  p5_map.set('sketch', index_1.sketch);
-  return p5_map;
+  var p5map = {
+    date: '20210201',
+    title: 'div test',
+    note: 'This is a test sketch to develop coverpage.',
+    content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+    sketch: index_1.sketch
+  };
+  return p5map;
 };
 
 exports.p5_20210201 = p5_20210201;
@@ -86478,7 +86480,7 @@ var createCoverPage = function createCoverPage(props) {
       var getCreateP5 = function getCreateP5(p5map) {
         return function createP5() {
           // remove coverPage
-          props.get('coverPage').remove(); // create divs
+          props.coverPage.remove(); // create divs
 
           var container = s.createDiv().class('container');
           var sketchRow = s.createDiv().class('row').parent(container).style('margin-top: 12%');
@@ -86487,26 +86489,26 @@ var createCoverPage = function createCoverPage(props) {
           var buttonRow = s.createDiv().class('row').parent(container).style('margin-top: 2%');
           s.createDiv('back to top').parent(buttonRow).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(backToTop);
           var contentRow = s.createDiv().class('row').parent(container).style('margin-top: 6%');
-          s.createElement('h5', p5map.get('title')).parent(contentRow);
-          p5map.has('content') ? s.createP(p5map.get('content')).parent(contentRow) : s.createP(p5map.get('note')).parent(contentRow); // add synths to props
+          s.createElement('h5', p5map.title).parent(contentRow);
+          p5map.content != null ? s.createP(p5map.content).parent(contentRow) : s.createP(p5map.note).parent(contentRow); // add synths to props
 
-          if (p5map.has('synths')) {
-            var synthMap = p5map.get('synths')();
-            props.set('synths', synthMap);
+          if (p5map.synths != null) {
+            var synthMap = p5map.synths();
+            props.synths = synthMap;
           } // add tweakpane to props
 
 
-          props.set('pane', new tweakpane_1.default({
+          props.pane = new tweakpane_1.default({
             container: document.getElementById('pane')
-          })); // add p5js to props
+          }); // add p5js to props
 
-          props.set('sketchPage', new p5_1.default(p5map.get('sketch')(props), document.getElementById('canvas'))); // prepare back to top function
+          props.sketchPage = new p5_1.default(p5map.sketch(props), document.getElementById('canvas')); // prepare back to top function
 
           function backToTop() {
             var e_2, _a;
 
-            if (props.has('synths')) {
-              var synths = props.get('synths');
+            if (props.synths != null) {
+              var synths = props.synths;
 
               try {
                 for (var _b = __values(synths.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -86526,11 +86528,13 @@ var createCoverPage = function createCoverPage(props) {
               }
             }
 
-            props.get('pane').dispose();
-            props.get('sketchPage').remove();
-            props.get('coverPage').remove();
-            props.clear();
-            props.set('coverPage', new p5_1.default(index_1.initSketch));
+            props.pane.dispose();
+            props.sketchPage.remove();
+            props.coverPage.remove();
+            props = {
+              init: true
+            };
+            props.coverPage = new p5_1.default(index_1.initSketch);
           }
         };
       };
@@ -86538,13 +86542,13 @@ var createCoverPage = function createCoverPage(props) {
       try {
         // contents
         for (var p5maps_1 = __values(p5maps), p5maps_1_1 = p5maps_1.next(); !p5maps_1_1.done; p5maps_1_1 = p5maps_1.next()) {
-          var p5map = p5maps_1_1.value;
-          var createP5 = getCreateP5(p5map);
+          var p5map_1 = p5maps_1_1.value;
+          var createP5 = getCreateP5(p5map_1);
           var tbody = s.createElement('tbody').parent(table);
           var tbodyTr = s.createElement('tr').parent(tbody);
-          s.createElement('td', p5map.get('date')).parent(tbodyTr);
-          s.createElement('td', p5map.get('title')).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5);
-          s.createElement('td', p5map.get('note')).parent(tbodyTr);
+          s.createElement('td', p5map_1.date).parent(tbodyTr);
+          s.createElement('td', p5map_1.title).parent(tbodyTr).style('color', '#1EAEDB').style('text-decoration', 'underline').style('cursor', 'pointer').mousePressed(createP5);
+          s.createElement('td', p5map_1.note).parent(tbodyTr);
         }
       } catch (e_1_1) {
         e_1 = {
@@ -86583,9 +86587,11 @@ var createCoverPage_1 = require("./createCoverPage");
 var initSketch = function initSketch(s) {
   s.setup = function () {
     s.noCanvas();
-    var props = new Map();
+    var props = {
+      init: true
+    };
     var coverPage = createCoverPage_1.createCoverPage(props);
-    props.set("coverPage", new p5_1.default(coverPage));
+    props.coverPage = new p5_1.default(coverPage);
   };
 };
 
@@ -86619,7 +86625,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61869" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51049" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,12 +1,13 @@
 import P5 from "p5";
 import { createCoverPage } from "./createCoverPage";
+import { props } from './types/props';
 
 export const initSketch = (s: P5): void => {
   s.setup = () => {
     s.noCanvas();
-    const props = new Map();
+		const props: props = { init: true };
     const coverPage = createCoverPage(props);
-    props.set("coverPage", new P5(coverPage));
+		props.coverPage = new P5(coverPage);
   };
 };
 

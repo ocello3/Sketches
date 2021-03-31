@@ -1,41 +1,49 @@
-'use strict';
-
 import P5 from 'p5';
+import { params } from './initParams';
+import { ball } from './ball';
 
-export const updateBall = (ball: any) => (params: any, frameCount: any) => {
-	const updatedBall = new Map();
-
-	updatedBall.set('cycleLength', ball.get('cycleLength'));
-	updatedBall.set('frameVal', frameCount % ball.get('cycleLength'));
-	updatedBall.set('angle', ball.get('frameVal') * 2 * Math.PI / ball.get('cycleLength'));
-	updatedBall.set('marginRate', ball.get('marginRate'));
-	updatedBall.set('leftEdge', ball.get('leftEdge'));
-	updatedBall.set('rightEdge', ball.get('rightEdge'));
-	updatedBall.set('amp', ball.get('amp'));
+export const updateBall = (ball: ball) => (params: params, frameCount: number) => {
+	const cycleLength = ball.cycleLength;
+	const frameVal = frameCount % ball.cycleLength;
+	const angle = ball.frameVal * 2 * Math.PI / ball.cycleLength;
+	const marginRate = ball.marginRate;
+	const leftEdge = ball.leftEdge;
+	const rightEdge = ball.rightEdge;
+	const amp = ball.amp;
 	
-	const calcPos = () => {
-		const x = ball.get('pos').x;
-		const margin = params.canvasSize * updatedBall.get('marginRate').y;
-		const y = margin + updatedBall.get('amp') * (Math.sin(updatedBall.get('angle')) + 1)/2;
-// @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 2.
-		return new P5.Vector(x, y);
+	const calcPos = (): P5.Vector => {
+		const x = ball.pos.x;
+		const margin = params.canvasSize * marginRate.y;
+		const y = margin + amp * (Math.sin(angle) + 1)/2;
+		return new P5.Vector().set(x, y);
 	}
-	updatedBall.set('pos', calcPos());
+	const pos = calcPos();
 
-	const normYPos = () => {
-		const yPos = updatedBall.get('pos').y;
+	const normYPos = (): number => {
+		const yPos = pos.y;
 		const min = 0;
 		const max = params.canvasSize;
 		return (yPos - min) / (max - min);
 	}
-	const calcVolume = () => {
+	const calcVolume = (): number => {
 		const normedYPos = normYPos();
 		const min = -50;
 		const max = -10;
 		return normedYPos * (max - min) + min;
 	}
-	updatedBall.set('volume', calcVolume());
+	const volume = calcVolume();
 
+	const updatedBall: ball = {
+		cycleLength: cycleLength,
+		frameVal: frameVal,
+		angle: angle,
+		marginRate: marginRate,
+		volume: volume,
+		leftEdge: leftEdge,
+		rightEdge: rightEdge,
+		amp: amp,
+		pos: pos,
+	};
 	return updatedBall;
 }
 
