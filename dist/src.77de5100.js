@@ -34208,9 +34208,9 @@ var index_1 = require("./index");
 var p5_20200501 = function p5_20200501() {
   var p5map = {
     date: '20200501',
-    title: 'snake',
-    note: 'This is a test sketch to develop coverpage.',
-    content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+    title: 'snakes',
+    note: 'Shrinking/Expanding five snakes',
+    content: 'Each snake is shaped with ten points connected by five lines. To shrink, points without the head move to the head. To expand, points without the tail move forward. Each seaquence duration and easing factor are randamized.',
     sketch: index_1.sketch
   };
   return p5map;
@@ -34454,8 +34454,8 @@ var p5_20200912 = function p5_20200912() {
   var p5map = {
     date: '20200912',
     title: 'flags',
-    note: 'This is a test sketch to develop coverpage.',
-    content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+    note: 'Three flags using quadraticVertex',
+    content: 'Three flags are created using quadraticVertex. Each quadraticVertex points are moving vertical. The cycle for the right flag is shifting little by little.',
     sketch: index_1.sketch
   };
   return p5map;
@@ -34564,8 +34564,8 @@ var p5_20201023 = function p5_20201023() {
   var p5map = {
     date: '20201023',
     title: 'hello shader',
-    note: 'This is a test sketch to develop coverpage.',
-    content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+    note: 'Using shader with typescript and parcel',
+    content: 'Refer <a href="https://scrapbox.io/ocello3blog/Shader_with_Typescript" target="_blank" rel="noopener noreferrer">this link</a> to see tips for shader with Typescript and Parcel.',
     sketch: index_1.sketch
   };
   return p5map;
@@ -86286,8 +86286,8 @@ var p5_20201231 = function p5_20201231() {
   var p5map = {
     date: '20201231',
     title: 'hello tone',
-    note: 'This is a test sketch to develop coverpage.',
-    content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+    note: 'Control sound volume using coordinate in canvas',
+    content: 'Three points are connected using curveVertex and are moving vertical. Three sound sources have each interval and their volumes are controled by coordinates for three points. Refer <a href="https://scrapbox.io/ocello3blog/Tone.js_with_P5.js" target="_blank" rel="noopener noreferrer">this link</a> to see how to implement them.',
     sketch: index_1.sketch,
     synths: synths_1.synths
   };
@@ -86378,9 +86378,9 @@ var index_1 = require("./index");
 var p5_20210201 = function p5_20210201() {
   var p5map = {
     date: '20210201',
-    title: 'div test',
-    note: 'This is a test sketch to develop coverpage.',
-    content: 'This is a test content for div test sketch.<br>This conten should be shown below the canvas.<br>Last row.',
+    title: 'hello P5.Element',
+    note: 'Created this whole pages with P5.Element',
+    content: 'Using P5.Element, all doms for whole pages are created. Refer <a href="https://scrapbox.io/ocello3blog/Simple_website_with_P5.Elements" target="_blank" rel="noopener noreferrer">this link</a> to see how to implement them.',
     sketch: index_1.sketch
   };
   return p5map;
@@ -86625,7 +86625,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55167" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55235" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
