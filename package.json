@@ -15,6 +15,7 @@
   "author": "ocello3",
   "license": "ISC",
   "dependencies": {
+    "navigo": "^8.11.0",
     "p5": "^1.2.0",
     "tone": "^14.7.77",
     "tweakpane": "^1.5.8"
