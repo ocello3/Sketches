@@ -86387,7 +86387,126 @@ var p5_20210201 = function p5_20210201() {
 };
 
 exports.p5_20210201 = p5_20210201;
-},{"./index":"20210201/index.ts"}],"getP5maps.ts":[function(require,module,exports) {
+},{"./index":"20210201/index.ts"}],"template/initParams.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initParams = void 0;
+
+var initParams = function initParams(width) {
+  var initParams = {
+    canvasSize: width,
+    frameRate: 0,
+    isStarted: false
+  };
+  return initParams;
+};
+
+exports.initParams = initParams;
+},{}],"template/setPane.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setPane = void 0;
+
+var setPane = function setPane(props, s, params) {
+  var f1 = props.pane.addFolder({
+    title: 'Control'
+  });
+  var stopButton = f1.addButton({
+    title: 'start/stop'
+  });
+  stopButton.on('click', function () {
+    s.isLooping() ? s.noLoop() : s.loop();
+  });
+  f1.addMonitor(params, 'frameRate', {
+    interval: 500
+  });
+};
+
+exports.setPane = setPane;
+},{}],"template/drawFrame.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.drawFrame = void 0;
+
+var drawFrame = function drawFrame(s, params) {
+  s.push();
+  s.stroke('black');
+  s.strokeWeight(1);
+  s.noFill();
+  s.rect(0, 0, params.canvasSize, params.canvasSize);
+  s.pop();
+};
+
+exports.drawFrame = drawFrame;
+},{}],"template/index.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.sketch = void 0;
+
+var initParams_1 = require("./initParams");
+
+var setPane_1 = require("./setPane");
+
+var drawFrame_1 = require("./drawFrame");
+
+var sketch = function sketch(props) {
+  return function (s) {
+    var canvasDiv = document.getElementById('canvas');
+    var params = initParams_1.initParams(canvasDiv.clientWidth);
+
+    s.setup = function () {
+      s.createCanvas(params.canvasSize, params.canvasSize);
+      setPane_1.setPane(props, s, params);
+      s.noLoop();
+    };
+
+    s.draw = function () {
+      s.background(255);
+      params.frameRate = s.frameRate();
+      drawFrame_1.drawFrame(s, params);
+      s.frameRate(2);
+      s.textSize(50);
+      s.text(s.frameCount, params.canvasSize / 2, params.canvasSize / 2);
+    };
+  };
+};
+
+exports.sketch = sketch;
+},{"./initParams":"template/initParams.ts","./setPane":"template/setPane.ts","./drawFrame":"template/drawFrame.ts"}],"template/p5_YYYYMMDD.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.p5_YYYYMMDD = void 0;
+
+var index_1 = require("./index");
+
+var p5_YYYYMMDD = function p5_YYYYMMDD() {
+  var p5map = {
+    date: 'MMMMYYDD',
+    title: 'template',
+    note: 'template note',
+    content: 'template content',
+    sketch: index_1.sketch
+  };
+  return p5map;
+};
+
+exports.p5_YYYYMMDD = p5_YYYYMMDD;
+},{"./index":"template/index.ts"}],"getP5maps.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -86405,8 +86524,13 @@ var p5_20201231_1 = require("./20201231/p5_20201231");
 
 var p5_20210201_1 = require("./20210201/p5_20210201");
 
+var p5_YYYYMMDD_1 = require("./template/p5_YYYYMMDD"); // comment out
+
+
 var getP5maps = function getP5maps() {
   var p5maps = [];
+  p5maps.push(p5_YYYYMMDD_1.p5_YYYYMMDD()); // comment out
+
   p5maps.push(p5_20210201_1.p5_20210201());
   p5maps.push(p5_20201231_1.p5_20201231());
   p5maps.push(p5_20201023_1.p5_20201023());
@@ -86416,7 +86540,7 @@ var getP5maps = function getP5maps() {
 };
 
 exports.getP5maps = getP5maps;
-},{"./20200501/p5_20200501":"20200501/p5_20200501.ts","./20200912/p5_20200912":"20200912/p5_20200912.ts","./20201023/p5_20201023":"20201023/p5_20201023.ts","./20201231/p5_20201231":"20201231/p5_20201231.ts","./20210201/p5_20210201":"20210201/p5_20210201.ts"}],"createCoverPage.ts":[function(require,module,exports) {
+},{"./20200501/p5_20200501":"20200501/p5_20200501.ts","./20200912/p5_20200912":"20200912/p5_20200912.ts","./20201023/p5_20201023":"20201023/p5_20201023.ts","./20201231/p5_20201231":"20201231/p5_20201231.ts","./20210201/p5_20210201":"20210201/p5_20210201.ts","./template/p5_YYYYMMDD":"template/p5_YYYYMMDD.ts"}],"createCoverPage.ts":[function(require,module,exports) {
 "use strict";
 
 var __values = this && this.__values || function (o) {
@@ -86625,7 +86749,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51527" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55113" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
