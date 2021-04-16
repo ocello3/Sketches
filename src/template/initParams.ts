@@ -1,7 +1,7 @@
 export interface params {
 	canvasSize: number;
 	frameRate: number;
-	isStarted: boolean;
+	isStarted: boolean; //  for tonejs
 }
 
 export const initParams = (width: number):params => {
@@ -9,7 +9,7 @@ export const initParams = (width: number):params => {
 	const initParams: params = {
 		canvasSize: width,
 		frameRate: 0,
-		isStarted: false,
+		isStarted: false,  // for tonejs
 	}
 
 	return initParams;

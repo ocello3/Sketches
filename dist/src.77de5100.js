@@ -86408,28 +86408,86 @@ exports.initParams = initParams;
 },{}],"template/setPane.ts":[function(require,module,exports) {
 "use strict";
 
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.setPane = void 0;
 
+var Tone = __importStar(require("tone")); // for tonejs
+
+
 var setPane = function setPane(props, s, params) {
   var f1 = props.pane.addFolder({
     title: 'Control'
-  });
+  }); // control button
+
   var stopButton = f1.addButton({
     title: 'start/stop'
   });
   stopButton.on('click', function () {
+    // for tonejs start--
+    if (!s.isLooping() && !params.isStarted) {
+      // when loaded
+      // for (const value of props.synths.values()) value.start();
+      // Tone.start();
+      // props.synths.get('test').triggerAttackRelease('C4', '4n');
+      params.isStarted = true;
+    }
+
+    if (s.isLooping()) Tone.Destination.mute = true; // when stoped
+
+    if (!s.isLooping() && params.isStarted) Tone.Destination.mute = false; // when restarted
+    // for tonejs --end
+
     s.isLooping() ? s.noLoop() : s.loop();
   });
   f1.addMonitor(params, 'frameRate', {
     interval: 500
   });
+  var synthTestButton = f1.addButton({
+    title: "synth test"
+  });
+  synthTestButton.on('click', function () {
+    props.synths.get('test').triggerAttackRelease('C4', '4n');
+  });
 };
 
 exports.setPane = setPane;
-},{}],"template/drawFrame.ts":[function(require,module,exports) {
+},{"tone":"../node_modules/tone/build/esm/index.js"}],"template/drawFrame.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -86484,7 +86542,58 @@ var sketch = function sketch(props) {
 };
 
 exports.sketch = sketch;
-},{"./initParams":"template/initParams.ts","./setPane":"template/setPane.ts","./drawFrame":"template/drawFrame.ts"}],"template/p5_YYYYMMDD.ts":[function(require,module,exports) {
+},{"./initParams":"template/initParams.ts","./setPane":"template/setPane.ts","./drawFrame":"template/drawFrame.ts"}],"template/synths.ts":[function(require,module,exports) {
+"use strict";
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.synths = void 0;
+
+var Tone = __importStar(require("tone"));
+
+var synths = function synths() {
+  var synthMap = new Map();
+  synthMap.set('test', new Tone.AMSynth().toDestination());
+  return synthMap;
+};
+
+exports.synths = synths;
+},{"tone":"../node_modules/tone/build/esm/index.js"}],"template/p5_YYYYMMDD.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -86494,19 +86603,22 @@ exports.p5_YYYYMMDD = void 0;
 
 var index_1 = require("./index");
 
+var synths_1 = require("./synths");
+
 var p5_YYYYMMDD = function p5_YYYYMMDD() {
   var p5map = {
     date: 'MMMMYYDD',
     title: 'template',
     note: 'template note',
     content: 'template content',
-    sketch: index_1.sketch
+    sketch: index_1.sketch,
+    synths: synths_1.synths
   };
   return p5map;
 };
 
 exports.p5_YYYYMMDD = p5_YYYYMMDD;
-},{"./index":"template/index.ts"}],"getP5maps.ts":[function(require,module,exports) {
+},{"./index":"template/index.ts","./synths":"template/synths.ts"}],"getP5maps.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -86749,7 +86861,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55113" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49477" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
