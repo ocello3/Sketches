@@ -86387,7 +86387,7 @@ var p5_20210201 = function p5_20210201() {
 };
 
 exports.p5_20210201 = p5_20210201;
-},{"./index":"20210201/index.ts"}],"template/initParams.ts":[function(require,module,exports) {
+},{"./index":"20210201/index.ts"}],"20210418/initParams.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -86405,7 +86405,7 @@ var initParams = function initParams(width) {
 };
 
 exports.initParams = initParams;
-},{}],"template/setPane.ts":[function(require,module,exports) {
+},{}],"20210418/setPane.ts":[function(require,module,exports) {
 "use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
@@ -86453,41 +86453,47 @@ var Tone = __importStar(require("tone")); // for tonejs
 var setPane = function setPane(props, s, params) {
   var f1 = props.pane.addFolder({
     title: 'Control'
-  }); // control button
+  });
+
+  var activate = function activate() {
+    // for (const value of props.synths.values()) value.start();
+    Tone.Transport.start(); // props.synths.get('test').triggerAttackRelease('C4', '4n');
+
+    props.synths.get('testSeq').start(0);
+    params.isStarted = true;
+  };
+
+  var inactivate = function inactivate() {
+    Tone.Destination.mute = true;
+    Tone.Transport.stop();
+  };
+
+  var reactivate = function reactivate() {
+    Tone.Destination.mute = false;
+    Tone.Transport.start();
+  }; // control button
+
 
   var stopButton = f1.addButton({
     title: 'start/stop'
   });
   stopButton.on('click', function () {
-    // for tonejs start--
-    if (!s.isLooping() && !params.isStarted) {
-      // when loaded
-      // for (const value of props.synths.values()) value.start();
-      // Tone.start();
-      // props.synths.get('test').triggerAttackRelease('C4', '4n');
-      params.isStarted = true;
-    }
+    if (!s.isLooping() && !params.isStarted) activate(); // when loaded
 
-    if (s.isLooping()) Tone.Destination.mute = true; // when stoped
+    if (s.isLooping()) inactivate(); // when stoped
 
-    if (!s.isLooping() && params.isStarted) Tone.Destination.mute = false; // when restarted
-    // for tonejs --end
+    if (!s.isLooping() && params.isStarted) reactivate(); // when restarted
 
     s.isLooping() ? s.noLoop() : s.loop();
-  });
+  }); // frameRate monitor
+
   f1.addMonitor(params, 'frameRate', {
     interval: 500
-  });
-  var synthTestButton = f1.addButton({
-    title: "synth test"
-  });
-  synthTestButton.on('click', function () {
-    props.synths.get('test').triggerAttackRelease('C4', '4n');
   });
 };
 
 exports.setPane = setPane;
-},{"tone":"../node_modules/tone/build/esm/index.js"}],"template/drawFrame.ts":[function(require,module,exports) {
+},{"tone":"../node_modules/tone/build/esm/index.js"}],"20210418/drawFrame.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -86505,7 +86511,7 @@ var drawFrame = function drawFrame(s, params) {
 };
 
 exports.drawFrame = drawFrame;
-},{}],"template/index.ts":[function(require,module,exports) {
+},{}],"20210418/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -86542,7 +86548,7 @@ var sketch = function sketch(props) {
 };
 
 exports.sketch = sketch;
-},{"./initParams":"template/initParams.ts","./setPane":"template/setPane.ts","./drawFrame":"template/drawFrame.ts"}],"template/synths.ts":[function(require,module,exports) {
+},{"./initParams":"20210418/initParams.ts","./setPane":"20210418/setPane.ts","./drawFrame":"20210418/drawFrame.ts"}],"20210418/synths.ts":[function(require,module,exports) {
 "use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
@@ -86588,28 +86594,33 @@ var Tone = __importStar(require("tone"));
 
 var synths = function synths() {
   var synthMap = new Map();
-  synthMap.set('test', new Tone.AMSynth().toDestination());
+  var testSynth = new Tone.AMSynth().toDestination();
+  synthMap.set('test', testSynth);
+  var testSeq = new Tone.Sequence(function (time, note) {
+    testSynth.triggerAttackRelease(note, time); // console.log(`time: ${time}, note: ${note}`);
+  }, ["C3", "E3", "G3"], "8n");
+  synthMap.set('testSeq', testSeq);
   return synthMap;
 };
 
 exports.synths = synths;
-},{"tone":"../node_modules/tone/build/esm/index.js"}],"template/p5_YYYYMMDD.ts":[function(require,module,exports) {
+},{"tone":"../node_modules/tone/build/esm/index.js"}],"20210418/p5_20210418.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.p5_YYYYMMDD = void 0;
+exports.p5_20210418 = void 0;
 
 var index_1 = require("./index");
 
 var synths_1 = require("./synths");
 
-var p5_YYYYMMDD = function p5_YYYYMMDD() {
+var p5_20210418 = function p5_20210418() {
   var p5map = {
-    date: 'MMMMYYDD',
-    title: 'template',
-    note: 'template note',
+    date: '20210418',
+    title: 'Pattern',
+    note: 'Developing',
     content: 'template content',
     sketch: index_1.sketch,
     synths: synths_1.synths
@@ -86617,8 +86628,8 @@ var p5_YYYYMMDD = function p5_YYYYMMDD() {
   return p5map;
 };
 
-exports.p5_YYYYMMDD = p5_YYYYMMDD;
-},{"./index":"template/index.ts","./synths":"template/synths.ts"}],"getP5maps.ts":[function(require,module,exports) {
+exports.p5_20210418 = p5_20210418;
+},{"./index":"20210418/index.ts","./synths":"20210418/synths.ts"}],"getP5maps.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -86636,13 +86647,13 @@ var p5_20201231_1 = require("./20201231/p5_20201231");
 
 var p5_20210201_1 = require("./20210201/p5_20210201");
 
-var p5_YYYYMMDD_1 = require("./template/p5_YYYYMMDD"); // comment out
+var p5_20210418_1 = require("./20210418/p5_20210418"); // import { p5_YYYYMMDD } from './template/p5_YYYYMMDD'; // comment out
 
 
 var getP5maps = function getP5maps() {
-  var p5maps = [];
-  p5maps.push(p5_YYYYMMDD_1.p5_YYYYMMDD()); // comment out
+  var p5maps = []; // p5maps.push(p5_YYYYMMDD()); // comment out
 
+  p5maps.push(p5_20210418_1.p5_20210418());
   p5maps.push(p5_20210201_1.p5_20210201());
   p5maps.push(p5_20201231_1.p5_20201231());
   p5maps.push(p5_20201023_1.p5_20201023());
@@ -86652,7 +86663,7 @@ var getP5maps = function getP5maps() {
 };
 
 exports.getP5maps = getP5maps;
-},{"./20200501/p5_20200501":"20200501/p5_20200501.ts","./20200912/p5_20200912":"20200912/p5_20200912.ts","./20201023/p5_20201023":"20201023/p5_20201023.ts","./20201231/p5_20201231":"20201231/p5_20201231.ts","./20210201/p5_20210201":"20210201/p5_20210201.ts","./template/p5_YYYYMMDD":"template/p5_YYYYMMDD.ts"}],"createCoverPage.ts":[function(require,module,exports) {
+},{"./20200501/p5_20200501":"20200501/p5_20200501.ts","./20200912/p5_20200912":"20200912/p5_20200912.ts","./20201023/p5_20201023":"20201023/p5_20201023.ts","./20201231/p5_20201231":"20201231/p5_20201231.ts","./20210201/p5_20210201":"20210201/p5_20210201.ts","./20210418/p5_20210418":"20210418/p5_20210418.ts"}],"createCoverPage.ts":[function(require,module,exports) {
 "use strict";
 
 var __values = this && this.__values || function (o) {
@@ -86861,7 +86872,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49477" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51247" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
