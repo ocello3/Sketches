@@ -9,9 +9,8 @@ export const setPane = (props: props, s: eP5, params: params): void => {
 	});
 	const activate = (): void => {
 		// for (const value of props.synths.values()) value.start();
+		Tone.Transport.bpm.value = 80;
 		Tone.Transport.start();
-		// props.synths.get('test').triggerAttackRelease('C4', '4n');
-		props.synths.get('testSeq').start(0);
 		params.isStarted = true;
 	}
 	const inactivate = (): void => {

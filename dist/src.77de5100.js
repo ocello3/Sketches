@@ -86399,13 +86399,77 @@ var initParams = function initParams(width) {
   var initParams = {
     canvasSize: width,
     frameRate: 0,
-    isStarted: false
+    isStarted: false,
+    note_1: 'A0',
+    note_2: 'A0'
   };
   return initParams;
 };
 
 exports.initParams = initParams;
-},{}],"20210418/setPane.ts":[function(require,module,exports) {
+},{}],"20210418/getSeqs.ts":[function(require,module,exports) {
+"use strict";
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getSeqs = void 0;
+
+var Tone = __importStar(require("tone"));
+
+var getSeqs = function getSeqs(props, params) {
+  var amSeq = new Tone.Sequence(function (time, note) {
+    props.synths.get('amSynth').triggerAttackRelease(note, time);
+    Tone.Draw.schedule(function () {
+      params.note_1 = note;
+    }, time);
+  }, ["C3", "E3", "G3"], "4n").start(0);
+  props.synths.set('amSeq', amSeq);
+  var fmSeq = new Tone.Sequence(function (time, note) {
+    props.synths.get('fmSynth').triggerAttackRelease(note, time);
+    Tone.Draw.schedule(function () {
+      params.note_2 = note;
+    }, time);
+  }, ["G4", ["C5", "C4", ["E4", null]], [null, "G5"]], "4n").start(0);
+  props.synths.set('fmSeq', fmSeq);
+};
+
+exports.getSeqs = getSeqs;
+},{"tone":"../node_modules/tone/build/esm/index.js"}],"20210418/setPane.ts":[function(require,module,exports) {
 "use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
@@ -86457,9 +86521,8 @@ var setPane = function setPane(props, s, params) {
 
   var activate = function activate() {
     // for (const value of props.synths.values()) value.start();
-    Tone.Transport.start(); // props.synths.get('test').triggerAttackRelease('C4', '4n');
-
-    props.synths.get('testSeq').start(0);
+    Tone.Transport.bpm.value = 80;
+    Tone.Transport.start();
     params.isStarted = true;
   };
 
@@ -86521,6 +86584,8 @@ exports.sketch = void 0;
 
 var initParams_1 = require("./initParams");
 
+var getSeqs_1 = require("./getSeqs");
+
 var setPane_1 = require("./setPane");
 
 var drawFrame_1 = require("./drawFrame");
@@ -86532,6 +86597,7 @@ var sketch = function sketch(props) {
 
     s.setup = function () {
       s.createCanvas(params.canvasSize, params.canvasSize);
+      getSeqs_1.getSeqs(props, params);
       setPane_1.setPane(props, s, params);
       s.noLoop();
     };
@@ -86540,15 +86606,18 @@ var sketch = function sketch(props) {
       s.background(255);
       params.frameRate = s.frameRate();
       drawFrame_1.drawFrame(s, params);
-      s.frameRate(2);
-      s.textSize(50);
-      s.text(s.frameCount, params.canvasSize / 2, params.canvasSize / 2);
+      s.frameRate(30);
+      s.textSize(50); // s.text(s.frameCount, params.canvasSize / 2, params.canvasSize / 2);
+
+      s.textAlign(s.CENTER);
+      s.text(params.note_1, params.canvasSize / 3, params.canvasSize / 2);
+      s.text(params.note_2, params.canvasSize * 2 / 3, params.canvasSize / 2);
     };
   };
 };
 
 exports.sketch = sketch;
-},{"./initParams":"20210418/initParams.ts","./setPane":"20210418/setPane.ts","./drawFrame":"20210418/drawFrame.ts"}],"20210418/synths.ts":[function(require,module,exports) {
+},{"./initParams":"20210418/initParams.ts","./getSeqs":"20210418/getSeqs.ts","./setPane":"20210418/setPane.ts","./drawFrame":"20210418/drawFrame.ts"}],"20210418/synths.ts":[function(require,module,exports) {
 "use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
@@ -86594,12 +86663,13 @@ var Tone = __importStar(require("tone"));
 
 var synths = function synths() {
   var synthMap = new Map();
-  var testSynth = new Tone.AMSynth().toDestination();
-  synthMap.set('test', testSynth);
-  var testSeq = new Tone.Sequence(function (time, note) {
-    testSynth.triggerAttackRelease(note, time); // console.log(`time: ${time}, note: ${note}`);
-  }, ["C3", "E3", "G3"], "8n");
-  synthMap.set('testSeq', testSeq);
+  var amPanner = new Tone.Panner(-0.8).toDestination();
+  var amSynth = new Tone.AMSynth().connect(amPanner);
+  synthMap.set('amSynth', amSynth);
+  var fmPanner = new Tone.Panner(0.8).toDestination();
+  var fmSynth = new Tone.FMSynth().connect(fmPanner);
+  fmSynth.volume.value = -10;
+  synthMap.set('fmSynth', fmSynth);
   return synthMap;
 };
 
@@ -86872,7 +86942,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51247" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53961" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
