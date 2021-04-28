@@ -86387,27 +86387,35 @@ var p5_20210201 = function p5_20210201() {
 };
 
 exports.p5_20210201 = p5_20210201;
-},{"./index":"20210201/index.ts"}],"20210418/initParams.ts":[function(require,module,exports) {
+},{"./index":"20210201/index.ts"}],"20210418/setParams.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.initParams = void 0;
+exports.setParams = void 0;
 
-var initParams = function initParams(width) {
+var setParams = function setParams(width) {
   var initParams = {
     canvasSize: width,
+    dataObjCount: 4,
     frameRate: 0,
     isStarted: false,
-    note_1: 'A0',
-    note_2: 'A0'
+    isReSet: false,
+    noteSeq: new Array(),
+    duration_min: 100,
+    duration_max: 200,
+    volume_min: -60,
+    volume_max: -6,
+    freq_min: 100,
+    freq_max: 1000,
+    colorPallete: [[81, 91, 212, 100], [129, 52, 175, 100], [221, 42, 123, 100], [254, 218, 119, 100]]
   };
   return initParams;
 };
 
-exports.initParams = initParams;
-},{}],"20210418/getSeqs.ts":[function(require,module,exports) {
+exports.setParams = setParams;
+},{}],"20210418/setSeqs.ts":[function(require,module,exports) {
 "use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
@@ -86447,28 +86455,26 @@ var __importStar = this && this.__importStar || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getSeqs = void 0;
+exports.setSeqs = void 0;
 
 var Tone = __importStar(require("tone"));
 
-var getSeqs = function getSeqs(props, params) {
-  var amSeq = new Tone.Sequence(function (time, note) {
-    props.synths.get('amSynth').triggerAttackRelease(note, time);
+var setSeqs = function setSeqs(s, props, params) {
+  var noteSeq = new Tone.Sequence(function (time, note) {
     Tone.Draw.schedule(function () {
-      params.note_1 = note;
+      params.noteSeq.push(note);
+
+      if (note == 'C3') {
+        s.fill(255, 150);
+        s.rect(0, 0, params.canvasSize, params.canvasSize);
+        params.isReSet = true;
+      }
     }, time);
-  }, ["C3", "E3", "G3"], "4n").start(0);
-  props.synths.set('amSeq', amSeq);
-  var fmSeq = new Tone.Sequence(function (time, note) {
-    props.synths.get('fmSynth').triggerAttackRelease(note, time);
-    Tone.Draw.schedule(function () {
-      params.note_2 = note;
-    }, time);
-  }, ["G4", ["C5", "C4", ["E4", null]], [null, "G5"]], "4n").start(0);
-  props.synths.set('fmSeq', fmSeq);
+  }, [['C3', 'D3', 'E3', 'F3'], null], '2n').start(0);
+  props.synths.set('noteSeq', noteSeq);
 };
 
-exports.getSeqs = getSeqs;
+exports.setSeqs = setSeqs;
 },{"tone":"../node_modules/tone/build/esm/index.js"}],"20210418/setPane.ts":[function(require,module,exports) {
 "use strict";
 
@@ -86562,7 +86568,7 @@ exports.setPane = setPane;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.drawFrame = void 0;
+exports.drawBall = exports.drawFrame = void 0;
 
 var drawFrame = function drawFrame(s, params) {
   s.push();
@@ -86574,7 +86580,143 @@ var drawFrame = function drawFrame(s, params) {
 };
 
 exports.drawFrame = drawFrame;
-},{}],"20210418/index.ts":[function(require,module,exports) {
+
+var drawBall = function drawBall(s, preDataObjs, dataObjs, params) {
+  dataObjs.forEach(function (dataObj, index) {
+    var preDataObj = preDataObjs[index];
+    s.push();
+    s.strokeWeight((0.5 - Math.abs(0.5 - dataObj.progressRate)) * 30);
+    s.stroke(params.colorPallete[index]);
+    s.curve(preDataObj.currentPos.x, preDataObj.currentPos.y, preDataObj.currentPos.x, preDataObj.currentPos.y, dataObj.currentPos.x, dataObj.currentPos.y, dataObj.currentPos.x, dataObj.currentPos.y);
+    s.pop();
+  });
+};
+
+exports.drawBall = drawBall;
+},{}],"20210418/setTargetDataObj.ts":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setTargetDataObj = void 0;
+
+var p5_1 = __importDefault(require("p5"));
+
+var setTargetDataObj = function setTargetDataObj(params) {
+  var calcDuration = function calcDuration() {
+    var diff = params.duration_max - params.duration_min;
+    return Math.random() * diff + params.duration_min;
+  };
+
+  var duration = calcDuration();
+  var startPos = new p5_1.default.Vector().set(Math.random() * params.canvasSize, Math.random() * params.canvasSize);
+
+  var calcV0 = function calcV0() {
+    var x_min = startPos.x * -2 / duration;
+    var y_min = startPos.y * -2 / duration;
+    var x_max = (params.canvasSize - startPos.x) * 2 / duration;
+    var y_max = (params.canvasSize - startPos.y) * 2 / duration;
+    var x = Math.random() * (x_max - x_min) + x_min;
+    var y = Math.random() * (y_max - y_min) + y_min;
+    return new p5_1.default.Vector().set(x, y);
+  };
+
+  var v0 = calcV0();
+  var a = p5_1.default.Vector.div(v0, -duration);
+
+  var calcTargetPos = function calcTargetPos() {
+    var x = startPos.x + v0.x * duration + Math.pow(duration, 2) * a.x / 2;
+    var y = startPos.y + v0.y * duration + Math.pow(duration, 2) * a.y / 2;
+    return new p5_1.default.Vector().set(x, y);
+  };
+
+  var targetPos = calcTargetPos();
+  return {
+    v0: v0,
+    a: a,
+    frameCount: 0,
+    duration: duration,
+    startPos: startPos,
+    targetPos: targetPos,
+    currentPos: startPos,
+    progressRate: 0,
+    // for tonejs
+    volume: params.volume_min,
+    pane: 0,
+    freq: 0
+  };
+};
+
+exports.setTargetDataObj = setTargetDataObj;
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"20210418/updateDataObj.ts":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateDataObj = void 0;
+
+var p5_1 = __importDefault(require("p5"));
+
+var updateDataObj = function updateDataObj(dataObj, index) {
+  return function (params) {
+    var frameCount = dataObj.frameCount + 1; // if frameCount is over duration, stop to update
+
+    if (frameCount >= dataObj.duration) return dataObj; // if still waiting for Tone.Sequence torriger
+
+    var noteSeqLength = params.noteSeq.length;
+    if (index > noteSeqLength) return dataObj;
+
+    var calcCurrentPos = function calcCurrentPos() {
+      var x = dataObj.startPos.x + dataObj.v0.x * dataObj.frameCount + dataObj.a.x * Math.pow(frameCount, 2) / 2;
+      var y = dataObj.startPos.y + dataObj.v0.y * dataObj.frameCount + dataObj.a.y * Math.pow(frameCount, 2) / 2;
+      return new p5_1.default.Vector().set(x, y);
+    };
+
+    var currentPos = calcCurrentPos();
+
+    var calcProgressRate = function calcProgressRate() {
+      var distStartCurrent = p5_1.default.Vector.dist(dataObj.startPos, currentPos);
+      var distStartTarget = p5_1.default.Vector.dist(dataObj.targetPos, dataObj.startPos);
+      return distStartCurrent / distStartTarget;
+    };
+
+    var progressRate = calcProgressRate();
+    var volume = (0.5 - Math.abs(0.5 - progressRate)) * 2 * (params.volume_max - params.volume_min) + params.volume_min;
+    var pane = currentPos.x / params.canvasSize * 2 - 1;
+    var freq = currentPos.y / params.canvasSize * (params.freq_max - params.freq_min) + params.freq_min;
+    return {
+      v0: dataObj.v0,
+      a: dataObj.a,
+      frameCount: frameCount,
+      duration: dataObj.duration,
+      startPos: dataObj.startPos,
+      targetPos: dataObj.targetPos,
+      currentPos: currentPos,
+      progressRate: progressRate,
+      // for tonejs
+      volume: volume,
+      pane: pane,
+      freq: freq
+    };
+  };
+};
+
+exports.updateDataObj = updateDataObj;
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"20210418/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -86582,42 +86724,84 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.sketch = void 0;
 
-var initParams_1 = require("./initParams");
+var setParams_1 = require("./setParams");
 
-var getSeqs_1 = require("./getSeqs");
+var setSeqs_1 = require("./setSeqs");
 
 var setPane_1 = require("./setPane");
 
 var drawFrame_1 = require("./drawFrame");
 
+var setTargetDataObj_1 = require("./setTargetDataObj");
+
+var updateDataObj_1 = require("./updateDataObj");
+
 var sketch = function sketch(props) {
   return function (s) {
     var canvasDiv = document.getElementById('canvas');
-    var params = initParams_1.initParams(canvasDiv.clientWidth);
+    var params = setParams_1.setParams(canvasDiv.clientWidth);
+    var dataObjs = Array.from(Array(params.dataObjCount), function () {
+      return setTargetDataObj_1.setTargetDataObj(params);
+    });
 
     s.setup = function () {
       s.createCanvas(params.canvasSize, params.canvasSize);
-      getSeqs_1.getSeqs(props, params);
+      setSeqs_1.setSeqs(s, props, params);
       setPane_1.setPane(props, s, params);
       s.noLoop();
     };
 
     s.draw = function () {
-      s.background(255);
       params.frameRate = s.frameRate();
-      drawFrame_1.drawFrame(s, params);
-      s.frameRate(30);
-      s.textSize(50); // s.text(s.frameCount, params.canvasSize / 2, params.canvasSize / 2);
 
-      s.textAlign(s.CENTER);
-      s.text(params.note_1, params.canvasSize / 3, params.canvasSize / 2);
-      s.text(params.note_2, params.canvasSize * 2 / 3, params.canvasSize / 2);
+      if (params.isReSet) {
+        dataObjs = Array.from(Array(params.dataObjCount), function () {
+          return setTargetDataObj_1.setTargetDataObj(params);
+        });
+        params.isReSet = false;
+        params.noteSeq = new Array();
+      }
+
+      var preDataObjs = dataObjs.slice();
+      dataObjs = dataObjs.map(function (dataObj, index) {
+        return updateDataObj_1.updateDataObj(dataObj, index)(params);
+      });
+      drawFrame_1.drawFrame(s, params);
+      drawFrame_1.drawBall(s, preDataObjs, dataObjs, params);
+      props.synths.get('synth_1').set({
+        frequency: dataObjs[0].freq,
+        volume: dataObjs[0].volume
+      });
+      props.synths.get('synth_2').set({
+        frequency: dataObjs[1].freq,
+        volume: dataObjs[1].volume
+      });
+      props.synths.get('synth_3').set({
+        frequency: dataObjs[2].freq,
+        volume: dataObjs[2].volume
+      });
+      props.synths.get('synth_4').set({
+        frequency: dataObjs[3].freq,
+        volume: dataObjs[3].volume
+      });
+      props.synths.get('panner_1').set({
+        pane: dataObjs[0].pane
+      });
+      props.synths.get('panner_2').set({
+        pane: dataObjs[1].pane
+      });
+      props.synths.get('panner_3').set({
+        pane: dataObjs[2].pane
+      });
+      props.synths.get('panner_4').set({
+        pane: dataObjs[3].pane
+      });
     };
   };
 };
 
 exports.sketch = sketch;
-},{"./initParams":"20210418/initParams.ts","./getSeqs":"20210418/getSeqs.ts","./setPane":"20210418/setPane.ts","./drawFrame":"20210418/drawFrame.ts"}],"20210418/synths.ts":[function(require,module,exports) {
+},{"./setParams":"20210418/setParams.ts","./setSeqs":"20210418/setSeqs.ts","./setPane":"20210418/setPane.ts","./drawFrame":"20210418/drawFrame.ts","./setTargetDataObj":"20210418/setTargetDataObj.ts","./updateDataObj":"20210418/updateDataObj.ts"}],"20210418/synths.ts":[function(require,module,exports) {
 "use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
@@ -86663,13 +86847,22 @@ var Tone = __importStar(require("tone"));
 
 var synths = function synths() {
   var synthMap = new Map();
-  var amPanner = new Tone.Panner(-0.8).toDestination();
-  var amSynth = new Tone.AMSynth().connect(amPanner);
-  synthMap.set('amSynth', amSynth);
-  var fmPanner = new Tone.Panner(0.8).toDestination();
-  var fmSynth = new Tone.FMSynth().connect(fmPanner);
-  fmSynth.volume.value = -10;
-  synthMap.set('fmSynth', fmSynth);
+  var panner_1 = new Tone.Panner(0).toDestination();
+  var synth_1 = new Tone.PWMOscillator(60, 0.3).connect(panner_1).start();
+  synthMap.set('panner_1', panner_1);
+  synthMap.set('synth_1', synth_1);
+  var panner_2 = new Tone.Panner(0).toDestination();
+  var synth_2 = new Tone.PWMOscillator(60, 0.3).connect(panner_2).start();
+  synthMap.set('panner_2', panner_2);
+  synthMap.set('synth_2', synth_2);
+  var panner_3 = new Tone.Panner(0).toDestination();
+  var synth_3 = new Tone.PWMOscillator(60, 0.3).connect(panner_3).start();
+  synthMap.set('panner_3', panner_3);
+  synthMap.set('synth_3', synth_3);
+  var panner_4 = new Tone.Panner(0).toDestination();
+  var synth_4 = new Tone.PWMOscillator(60, 0.3).connect(panner_4).start();
+  synthMap.set('panner_4', panner_4);
+  synthMap.set('synth_4', synth_4);
   return synthMap;
 };
 
@@ -86690,8 +86883,8 @@ var p5_20210418 = function p5_20210418() {
   var p5map = {
     date: '20210418',
     title: 'Pattern',
-    note: 'Developing',
-    content: 'template content',
+    note: 'Easing by constant acceleration motion and switched by Tone.Sequence',
+    content: 'Easing motion is implemented using initial velocity and acceleration. These parameters are restricted by duration and targetPosition. Switching timing is controled by Tone.Sequence. Refer <a href="https://scrapbox.io/ocello3blog/Easing_20210418" target="_blank" rel="noopener noreferrer">this link</a> to see how to implement them.',
     sketch: index_1.sketch,
     synths: synths_1.synths
   };
@@ -86942,7 +87135,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53961" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50566" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
