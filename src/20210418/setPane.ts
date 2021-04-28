@@ -1,7 +1,7 @@
 import * as Tone from 'tone';  // for tonejs
 import { props } from '../types/props';
 import { eP5 } from '../types/eP5';
-import { params } from './initParams';
+import { params } from './setParams';
 
 export const setPane = (props: props, s: eP5, params: params): void => {
 	const f1 = props.pane.addFolder({

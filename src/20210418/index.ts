@@ -17,23 +17,27 @@ export const sketch = (props: props) => {
 			s.createCanvas(params.canvasSize, params.canvasSize);
 			setSeqs(s, props, params);
 			setPane(props, s, params);
-			s.frameRate(30);
 			s.noLoop();
 		};
 		s.draw = () => {
-			// s.background(255);
-			s.strokeWeight(3);
 			params.frameRate = s.frameRate();
-			if (params.isSet) {
+			if (params.isReSet) {
 				dataObjs = Array.from(Array(params.dataObjCount), () => setTargetDataObj(params));
-				params.isSet = false;
+				params.isReSet = false;
+				params.noteSeq = new Array();
 			}
-			dataObjs = dataObjs.map(dataObj => updateDataObj(dataObj)(params));
+			const preDataObjs = dataObjs.slice();
+			dataObjs = dataObjs.map((dataObj, index) => updateDataObj(dataObj, index)(params));
 			drawFrame(s, params);
-			drawBall(s, dataObjs);
-			// s.textSize(50);
-			// s.text(s.frameCount, params.canvasSize / 2, params.canvasSize / 2);
-			// s.textAlign(s.CENTER);
+			drawBall(s, preDataObjs, dataObjs, params);
+			props.synths.get('synth_1').set({frequency: dataObjs[0].freq, volume: dataObjs[0].volume});
+			props.synths.get('synth_2').set({frequency: dataObjs[1].freq, volume: dataObjs[1].volume});
+			props.synths.get('synth_3').set({frequency: dataObjs[2].freq, volume: dataObjs[2].volume});
+			props.synths.get('synth_4').set({frequency: dataObjs[3].freq, volume: dataObjs[3].volume});
+			props.synths.get('panner_1').set({pane: dataObjs[0].pane});
+			props.synths.get('panner_2').set({pane: dataObjs[1].pane});
+			props.synths.get('panner_3').set({pane: dataObjs[2].pane});
+			props.synths.get('panner_4').set({pane: dataObjs[3].pane});
 		};
 	};
 };

@@ -4,6 +4,7 @@ import { params, setParams } from './setParams';
 import { dataObj } from './dataObj';
 
 const params: params = setParams(100);
+params.noteSeq = ['C', 'D', 'E', 'F'];
 const dataObjs: dataObj[] = Array.from(Array(params.dataObjCount), () => setTargetDataObj(params));
 
 test('duration', () => {
@@ -15,9 +16,9 @@ test('duration', () => {
 
 test('a and v0', () => {
 	dataObjs.forEach(dataObj => {
-		const v = P5.Vector.add(dataObj.v0, P5.Vector.mult(dataObj.a, dataObj.duration + 1));
-		expect(v.x).toBeLessThan(50);
-		expect(v.y).toBeGreaterThan(-50);
+		const v = P5.Vector.add(dataObj.v0, P5.Vector.mult(dataObj.a, dataObj.duration));
+		expect(v.x).toBeCloseTo(0, 0);
+		expect(v.y).toBeCloseTo(0, 0);
 	});
 });
 

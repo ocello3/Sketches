@@ -11,25 +11,25 @@ export const setTargetDataObj =  (params: params): dataObj => {
 
 	const startPos = new P5.Vector().set(Math.random() * params.canvasSize, Math.random() * params.canvasSize);
 	
-	const targetPos = new P5.Vector().set(Math.random() * params.canvasSize, Math.random() * params.canvasSize);
-
 	const calcV0 = ():P5.Vector => {
-		const x_fromParams = Math.random() * (params.v0_max - params.v0_min) + params.v0_min;
-		const y_fromParams = Math.random() * (params.v0_max - params.v0_min) + params.v0_min;
-		const v0_fromParams = new P5.Vector().set(x_fromParams, y_fromParams);
-		const length_fromParams = P5.Vector.mag(v0_fromParams);
-		const length_startFromTarget = P5.Vector.dist(targetPos, startPos);
-		if (length_fromParams > length_startFromTarget/2) return v0_fromParams;
-		return P5.Vector.div(P5.Vector.sub(targetPos, startPos), 2); 
+		const x_min = startPos.x * (-2) / duration;
+		const y_min = startPos.y * (-2) / duration;
+		const x_max = (params.canvasSize - startPos.x) * 2 / duration;
+		const y_max = (params.canvasSize - startPos.y) * 2 / duration;
+		const x = Math.random() * (x_max - x_min) + x_min;
+		const y = Math.random() * (y_max - y_min) + y_min;
+		return new P5.Vector().set(x, y);
 	}
 	const v0 = calcV0();
 	
-	const calcA = ():P5.Vector => {
-		const x = (targetPos.x - startPos.x - v0.x * duration) * 2 / Math.pow(duration, 2);
-		const y = (targetPos.y - startPos.y - v0.y * duration) * 2 / Math.pow(duration, 2);
+	const a = P5.Vector.div(v0, -duration);
+
+	const calcTargetPos = ():P5.Vector => {
+		const x = startPos.x + v0.x * duration + Math.pow(duration, 2) * a.x / 2;
+		const y = startPos.y + v0.y * duration + Math.pow(duration, 2) * a.y / 2;
 		return new P5.Vector().set(x, y);
 	}
-	const a = calcA();
+	const targetPos = calcTargetPos();
 	
 	return {
 		v0: v0,
