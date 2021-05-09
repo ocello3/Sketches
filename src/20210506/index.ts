@@ -1,9 +1,8 @@
 import { eP5 } from '../types/eP5';
 import { props } from '../types/props';
-import { params, setParams } from './setParams';
-import { setPane } from './setPane';
-import { drawFrame } from './draw';
-import { dataObj } from './dataObj';
+import { params, setParams, updateParams} from './params';
+import { setPane } from './pane';
+import { drawFrame } from './frame';
 
 export const sketch = (props: props) => {
 	return (s: eP5): void => {
@@ -15,7 +14,7 @@ export const sketch = (props: props) => {
 			s.noLoop();
 		};
 		s.draw = () => {
-			params.frameRate = s.frameRate();
+			updateParams(s, params);
 			drawFrame(s, params);
 		};
 	};

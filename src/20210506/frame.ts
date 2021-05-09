@@ -1,5 +1,5 @@
 import { eP5 } from '../types/eP5';
-import { params } from './setParams';
+import { params } from './params';
 
 export const drawFrame = (s: eP5, params: params):void => {
 	s.push();
