@@ -10,6 +10,8 @@ export const setParams = (width: number) => {
 		isStarted: false,
 		// for box
 		boxRotateSpeedRate: 0.1,
+		boxSlidSpeedRate: 0.3,
+		status: 'falling',
 		// for slope
 		tiltAngle: Math.PI / 6,
 	}

@@ -30,5 +30,6 @@ export const setPane = (props: props, s: eP5, params: params): void => {
 	});
 	// frameRate monitor
 	f1.addMonitor(params, 'frameRate', { interval: 500 });
+	f1.addMonitor(params, 'status', { interval: 500 });
 };
 

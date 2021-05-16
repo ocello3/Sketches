@@ -86892,26 +86892,40 @@ var p5_20210418 = function p5_20210418() {
 };
 
 exports.p5_20210418 = p5_20210418;
-},{"./index":"20210418/index.ts","./synths":"20210418/synths.ts"}],"20210506/setParams.ts":[function(require,module,exports) {
+},{"./index":"20210418/index.ts","./synths":"20210418/synths.ts"}],"20210506/params.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.setParams = void 0;
+exports.updateParams = exports.setParams = void 0;
 
 var setParams = function setParams(width) {
-  var initParams = {
+  var params = {
+    // default
     canvasSize: width,
     dataObjCount: 4,
     frameRate: 0,
-    isStarted: false
+    isStarted: false,
+    // for box
+    boxRotateSpeedRate: 0.1,
+    boxSlidSpeedRate: 0.3,
+    status: 'falling',
+    // for slope
+    tiltAngle: Math.PI / 6
   };
-  return initParams;
+  return params;
 };
 
 exports.setParams = setParams;
-},{}],"20210506/setPane.ts":[function(require,module,exports) {
+var thisParams = exports.setParams(0);
+
+var updateParams = function updateParams(s, params) {
+  params.frameRate = s.frameRate();
+};
+
+exports.updateParams = updateParams;
+},{}],"20210506/pane.ts":[function(require,module,exports) {
 "use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
@@ -86963,7 +86977,6 @@ var setPane = function setPane(props, s, params) {
 
   var activate = function activate() {
     // for (const value of props.synths.values()) value.start();
-    Tone.Transport.bpm.value = 80;
     Tone.Transport.start();
     params.isStarted = true;
   };
@@ -86995,10 +87008,295 @@ var setPane = function setPane(props, s, params) {
   f1.addMonitor(params, 'frameRate', {
     interval: 500
   });
+  f1.addMonitor(params, 'status', {
+    interval: 500
+  });
 };
 
 exports.setPane = setPane;
-},{"tone":"../node_modules/tone/build/esm/index.js"}],"20210506/draw.ts":[function(require,module,exports) {
+},{"tone":"../node_modules/tone/build/esm/index.js"}],"20210506/box/setBox.ts":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setBox = void 0;
+
+var p5_1 = __importDefault(require("p5"));
+
+var params_1 = require("../params");
+
+var setBox = function setBox(params) {
+  // randamize later
+  var boxSize = params.canvasSize / 8;
+  var boxPosX = params.canvasSize * 2 / 3;
+  var boxVelocityY = 5;
+  var boxInitVelocity = new p5_1.default.Vector().set(0, boxVelocityY);
+  var boxCollisionPosY = params.canvasSize - boxPosX * Math.sin(Math.PI / 6);
+  var boxCollisionPos = new p5_1.default.Vector().set(boxPosX, boxCollisionPosY);
+  return {
+    frameCount: 0,
+    gravity: 0.3,
+    boxSize: boxSize,
+    boxAngle: 0,
+    boxRotateSpeed: 0,
+    boxInitVelocity: boxInitVelocity,
+    boxVelocity: boxInitVelocity,
+    boxCollisionPos: boxCollisionPos,
+    boxPos_rowRight: new p5_1.default.Vector().set(boxPosX, 0)
+  };
+};
+
+exports.setBox = setBox;
+var params = params_1.setParams(100);
+var thisBox = exports.setBox(params);
+},{"p5":"../node_modules/p5/lib/p5.min.js","../params":"20210506/params.ts"}],"20210506/box/fallingBox.ts":[function(require,module,exports) {
+"use strict";
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.fallingBox = exports.calcBoxPos = exports.calcBoxVelocity = void 0;
+
+var p5_1 = __importDefault(require("p5"));
+
+var calcBoxVelocity = function calcBoxVelocity(preBoxVelocity, preBoxInitVelocity, preBoxGravity, updatedFrameCount) {
+  var x = preBoxVelocity.x;
+  var y = preBoxInitVelocity.y + preBoxGravity * updatedFrameCount;
+  return new p5_1.default.Vector().set(x, y);
+};
+
+exports.calcBoxVelocity = calcBoxVelocity;
+
+var calcBoxPos = function calcBoxPos(preBoxPos, preBoxGravity, updatedFrameCount, preBoxCollisionPos) {
+  var x = preBoxPos.x;
+  var updatedY = 0.5 * preBoxGravity * Math.pow(updatedFrameCount, 2);
+  var y = updatedY > preBoxCollisionPos.y ? preBoxCollisionPos.y : updatedY;
+  return new p5_1.default.Vector().set(x, y);
+};
+
+exports.calcBoxPos = calcBoxPos;
+
+var fallingBox = function fallingBox(preBox) {
+  var updatedBox = __assign({}, preBox);
+
+  updatedBox.frameCount = preBox.frameCount + 1;
+  updatedBox.boxVelocity = exports.calcBoxVelocity(preBox.boxVelocity, preBox.boxInitVelocity, preBox.gravity, updatedBox.frameCount);
+  updatedBox.boxPos_rowRight = exports.calcBoxPos(preBox.boxPos_rowRight, preBox.gravity, updatedBox.frameCount, preBox.boxCollisionPos);
+  return updatedBox;
+};
+
+exports.fallingBox = fallingBox;
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"20210506/box/rotatingBox.ts":[function(require,module,exports) {
+"use strict";
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.rotatingBox = exports.calcBoxAngle = exports.calcBoxRotateSpeed = void 0;
+
+var calcBoxRotateSpeed = function calcBoxRotateSpeed(preBoxVelocity, preBoxAngle, preBoxRotateSpeed, params) {
+  var updatedRotateSpeed = preBoxVelocity.y * params.boxRotateSpeedRate;
+  return preBoxAngle == 0 ? updatedRotateSpeed : preBoxRotateSpeed;
+};
+
+exports.calcBoxRotateSpeed = calcBoxRotateSpeed;
+
+var calcBoxAngle = function calcBoxAngle(preBoxAngle, updatedBoxRotateSpeed, params) {
+  var updatedBoxAngle = preBoxAngle + updatedBoxRotateSpeed;
+  return updatedBoxAngle > params.tiltAngle ? params.tiltAngle : updatedBoxAngle;
+};
+
+exports.calcBoxAngle = calcBoxAngle;
+
+var rotatingBox = function rotatingBox(preBox, params) {
+  var updatedBox = __assign({}, preBox);
+
+  updatedBox.frameCount = preBox.frameCount + 1;
+  updatedBox.boxRotateSpeed = exports.calcBoxRotateSpeed(preBox.boxVelocity, preBox.boxAngle, preBox.boxRotateSpeed, params);
+  updatedBox.boxAngle = exports.calcBoxAngle(preBox.boxAngle, updatedBox.boxRotateSpeed, params);
+  return updatedBox;
+};
+
+exports.rotatingBox = rotatingBox;
+},{}],"20210506/box/slidingBox.ts":[function(require,module,exports) {
+"use strict";
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.slidingBox = exports.calcBoxPos = exports.calcBoxVelocity = void 0;
+
+var p5_1 = __importDefault(require("p5"));
+
+var calcBoxVelocity = function calcBoxVelocity(preBoxVelocity, preBoxAngle, params) {
+  var boxVelocityMag = p5_1.default.Vector.mag(preBoxVelocity);
+  var updatedBoxVelocity = p5_1.default.Vector.mult(p5_1.default.Vector.fromAngle(Math.PI - preBoxAngle, boxVelocityMag), params.boxSlidSpeedRate);
+  return preBoxVelocity.x == 0 ? updatedBoxVelocity : preBoxVelocity;
+};
+
+exports.calcBoxVelocity = calcBoxVelocity;
+
+var calcBoxPos = function calcBoxPos(preBoxPos, updatedBoxVelocity) {
+  return p5_1.default.Vector.add(preBoxPos, updatedBoxVelocity);
+};
+
+exports.calcBoxPos = calcBoxPos;
+
+var slidingBox = function slidingBox(preBox, params) {
+  var updatedBox = __assign({}, preBox);
+
+  updatedBox.frameCount = preBox.frameCount + 1;
+  updatedBox.boxVelocity = exports.calcBoxVelocity(preBox.boxVelocity, preBox.boxAngle, params);
+  updatedBox.boxPos_rowRight = exports.calcBoxPos(preBox.boxPos_rowRight, updatedBox.boxVelocity);
+  return updatedBox;
+};
+
+exports.slidingBox = slidingBox;
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"20210506/box/updateBox.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateBox = exports.getStatus = void 0;
+
+var setBox_1 = require("./setBox");
+
+var fallingBox_1 = require("./fallingBox");
+
+var rotatingBox_1 = require("./rotatingBox");
+
+var slidingBox_1 = require("./slidingBox");
+
+var getStatus = function getStatus(box, params) {
+  var isCollided = box.boxPos_rowRight.y >= box.boxCollisionPos.y;
+  var isRotated = box.boxAngle == params.tiltAngle;
+  var isOvered = box.boxPos_rowRight.x < 0;
+  if (!isCollided) return 'falling';
+  if (isCollided && !isRotated) return 'rotating';
+  if (isCollided && isRotated && !isOvered) return 'sliding';
+  if (isCollided && isRotated && isOvered) return 'reset';
+};
+
+exports.getStatus = getStatus;
+
+var updateBox = function updateBox(box) {
+  return function (params) {
+    var status = exports.getStatus(box, params);
+    params.status = status;
+    if (status == 'falling') return fallingBox_1.fallingBox(box);
+    if (status == 'rotating') return rotatingBox_1.rotatingBox(box, params);
+    if (status == 'sliding') return slidingBox_1.slidingBox(box, params);
+    if (status == 'reset') return setBox_1.setBox(params);
+    throw 'status is unknown';
+  };
+};
+
+exports.updateBox = updateBox;
+},{"./setBox":"20210506/box/setBox.ts","./fallingBox":"20210506/box/fallingBox.ts","./rotatingBox":"20210506/box/rotatingBox.ts","./slidingBox":"20210506/box/slidingBox.ts"}],"20210506/box/drawBox.ts":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.drawBox = void 0;
+
+var p5_1 = __importDefault(require("p5"));
+
+var drawBox = function drawBox(s, boxes) {
+  boxes.forEach(function (box) {
+    var rightUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI - box.boxAngle, box.boxSize));
+    ;
+    var rightLower = box.boxPos_rowRight;
+    var leftUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI * 5 / 4 - box.boxAngle, box.boxSize * Math.pow(2, 0.5)));
+    var leftLower = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI * 3 / 2 - box.boxAngle, box.boxSize));
+    s.push();
+    s.noFill();
+    s.beginShape();
+    s.vertex(rightUpper.x, rightUpper.y);
+    s.vertex(rightLower.x, rightLower.y);
+    s.vertex(leftLower.x, leftLower.y);
+    s.vertex(leftUpper.x, leftUpper.y);
+    s.endShape(s.CLOSE);
+    s.pop();
+  });
+};
+
+exports.drawBox = drawBox;
+},{"p5":"../node_modules/p5/lib/p5.min.js"}],"20210506/frame.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -87024,46 +87322,46 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.sketch = void 0;
 
-var setParams_1 = require("./setParams");
+var params_1 = require("./params");
 
-var setPane_1 = require("./setPane");
+var pane_1 = require("./pane");
 
-var draw_1 = require("./draw");
+var setBox_1 = require("./box/setBox");
+
+var updateBox_1 = require("./box/updateBox");
+
+var drawBox_1 = require("./box/drawBox");
+
+var frame_1 = require("./frame");
 
 var sketch = function sketch(props) {
   return function (s) {
     var canvasDiv = document.getElementById('canvas');
-    var params = setParams_1.setParams(canvasDiv.clientWidth);
+    var params = params_1.setParams(canvasDiv.clientWidth);
+    var boxes = Array.from(Array(1), function () {
+      return setBox_1.setBox(params);
+    });
 
     s.setup = function () {
       s.createCanvas(params.canvasSize, params.canvasSize);
-      setPane_1.setPane(props, s, params);
-      s.noLoop();
+      pane_1.setPane(props, s, params); // s.frameRate(30);
+      // s.noLoop();
     };
 
     s.draw = function () {
-      params.frameRate = s.frameRate();
-      draw_1.drawFrame(s, params);
+      s.background(255);
+      params_1.updateParams(s, params);
+      boxes = boxes.map(function (box) {
+        return updateBox_1.updateBox(box)(params);
+      });
+      drawBox_1.drawBox(s, boxes);
+      frame_1.drawFrame(s, params);
     };
   };
 };
 
 exports.sketch = sketch;
-},{"./setParams":"20210506/setParams.ts","./setPane":"20210506/setPane.ts","./draw":"20210506/draw.ts"}],"20210506/synths.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.synths = void 0;
-
-var synths = function synths() {
-  var synthMap = new Map();
-  return synthMap;
-};
-
-exports.synths = synths;
-},{}],"20210506/p5_20210506.ts":[function(require,module,exports) {
+},{"./params":"20210506/params.ts","./pane":"20210506/pane.ts","./box/setBox":"20210506/box/setBox.ts","./box/updateBox":"20210506/box/updateBox.ts","./box/drawBox":"20210506/box/drawBox.ts","./frame":"20210506/frame.ts"}],"20210506/p5_20210506.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -87073,22 +87371,19 @@ exports.p5_20210506 = void 0;
 
 var index_1 = require("./index");
 
-var synths_1 = require("./synths");
-
 var p5_20210506 = function p5_20210506() {
   var p5map = {
     date: '20210506',
-    title: 'Clocks',
-    note: 'Clock sound experiment.',
+    title: 'Fall Box',
+    note: 'Box fall to slope.',
     content: 'Experiment to create two difference sound at moment of the second hand advances.',
-    sketch: index_1.sketch,
-    synths: synths_1.synths
+    sketch: index_1.sketch
   };
   return p5map;
 };
 
 exports.p5_20210506 = p5_20210506;
-},{"./index":"20210506/index.ts","./synths":"20210506/synths.ts"}],"getP5maps.ts":[function(require,module,exports) {
+},{"./index":"20210506/index.ts"}],"getP5maps.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -87334,7 +87629,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61614" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55052" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
