@@ -13,7 +13,9 @@ export const setBox = (params:params) => {
 	return {
 		frameCount: 0,
 		gravity: 0.3,
-		boxSize: boxSize,
+		boxWidth: boxSize,
+		boxHeight: boxSize,
+		boxShrinkSpeed: 0,
 		boxAngle: 0,
 		boxRotateSpeed: 0,
 		boxInitVelocity: boxInitVelocity,

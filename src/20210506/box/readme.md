@@ -1,12 +1,11 @@
 # action item
-スロープが原点を通っていない。
-- slidingBoxで計算した`fromAngle`で計算したベクトルがおかしいのでは？それか`collisionPos`がおかしい。
-
-回転する向きが逆
-- `quad`の向きが違う気がする。
-- vertexの順番も調べる。
-
+- `status`が`rotating`になった時にboxの高さを衝突時の速度で小さくしたい。
+- `boxSize`を`boxWidth`と`boxHeight`に分けて整備する。
 
 # done
 四角形の角度がおかしい。
 - 手書きメモで整理する。
+
+回転する向きが逆
+- `fromAngle`の向きが逆になっていた（時計回りに考える）
+

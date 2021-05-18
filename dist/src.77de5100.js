@@ -86908,7 +86908,8 @@ var setParams = function setParams(width) {
     frameRate: 0,
     isStarted: false,
     // for box
-    boxRotateSpeedRate: 0.1,
+    boxShrinkSpeedRate: 1.5,
+    boxRotateSpeedRate: 0.03,
     boxSlidSpeedRate: 0.3,
     status: 'falling',
     // for slope
@@ -87043,7 +87044,9 @@ var setBox = function setBox(params) {
   return {
     frameCount: 0,
     gravity: 0.3,
-    boxSize: boxSize,
+    boxWidth: boxSize,
+    boxHeight: boxSize,
+    boxShrinkSpeed: 0,
     boxAngle: 0,
     boxRotateSpeed: 0,
     boxInitVelocity: boxInitVelocity,
@@ -87191,9 +87194,33 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.slidingBox = exports.calcBoxPos = exports.calcBoxVelocity = void 0;
+exports.slidingBox = exports.calcBoxPos = exports.calcBoxVelocity = exports.calcBoxHeight = exports.calcBoxShrinkSpeed = exports.calcFrameCount = void 0;
 
 var p5_1 = __importDefault(require("p5"));
+
+var calcFrameCount = function calcFrameCount(preFrameCount, preBoxShrinkSpeed) {
+  if (preBoxShrinkSpeed == 0) return 0; // when status is changed to "sliding"
+
+  return preFrameCount + 1;
+};
+
+exports.calcFrameCount = calcFrameCount;
+
+var calcBoxShrinkSpeed = function calcBoxShrinkSpeed(updatedFrameCount, preBoxGravity, preBoxVelocity) {
+  var updatedBoxShrinkSpeed = preBoxVelocity.y - preBoxGravity * updatedFrameCount;
+  if (updatedBoxShrinkSpeed < 0) return 0;
+  return updatedBoxShrinkSpeed;
+};
+
+exports.calcBoxShrinkSpeed = calcBoxShrinkSpeed;
+
+var calcBoxHeight = function calcBoxHeight(preBoxHeight, updatedBoxShrinkSpeed, params) {
+  var updatedBoxHeight = preBoxHeight - updatedBoxShrinkSpeed * params.boxShrinkSpeedRate;
+  if (updatedBoxHeight < 0) return 0;
+  return updatedBoxHeight;
+};
+
+exports.calcBoxHeight = calcBoxHeight;
 
 var calcBoxVelocity = function calcBoxVelocity(preBoxVelocity, preBoxAngle, params) {
   var boxVelocityMag = p5_1.default.Vector.mag(preBoxVelocity);
@@ -87212,7 +87239,9 @@ exports.calcBoxPos = calcBoxPos;
 var slidingBox = function slidingBox(preBox, params) {
   var updatedBox = __assign({}, preBox);
 
-  updatedBox.frameCount = preBox.frameCount + 1;
+  updatedBox.frameCount = exports.calcFrameCount(preBox.frameCount, preBox.boxShrinkSpeed);
+  updatedBox.boxShrinkSpeed = exports.calcBoxShrinkSpeed(updatedBox.frameCount, preBox.gravity, preBox.boxVelocity);
+  updatedBox.boxHeight = exports.calcBoxHeight(preBox.boxHeight, updatedBox.boxShrinkSpeed, params);
   updatedBox.boxVelocity = exports.calcBoxVelocity(preBox.boxVelocity, preBox.boxAngle, params);
   updatedBox.boxPos_rowRight = exports.calcBoxPos(preBox.boxPos_rowRight, updatedBox.boxVelocity);
   return updatedBox;
@@ -87278,13 +87307,13 @@ var p5_1 = __importDefault(require("p5"));
 
 var drawBox = function drawBox(s, boxes) {
   boxes.forEach(function (box) {
-    var rightUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI - box.boxAngle, box.boxSize));
-    ;
     var rightLower = box.boxPos_rowRight;
-    var leftUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI * 5 / 4 - box.boxAngle, box.boxSize * Math.pow(2, 0.5)));
-    var leftLower = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI * 3 / 2 - box.boxAngle, box.boxSize));
+    var leftLower = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI - box.boxAngle, box.boxWidth));
+    ;
+    var leftUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI + Math.atan(box.boxHeight / box.boxWidth) - box.boxAngle, Math.pow(Math.pow(box.boxWidth, 2) + Math.pow(box.boxHeight, 2), 0.5)));
+    var rightUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI * 3 / 2 - box.boxAngle, box.boxHeight));
     s.push();
-    s.noFill();
+    s.fill(0);
     s.beginShape();
     s.vertex(rightUpper.x, rightUpper.y);
     s.vertex(rightLower.x, rightLower.y);
@@ -87629,7 +87658,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55052" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51470" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -9,7 +9,8 @@ export const setParams = (width: number) => {
 		frameRate: 0,
 		isStarted: false,
 		// for box
-		boxRotateSpeedRate: 0.1,
+		boxShrinkSpeedRate: 1.5,
+		boxRotateSpeedRate: 0.03,
 		boxSlidSpeedRate: 0.3,
 		status: 'falling',
 		// for slope
