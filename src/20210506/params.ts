@@ -9,10 +9,10 @@ export const setParams = (width: number) => {
 		frameRate: 0,
 		isStarted: false,
 		// for box
-		boxShrinkSpeedRate: 1.5,
-		boxRotateSpeedRate: 0.03,
-		boxSlidSpeedRate: 0.3,
-		status: 'falling',
+		boxShrinkSpeedRate: 0.7,
+		boxRotateSpeedRate: 0.1,
+		boxSlideSpeedRate: 0.5,
+		boxControlPosSpeedRate: 0.01,
 		// for slope
 		tiltAngle: Math.PI / 6,
 	}

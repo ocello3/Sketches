@@ -86908,10 +86908,10 @@ var setParams = function setParams(width) {
     frameRate: 0,
     isStarted: false,
     // for box
-    boxShrinkSpeedRate: 1.5,
-    boxRotateSpeedRate: 0.03,
-    boxSlidSpeedRate: 0.3,
-    status: 'falling',
+    boxShrinkSpeedRate: 0.7,
+    boxRotateSpeedRate: 0.1,
+    boxSlideSpeedRate: 0.5,
+    boxControlPosSpeedRate: 0.01,
     // for slope
     tiltAngle: Math.PI / 6
   };
@@ -87008,10 +87008,11 @@ var setPane = function setPane(props, s, params) {
 
   f1.addMonitor(params, 'frameRate', {
     interval: 500
-  });
-  f1.addMonitor(params, 'status', {
-    interval: 500
-  });
+  }); // parameter
+
+  f1.addInput(params, 'boxShrinkSpeedRate');
+  f1.addInput(params, 'boxRotateSpeedRate');
+  f1.addInput(params, 'boxSlideSpeedRate');
 };
 
 exports.setPane = setPane;
@@ -87043,16 +87044,18 @@ var setBox = function setBox(params) {
   var boxCollisionPos = new p5_1.default.Vector().set(boxPosX, boxCollisionPosY);
   return {
     frameCount: 0,
+    status: 'falling',
     gravity: 0.3,
     boxWidth: boxSize,
     boxHeight: boxSize,
-    boxShrinkSpeed: 0,
     boxAngle: 0,
     boxRotateSpeed: 0,
     boxInitVelocity: boxInitVelocity,
     boxVelocity: boxInitVelocity,
+    boxCollidedVelocity: new p5_1.default.Vector().set(0, 0),
     boxCollisionPos: boxCollisionPos,
-    boxPos_rowRight: new p5_1.default.Vector().set(boxPosX, 0)
+    boxPos_rowRight: new p5_1.default.Vector().set(boxPosX, 0),
+    boxControlVector: new p5_1.default.Vector().set(0, 0)
   };
 };
 
@@ -87087,7 +87090,7 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fallingBox = exports.calcBoxPos = exports.calcBoxVelocity = void 0;
+exports.fallingBox = exports.resetFrameCount = exports.calcStatus = exports.calcBoxPos = exports.calcBoxVelocity = void 0;
 
 var p5_1 = __importDefault(require("p5"));
 
@@ -87108,12 +87111,29 @@ var calcBoxPos = function calcBoxPos(preBoxPos, preBoxGravity, updatedFrameCount
 
 exports.calcBoxPos = calcBoxPos;
 
+var calcStatus = function calcStatus(updatedBoxPos, updatedBoxCollisionPos) {
+  if (updatedBoxPos.y >= updatedBoxCollisionPos.y) return 'rotating';
+  return 'falling';
+};
+
+exports.calcStatus = calcStatus;
+
+var resetFrameCount = function resetFrameCount(updatedFrameCount, status) {
+  if (status == 'falling') return updatedFrameCount;
+  if (status == 'rotating') return 0;
+  throw 'status is unkown';
+};
+
+exports.resetFrameCount = resetFrameCount;
+
 var fallingBox = function fallingBox(preBox) {
   var updatedBox = __assign({}, preBox);
 
   updatedBox.frameCount = preBox.frameCount + 1;
   updatedBox.boxVelocity = exports.calcBoxVelocity(preBox.boxVelocity, preBox.boxInitVelocity, preBox.gravity, updatedBox.frameCount);
   updatedBox.boxPos_rowRight = exports.calcBoxPos(preBox.boxPos_rowRight, preBox.gravity, updatedBox.frameCount, preBox.boxCollisionPos);
+  updatedBox.status = exports.calcStatus(updatedBox.boxPos_rowRight, updatedBox.boxCollisionPos);
+  updatedBox.frameCount = exports.resetFrameCount(updatedBox.frameCount, updatedBox.status);
   return updatedBox;
 };
 
@@ -87140,11 +87160,11 @@ var __assign = this && this.__assign || function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.rotatingBox = exports.calcBoxAngle = exports.calcBoxRotateSpeed = void 0;
+exports.rotatingBox = exports.resetFrameCount = exports.calcStatus = exports.calcBoxAngle = exports.calcBoxRotateSpeed = void 0;
 
 var calcBoxRotateSpeed = function calcBoxRotateSpeed(preBoxVelocity, preBoxAngle, preBoxRotateSpeed, params) {
-  var updatedRotateSpeed = preBoxVelocity.y * params.boxRotateSpeedRate;
-  return preBoxAngle == 0 ? updatedRotateSpeed : preBoxRotateSpeed;
+  if (preBoxAngle != 0) return preBoxRotateSpeed;
+  return preBoxVelocity.y * 0.1 * params.boxRotateSpeedRate;
 };
 
 exports.calcBoxRotateSpeed = calcBoxRotateSpeed;
@@ -87156,12 +87176,29 @@ var calcBoxAngle = function calcBoxAngle(preBoxAngle, updatedBoxRotateSpeed, par
 
 exports.calcBoxAngle = calcBoxAngle;
 
+var calcStatus = function calcStatus(updatedBoxAngle, params) {
+  if (updatedBoxAngle >= params.tiltAngle) return 'sliding';
+  return 'rotating';
+};
+
+exports.calcStatus = calcStatus;
+
+var resetFrameCount = function resetFrameCount(updatedFrameCount, status) {
+  if (status == 'rotating') return updatedFrameCount;
+  if (status == 'sliding') return 0;
+  throw 'status is unkown';
+};
+
+exports.resetFrameCount = resetFrameCount;
+
 var rotatingBox = function rotatingBox(preBox, params) {
   var updatedBox = __assign({}, preBox);
 
   updatedBox.frameCount = preBox.frameCount + 1;
   updatedBox.boxRotateSpeed = exports.calcBoxRotateSpeed(preBox.boxVelocity, preBox.boxAngle, preBox.boxRotateSpeed, params);
   updatedBox.boxAngle = exports.calcBoxAngle(preBox.boxAngle, updatedBox.boxRotateSpeed, params);
+  updatedBox.status = exports.calcStatus(updatedBox.boxAngle, params);
+  updatedBox.frameCount = exports.resetFrameCount(updatedBox.frameCount, updatedBox.status);
   return updatedBox;
 };
 
@@ -87194,38 +87231,36 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.slidingBox = exports.calcBoxPos = exports.calcBoxVelocity = exports.calcBoxHeight = exports.calcBoxShrinkSpeed = exports.calcFrameCount = void 0;
+exports.slidingBox = exports.calcStatus = exports.calcBoxControlVector = exports.calcBoxPos = exports.calcBoxVelocity = exports.calcBoxHeight = exports.calcBoxCollidedVelocity = void 0;
 
 var p5_1 = __importDefault(require("p5"));
 
-var calcFrameCount = function calcFrameCount(preFrameCount, preBoxShrinkSpeed) {
-  if (preBoxShrinkSpeed == 0) return 0; // when status is changed to "sliding"
-
-  return preFrameCount + 1;
+var calcBoxCollidedVelocity = function calcBoxCollidedVelocity(preFrameCount, preBoxVelocity, preBoxCollidedVelocity) {
+  if (preFrameCount == 0) return preBoxVelocity;
+  return preBoxCollidedVelocity;
 };
 
-exports.calcFrameCount = calcFrameCount;
+exports.calcBoxCollidedVelocity = calcBoxCollidedVelocity;
 
-var calcBoxShrinkSpeed = function calcBoxShrinkSpeed(updatedFrameCount, preBoxGravity, preBoxVelocity) {
-  var updatedBoxShrinkSpeed = preBoxVelocity.y - preBoxGravity * updatedFrameCount;
-  if (updatedBoxShrinkSpeed < 0) return 0;
-  return updatedBoxShrinkSpeed;
-};
-
-exports.calcBoxShrinkSpeed = calcBoxShrinkSpeed;
-
-var calcBoxHeight = function calcBoxHeight(preBoxHeight, updatedBoxShrinkSpeed, params) {
-  var updatedBoxHeight = preBoxHeight - updatedBoxShrinkSpeed * params.boxShrinkSpeedRate;
+var calcBoxHeight = function calcBoxHeight(updatedFrameCount, updatedBoxCollidedVelocity, preBoxGravity, preBoxWidth, params) {
+  var initVelocity = updatedBoxCollidedVelocity.y * params.boxShrinkSpeedRate;
+  var acceleration = preBoxGravity * params.boxShrinkSpeedRate;
+  var updatedBoxHeight = preBoxWidth - initVelocity * updatedFrameCount - 0.5 * acceleration * Math.pow(updatedFrameCount, 2);
   if (updatedBoxHeight < 0) return 0;
   return updatedBoxHeight;
 };
 
 exports.calcBoxHeight = calcBoxHeight;
 
-var calcBoxVelocity = function calcBoxVelocity(preBoxVelocity, preBoxAngle, params) {
-  var boxVelocityMag = p5_1.default.Vector.mag(preBoxVelocity);
-  var updatedBoxVelocity = p5_1.default.Vector.mult(p5_1.default.Vector.fromAngle(Math.PI - preBoxAngle, boxVelocityMag), params.boxSlidSpeedRate);
-  return preBoxVelocity.x == 0 ? updatedBoxVelocity : preBoxVelocity;
+var calcBoxVelocity = function calcBoxVelocity(preFrameCount, preBoxVelocity, preBoxAngle, params) {
+  if (preFrameCount == 0) {
+    var boxVelocityMag = p5_1.default.Vector.mag(preBoxVelocity);
+    var boxVelocity = p5_1.default.Vector.fromAngle(Math.PI - preBoxAngle, boxVelocityMag);
+    return p5_1.default.Vector.mult(boxVelocity, params.boxSlideSpeedRate);
+  }
+
+  ;
+  return preBoxVelocity;
 };
 
 exports.calcBoxVelocity = calcBoxVelocity;
@@ -87236,14 +87271,33 @@ var calcBoxPos = function calcBoxPos(preBoxPos, updatedBoxVelocity) {
 
 exports.calcBoxPos = calcBoxPos;
 
+var calcBoxControlVector = function calcBoxControlVector(updatedFrameCount, preBoxGravity, updatedBoxCollidedVelocity, params) {
+  var acceleration = p5_1.default.Vector.mult(updatedBoxCollidedVelocity.normalize(), preBoxGravity * params.boxControlPosSpeedRate);
+  var velocity = p5_1.default.Vector.mult(updatedBoxCollidedVelocity, params.boxControlPosSpeedRate);
+  var v0t = p5_1.default.Vector.mult(velocity, updatedFrameCount);
+  var at2 = p5_1.default.Vector.mult(acceleration, Math.pow(updatedFrameCount, 2));
+  return p5_1.default.Vector.sub(v0t, at2);
+};
+
+exports.calcBoxControlVector = calcBoxControlVector;
+
+var calcStatus = function calcStatus(updatedBoxPos) {
+  if (updatedBoxPos.x < 0) return 'reset';
+  return 'sliding';
+};
+
+exports.calcStatus = calcStatus;
+
 var slidingBox = function slidingBox(preBox, params) {
   var updatedBox = __assign({}, preBox);
 
-  updatedBox.frameCount = exports.calcFrameCount(preBox.frameCount, preBox.boxShrinkSpeed);
-  updatedBox.boxShrinkSpeed = exports.calcBoxShrinkSpeed(updatedBox.frameCount, preBox.gravity, preBox.boxVelocity);
-  updatedBox.boxHeight = exports.calcBoxHeight(preBox.boxHeight, updatedBox.boxShrinkSpeed, params);
-  updatedBox.boxVelocity = exports.calcBoxVelocity(preBox.boxVelocity, preBox.boxAngle, params);
+  updatedBox.frameCount = preBox.frameCount + 1;
+  updatedBox.boxCollidedVelocity = exports.calcBoxCollidedVelocity(preBox.frameCount, preBox.boxVelocity, preBox.boxCollidedVelocity);
+  updatedBox.boxHeight = exports.calcBoxHeight(updatedBox.frameCount, updatedBox.boxCollidedVelocity, preBox.gravity, preBox.boxWidth, params);
+  updatedBox.boxVelocity = exports.calcBoxVelocity(preBox.frameCount, preBox.boxVelocity, preBox.boxAngle, params);
   updatedBox.boxPos_rowRight = exports.calcBoxPos(preBox.boxPos_rowRight, updatedBox.boxVelocity);
+  updatedBox.boxControlVector = exports.calcBoxControlVector(updatedBox.frameCount, preBox.gravity, updatedBox.boxCollidedVelocity, params);
+  updatedBox.status = exports.calcStatus(updatedBox.boxPos_rowRight);
   return updatedBox;
 };
 
@@ -87254,7 +87308,7 @@ exports.slidingBox = slidingBox;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateBox = exports.getStatus = void 0;
+exports.updateBox = void 0;
 
 var setBox_1 = require("./setBox");
 
@@ -87264,26 +87318,12 @@ var rotatingBox_1 = require("./rotatingBox");
 
 var slidingBox_1 = require("./slidingBox");
 
-var getStatus = function getStatus(box, params) {
-  var isCollided = box.boxPos_rowRight.y >= box.boxCollisionPos.y;
-  var isRotated = box.boxAngle == params.tiltAngle;
-  var isOvered = box.boxPos_rowRight.x < 0;
-  if (!isCollided) return 'falling';
-  if (isCollided && !isRotated) return 'rotating';
-  if (isCollided && isRotated && !isOvered) return 'sliding';
-  if (isCollided && isRotated && isOvered) return 'reset';
-};
-
-exports.getStatus = getStatus;
-
 var updateBox = function updateBox(box) {
   return function (params) {
-    var status = exports.getStatus(box, params);
-    params.status = status;
-    if (status == 'falling') return fallingBox_1.fallingBox(box);
-    if (status == 'rotating') return rotatingBox_1.rotatingBox(box, params);
-    if (status == 'sliding') return slidingBox_1.slidingBox(box, params);
-    if (status == 'reset') return setBox_1.setBox(params);
+    if (box.status == 'falling') return fallingBox_1.fallingBox(box);
+    if (box.status == 'rotating') return rotatingBox_1.rotatingBox(box, params);
+    if (box.status == 'sliding') return slidingBox_1.slidingBox(box, params);
+    if (box.status == 'reset') return setBox_1.setBox(params);
     throw 'status is unknown';
   };
 };
@@ -87311,9 +87351,11 @@ var drawBox = function drawBox(s, boxes) {
     var leftLower = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI - box.boxAngle, box.boxWidth));
     ;
     var leftUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI + Math.atan(box.boxHeight / box.boxWidth) - box.boxAngle, Math.pow(Math.pow(box.boxWidth, 2) + Math.pow(box.boxHeight, 2), 0.5)));
-    var rightUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI * 3 / 2 - box.boxAngle, box.boxHeight));
+    var rightUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI * 3 / 2 - box.boxAngle, box.boxHeight)); // draw box
+
     s.push();
     s.fill(0);
+    s.noStroke();
     s.beginShape();
     s.vertex(rightUpper.x, rightUpper.y);
     s.vertex(rightLower.x, rightLower.y);
@@ -87321,6 +87363,19 @@ var drawBox = function drawBox(s, boxes) {
     s.vertex(leftUpper.x, leftUpper.y);
     s.endShape(s.CLOSE);
     s.pop();
+    /*
+    // draw quadraticVertex
+    const centerLower = P5.Vector.sub(rightLower, leftLower);
+    const controlPoint = P5.Vector.div(P5.Vector.add(centerLower, box.boxControlVector), 2);
+    s.push();
+    s.fill(0);
+    s.noStroke();
+    s.beginShape();
+    s.vertex(leftLower.x, leftLower.y);
+    s.quadraticVertex(controlPoint.x, controlPoint.y, rightLower.x, rightLower.y);
+    s.endShape();
+    s.pop();
+    */
   });
 };
 
@@ -87658,7 +87713,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51470" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51711" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,61 +1,34 @@
 import P5 from 'p5';
-import { calcBoxShrinkSpeed, calcBoxHeight, calcBoxVelocity, calcBoxPos } from './slidingBox';
+import { calcBoxHeight, calcBoxVelocity, calcBoxCollidedVelocity, calcBoxPos, calcBoxControlVector } from './slidingBox';
 import { setParams } from '../params';
 
 const params = setParams(100);
 
-test('calcBoxSshrinkSpeed: init', () => {
-	const updatedFrameCount = 0;
-	const preBoxGravity = 0.3;
-	const preBoxVelocity = new P5.Vector().set(0, 100);
-	const updatedBoxShrinkSpeed = calcBoxShrinkSpeed(updatedFrameCount, preBoxGravity, preBoxVelocity);
-	expect(updatedBoxShrinkSpeed).toBe(100);
-});
-
-test('calcBoxSshrinkSpeed: update', () => {
-	const updatedFrameCount = 50;
-	const preBoxGravity = 0.3;
-	const preBoxVelocity = new P5.Vector().set(10, 50);
-	const updatedBoxShrinkSpeed = calcBoxShrinkSpeed(updatedFrameCount, preBoxGravity, preBoxVelocity);
-	expect(updatedBoxShrinkSpeed).toBeLessThan(preBoxVelocity.y);
-});
-
-test('calcBoxSshrinkSpeed: overed', () => {
-	const updatedFrameCount = 10000;
-	const preBoxGravity = 0.3;
-	const preBoxVelocity = new P5.Vector().set(10, 50);
-	const updatedBoxShrinkSpeed = calcBoxShrinkSpeed(updatedFrameCount, preBoxGravity, preBoxVelocity);
-	expect(updatedBoxShrinkSpeed).toBe(0);
-});
-
 test('calcBoxHeight: shrinking', () => {
-	const preBoxHeight = 100;
-	const updatedBoxShrinkSpeed = 10;
-	const updatedBoxHeight = calcBoxHeight(preBoxHeight, updatedBoxShrinkSpeed, params);
-	expect(updatedBoxHeight).toBeLessThan(preBoxHeight);
+	const updatedFrameCount = 1;
+	const updatedBoxCollidedVelocity = new P5.Vector().set(0, 100);
+	const preBoxGravity = 10;
+	const preBoxWidth = 100;
+	const updatedBoxHeight = calcBoxHeight(updatedFrameCount, updatedBoxCollidedVelocity,preBoxGravity, preBoxWidth, params);
+	expect(updatedBoxHeight).toBeLessThan(preBoxWidth);
 });
 
 test('calcBoxHeight: stoped', () => {
-	const preBoxHeight = 5;
-	const updatedBoxShrinkSpeed = 1000;
-	const updatedBoxHeight = calcBoxHeight(preBoxHeight, updatedBoxShrinkSpeed, params);
+	const updatedFrameCount = 100000;
+	const updatedBoxCollidedVelocity = new P5.Vector().set(0, 100);
+	const preBoxGravity = 1;
+	const preBoxWidth = 100;
+	const updatedBoxHeight = calcBoxHeight(updatedFrameCount, updatedBoxCollidedVelocity,preBoxGravity, preBoxWidth, params);
 	expect(updatedBoxHeight).toBe(0);
 });
 
-test('calcBoxVelocity: velocity-x == 0', () => {
+test('calcBoxVelocity', () => {
+	const preFrameCount = 0;
 	const preBoxVelocity = new P5.Vector().set(0, 100);
 	const preBoxAngle = Math.PI / 10;
-	const updatedBoxVelocity = calcBoxVelocity(preBoxVelocity, preBoxAngle, params);
+	const updatedBoxVelocity = calcBoxVelocity(preFrameCount, preBoxVelocity, preBoxAngle, params);
 	expect(updatedBoxVelocity.x).toBeLessThan(0);
 	expect(updatedBoxVelocity.y).toBeLessThan(preBoxVelocity.y);
-});
-
-test('calcBoxVelocity: velocity-x != 0', () => {
-	const preBoxVelocity = new P5.Vector().set(-10, 100);
-	const preBoxAngle = Math.PI / 10;
-	const updatedBoxVelocity = calcBoxVelocity(preBoxVelocity, preBoxAngle, params);
-	expect(updatedBoxVelocity.x).toBe(preBoxVelocity.x);
-	expect(updatedBoxVelocity.y).toBe(preBoxVelocity.y);
 });
 
 test('calcBoxPos', () => {
@@ -66,3 +39,11 @@ test('calcBoxPos', () => {
 	expect(updatedBoxPos.y).toBeGreaterThan(preBoxPos.y);
 })
 
+test('calcBoxControlVector', () => {
+	const updatedFrameCount = 1;
+	const preBoxGravity = 10;
+	const updatedBoxCollidedVelocity = new P5.Vector().set(10, 10);
+	const updatedBoxControlVector = calcBoxControlVector(updatedFrameCount, preBoxGravity, updatedBoxCollidedVelocity, params);
+	expect(updatedBoxControlVector.x).toBeLessThan(updatedBoxCollidedVelocity.x);
+	expect(updatedBoxControlVector.y).toBeLessThan(updatedBoxCollidedVelocity.y);
+})

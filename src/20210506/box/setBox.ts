@@ -1,6 +1,8 @@
 import P5 from 'p5';
 import { params, setParams } from '../params';
 
+export type status = 'waiting' | 'falling' | 'rotating' | 'sliding' | 'reset';
+
 export const setBox = (params:params) => {
 	// randamize later
 	const boxSize:number = params.canvasSize / 8;
@@ -12,16 +14,18 @@ export const setBox = (params:params) => {
 	
 	return {
 		frameCount: 0,
+		status: 'falling',
 		gravity: 0.3,
 		boxWidth: boxSize,
 		boxHeight: boxSize,
-		boxShrinkSpeed: 0,
 		boxAngle: 0,
 		boxRotateSpeed: 0,
 		boxInitVelocity: boxInitVelocity,
 		boxVelocity: boxInitVelocity,
+		boxCollidedVelocity: new P5.Vector().set(0, 0),
 		boxCollisionPos: boxCollisionPos,
 		boxPos_rowRight: new P5.Vector().set(boxPosX, 0),
+		boxControlVector: new P5.Vector().set(0, 0),
 	}
 }
 
