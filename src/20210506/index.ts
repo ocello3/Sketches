@@ -24,7 +24,7 @@ export const sketch = (props: props) => {
 			s.background(255);
 			updateParams(s, params);
 			boxes = boxes.map(box => updateBox(box)(params));
-			drawBox(s, boxes);
+			drawBox(s, boxes, params);
 			drawSlope(s, params);
 			drawFrame(s, params);
 		};

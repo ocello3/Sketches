@@ -87350,35 +87350,40 @@ exports.drawSlope = exports.drawBox = void 0;
 
 var p5_1 = __importDefault(require("p5"));
 
-var drawBox = function drawBox(s, boxes) {
+var drawBox = function drawBox(s, boxes, params) {
   boxes.forEach(function (box) {
     var rightLower = box.boxPos_rowRight;
     var leftLower = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI - box.boxAngle, box.boxWidth));
-    ;
-    var leftUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI + Math.atan(box.boxHeight / box.boxWidth) - box.boxAngle, Math.pow(Math.pow(box.boxWidth, 2) + Math.pow(box.boxHeight, 2), 0.5)));
-    var rightUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI * 3 / 2 - box.boxAngle, box.boxHeight)); // draw box
+    ; // draw box
 
-    s.push();
-    s.fill(0);
-    s.noStroke();
-    s.beginShape();
-    s.vertex(rightUpper.x, rightUpper.y);
-    s.vertex(rightLower.x, rightLower.y);
-    s.vertex(leftLower.x, leftLower.y);
-    s.vertex(leftUpper.x, leftUpper.y);
-    s.endShape(s.CLOSE);
-    s.pop(); // draw quadraticVertex
+    if (box.boxHeight != 0) {
+      var leftUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI + Math.atan(box.boxHeight / box.boxWidth) - box.boxAngle, Math.pow(Math.pow(box.boxWidth, 2) + Math.pow(box.boxHeight, 2), 0.5)));
+      var rightUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI * 3 / 2 - box.boxAngle, box.boxHeight));
+      s.push();
+      s.fill(0);
+      s.noStroke();
+      s.beginShape();
+      s.vertex(rightUpper.x, rightUpper.y);
+      s.vertex(rightLower.x, rightLower.y);
+      s.vertex(leftLower.x, leftLower.y);
+      s.vertex(leftUpper.x, leftUpper.y);
+      s.endShape(s.CLOSE);
+      s.pop();
+    } // draw quadraticVertex
 
-    var centerLower = p5_1.default.Vector.div(p5_1.default.Vector.add(rightLower, leftLower), 2);
-    var controlPoint = p5_1.default.Vector.add(centerLower, box.boxControlVector);
-    s.push();
-    s.fill(0, 50);
-    s.noStroke();
-    s.beginShape();
-    s.vertex(leftLower.x, leftLower.y);
-    s.quadraticVertex(controlPoint.x, controlPoint.y, rightLower.x, rightLower.y);
-    s.endShape();
-    s.pop();
+
+    if (box.boxAngle == params.tiltAngle) {
+      var centerLower = p5_1.default.Vector.div(p5_1.default.Vector.add(rightLower, leftLower), 2);
+      var controlPoint = p5_1.default.Vector.add(centerLower, box.boxControlVector);
+      s.push();
+      s.fill(0, 50);
+      s.noStroke();
+      s.beginShape();
+      s.vertex(leftLower.x, leftLower.y);
+      s.quadraticVertex(controlPoint.x, controlPoint.y, rightLower.x, rightLower.y);
+      s.endShape();
+      s.pop();
+    }
   });
 };
 
@@ -87451,7 +87456,7 @@ var sketch = function sketch(props) {
       boxes = boxes.map(function (box) {
         return updateBox_1.updateBox(box)(params);
       });
-      drawBox_1.drawBox(s, boxes);
+      drawBox_1.drawBox(s, boxes, params);
       drawBox_1.drawSlope(s, params);
       frame_1.drawFrame(s, params);
     };
@@ -87727,7 +87732,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52511" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54812" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
