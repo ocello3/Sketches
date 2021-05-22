@@ -43,7 +43,7 @@ test('calcBoxControlVector', () => {
 	const updatedFrameCount = 1;
 	const preBoxGravity = 10;
 	const updatedBoxCollidedVelocity = new P5.Vector().set(10, 10);
-	const updatedBoxControlVector = calcBoxControlVector(updatedFrameCount, preBoxGravity, updatedBoxCollidedVelocity, params);
+	const updatedBoxControlVector = calcBoxControlVector(0, updatedFrameCount, preBoxGravity, updatedBoxCollidedVelocity, params);
 	expect(updatedBoxControlVector.x).toBeLessThan(updatedBoxCollidedVelocity.x);
 	expect(updatedBoxControlVector.y).toBeLessThan(updatedBoxCollidedVelocity.y);
 })

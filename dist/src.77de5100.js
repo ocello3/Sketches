@@ -86908,10 +86908,11 @@ var setParams = function setParams(width) {
     frameRate: 0,
     isStarted: false,
     // for box
-    boxShrinkSpeedRate: 0.7,
-    boxRotateSpeedRate: 0.1,
-    boxSlideSpeedRate: 0.5,
-    boxControlPosSpeedRate: 0.01,
+    boxShrinkSpeedRate: 0.9,
+    boxRotateSpeedRate: 0.6,
+    boxSlideSpeedRate: 0.2,
+    boxControlPosVelocityRate: 17,
+    boxControlPosAccelerateRate: 3,
     // for slope
     tiltAngle: Math.PI / 6
   };
@@ -87013,6 +87014,8 @@ var setPane = function setPane(props, s, params) {
   f1.addInput(params, 'boxShrinkSpeedRate');
   f1.addInput(params, 'boxRotateSpeedRate');
   f1.addInput(params, 'boxSlideSpeedRate');
+  f1.addInput(params, 'boxControlPosVelocityRate');
+  f1.addInput(params, 'boxControlPosAccelerateRate');
 };
 
 exports.setPane = setPane;
@@ -87036,7 +87039,7 @@ var params_1 = require("../params");
 
 var setBox = function setBox(params) {
   // randamize later
-  var boxSize = params.canvasSize / 8;
+  var boxSize = params.canvasSize / 10;
   var boxPosX = params.canvasSize * 2 / 3;
   var boxVelocityY = 5;
   var boxInitVelocity = new p5_1.default.Vector().set(0, boxVelocityY);
@@ -87271,12 +87274,14 @@ var calcBoxPos = function calcBoxPos(preBoxPos, updatedBoxVelocity) {
 
 exports.calcBoxPos = calcBoxPos;
 
-var calcBoxControlVector = function calcBoxControlVector(updatedFrameCount, preBoxGravity, updatedBoxCollidedVelocity, params) {
-  var acceleration = p5_1.default.Vector.mult(updatedBoxCollidedVelocity.normalize(), preBoxGravity * params.boxControlPosSpeedRate);
-  var velocity = p5_1.default.Vector.mult(updatedBoxCollidedVelocity, params.boxControlPosSpeedRate);
+var calcBoxControlVector = function calcBoxControlVector(preFrameCount, updatedFrameCount, preBoxGravity, updatedBoxCollidedVelocity, params) {
+  var acceleration = p5_1.default.Vector.mult(updatedBoxCollidedVelocity.normalize(), preBoxGravity * params.boxControlPosAccelerateRate);
+  var velocity = p5_1.default.Vector.mult(updatedBoxCollidedVelocity, params.boxControlPosVelocityRate);
   var v0t = p5_1.default.Vector.mult(velocity, updatedFrameCount);
-  var at2 = p5_1.default.Vector.mult(acceleration, Math.pow(updatedFrameCount, 2));
-  return p5_1.default.Vector.sub(v0t, at2);
+  var at2 = p5_1.default.Vector.mult(acceleration, Math.pow(updatedFrameCount, 2) * 0.5);
+  var updatedBoxControlVector = p5_1.default.Vector.sub(v0t, at2);
+  if (updatedBoxControlVector.y <= 0 && preFrameCount != 0) return new p5_1.default.Vector().set(0, 0);
+  return updatedBoxControlVector;
 };
 
 exports.calcBoxControlVector = calcBoxControlVector;
@@ -87296,7 +87301,7 @@ var slidingBox = function slidingBox(preBox, params) {
   updatedBox.boxHeight = exports.calcBoxHeight(updatedBox.frameCount, updatedBox.boxCollidedVelocity, preBox.gravity, preBox.boxWidth, params);
   updatedBox.boxVelocity = exports.calcBoxVelocity(preBox.frameCount, preBox.boxVelocity, preBox.boxAngle, params);
   updatedBox.boxPos_rowRight = exports.calcBoxPos(preBox.boxPos_rowRight, updatedBox.boxVelocity);
-  updatedBox.boxControlVector = exports.calcBoxControlVector(updatedBox.frameCount, preBox.gravity, updatedBox.boxCollidedVelocity, params);
+  updatedBox.boxControlVector = exports.calcBoxControlVector(preBox.frameCount, updatedBox.frameCount, preBox.gravity, updatedBox.boxCollidedVelocity, params);
   updatedBox.status = exports.calcStatus(updatedBox.boxPos_rowRight);
   return updatedBox;
 };
@@ -87341,7 +87346,7 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.drawBox = void 0;
+exports.drawSlope = exports.drawBox = void 0;
 
 var p5_1 = __importDefault(require("p5"));
 
@@ -87362,24 +87367,32 @@ var drawBox = function drawBox(s, boxes) {
     s.vertex(leftLower.x, leftLower.y);
     s.vertex(leftUpper.x, leftUpper.y);
     s.endShape(s.CLOSE);
-    s.pop();
-    /*
-    // draw quadraticVertex
-    const centerLower = P5.Vector.sub(rightLower, leftLower);
-    const controlPoint = P5.Vector.div(P5.Vector.add(centerLower, box.boxControlVector), 2);
+    s.pop(); // draw quadraticVertex
+
+    var centerLower = p5_1.default.Vector.div(p5_1.default.Vector.add(rightLower, leftLower), 2);
+    var controlPoint = p5_1.default.Vector.add(centerLower, box.boxControlVector);
     s.push();
-    s.fill(0);
+    s.fill(0, 50);
     s.noStroke();
     s.beginShape();
     s.vertex(leftLower.x, leftLower.y);
     s.quadraticVertex(controlPoint.x, controlPoint.y, rightLower.x, rightLower.y);
     s.endShape();
     s.pop();
-    */
   });
 };
 
 exports.drawBox = drawBox;
+
+var drawSlope = function drawSlope(s, params) {
+  s.push();
+  s.stroke(0, 100);
+  var height = Math.atan(params.tiltAngle) * params.canvasSize;
+  s.line(0, params.canvasSize, params.canvasSize, params.canvasSize - height);
+  s.pop();
+};
+
+exports.drawSlope = drawSlope;
 },{"p5":"../node_modules/p5/lib/p5.min.js"}],"20210506/frame.ts":[function(require,module,exports) {
 "use strict";
 
@@ -87439,6 +87452,7 @@ var sketch = function sketch(props) {
         return updateBox_1.updateBox(box)(params);
       });
       drawBox_1.drawBox(s, boxes);
+      drawBox_1.drawSlope(s, params);
       frame_1.drawFrame(s, params);
     };
   };
@@ -87713,7 +87727,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51711" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52511" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -34,5 +34,7 @@ export const setPane = (props: props, s: eP5, params: params): void => {
 	f1.addInput(params, 'boxShrinkSpeedRate');
 	f1.addInput(params, 'boxRotateSpeedRate');
 	f1.addInput(params, 'boxSlideSpeedRate');
+	f1.addInput(params, 'boxControlPosVelocityRate');
+	f1.addInput(params, 'boxControlPosAccelerateRate');
 };
 

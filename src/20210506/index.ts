@@ -4,7 +4,7 @@ import { params, setParams, updateParams} from './params';
 import { setPane } from './pane';
 import { setBox } from './box/setBox';
 import { updateBox } from './box/updateBox';
-import { drawBox } from './box/drawBox';
+import { drawBox, drawSlope } from './box/drawBox';
 import { drawFrame } from './frame';
 
 export const sketch = (props: props) => {
@@ -25,6 +25,7 @@ export const sketch = (props: props) => {
 			updateParams(s, params);
 			boxes = boxes.map(box => updateBox(box)(params));
 			drawBox(s, boxes);
+			drawSlope(s, params);
 			drawFrame(s, params);
 		};
 	};

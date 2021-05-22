@@ -5,7 +5,7 @@ export type status = 'waiting' | 'falling' | 'rotating' | 'sliding' | 'reset';
 
 export const setBox = (params:params) => {
 	// randamize later
-	const boxSize:number = params.canvasSize / 8;
+	const boxSize:number = params.canvasSize / 10;
 	const boxPosX:number = params.canvasSize * 2 / 3;
 	const boxVelocityY = 5;
 	const boxInitVelocity:P5.Vector = new P5.Vector().set(0, boxVelocityY);

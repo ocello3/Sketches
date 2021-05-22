@@ -1,4 +1,5 @@
 import P5 from 'p5';
+import { params } from '../params';
 import { box } from './setBox';
 import { eP5 } from '../../types/eP5';
 
@@ -19,18 +20,25 @@ export const drawBox = (s:eP5, boxes:box[]):void => {
 		s.vertex(leftUpper.x, leftUpper.y);
 		s.endShape(s.CLOSE);
 		s.pop();
-		/*
+		
 		// draw quadraticVertex
-		const centerLower = P5.Vector.sub(rightLower, leftLower);
-		const controlPoint = P5.Vector.div(P5.Vector.add(centerLower, box.boxControlVector), 2);
+		const centerLower = P5.Vector.div(P5.Vector.add(rightLower, leftLower), 2);
+		const controlPoint = P5.Vector.add(centerLower, box.boxControlVector);
 		s.push();
-		s.fill(0);
+		s.fill(0, 50);
 		s.noStroke();
 		s.beginShape();
 		s.vertex(leftLower.x, leftLower.y);
 		s.quadraticVertex(controlPoint.x, controlPoint.y, rightLower.x, rightLower.y);
 		s.endShape();
 		s.pop();
-		*/
 	});
+}
+
+export const drawSlope = (s:eP5, params:params):void => {
+	s.push();
+	s.stroke(0, 100);
+	const height = Math.atan(params.tiltAngle) * params.canvasSize;
+	s.line(0, params.canvasSize, params.canvasSize, params.canvasSize - height);
+	s.pop();
 }
