@@ -10,6 +10,7 @@ export const setPane = (props: props, s: eP5, params: params): void => {
 	const activate = (): void => {
 		// for (const value of props.synths.values()) value.start();
 		Tone.Transport.start();
+		Tone.start(); // remove after add synths
 		params.isStarted = true;
 	}
 	const inactivate = (): void => {

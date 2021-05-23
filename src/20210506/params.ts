@@ -9,6 +9,8 @@ export const setParams = (width: number) => {
 		frameRate: 0,
 		isStarted: false,
 		// for box
+		statusNoteSeq: ['C3', 'D3', 'E3', 'F3'],
+		statusNoteNum: -1, // use without 0 - 4
 		boxShrinkSpeedRate: 0.9,
 		boxRotateSpeedRate: 0.6,
 		boxSlideSpeedRate: 0.2,

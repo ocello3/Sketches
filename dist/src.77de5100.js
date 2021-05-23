@@ -86908,6 +86908,8 @@ var setParams = function setParams(width) {
     frameRate: 0,
     isStarted: false,
     // for box
+    statusNoteSeq: ['C3', 'D3', 'E3', 'F3'],
+    statusNoteNum: -1,
     boxShrinkSpeedRate: 0.9,
     boxRotateSpeedRate: 0.6,
     boxSlideSpeedRate: 0.2,
@@ -86980,6 +86982,8 @@ var setPane = function setPane(props, s, params) {
   var activate = function activate() {
     // for (const value of props.synths.values()) value.start();
     Tone.Transport.start();
+    Tone.start(); // remove after add synths
+
     params.isStarted = true;
   };
 
@@ -87019,6 +87023,61 @@ var setPane = function setPane(props, s, params) {
 };
 
 exports.setPane = setPane;
+},{"tone":"../node_modules/tone/build/esm/index.js"}],"20210506/seqs.ts":[function(require,module,exports) {
+"use strict";
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setSeqs = void 0;
+
+var Tone = __importStar(require("tone"));
+
+var setSeqs = function setSeqs(props, params) {
+  var seq = params.statusNoteSeq;
+  var statusSeq = new Tone.Sequence(function (time, note) {
+    Tone.Draw.schedule(function () {
+      params.statusNoteNum = seq.indexOf(note);
+    }, time);
+  }, [seq[0], null, [seq[1], seq[2], null], null, seq[3]], '1.5n').start(0);
+  props.synths.set('statusSeq', statusSeq);
+};
+
+exports.setSeqs = setSeqs;
 },{"tone":"../node_modules/tone/build/esm/index.js"}],"20210506/box/setBox.ts":[function(require,module,exports) {
 "use strict";
 
@@ -87287,7 +87346,7 @@ var calcBoxControlVector = function calcBoxControlVector(preFrameCount, updatedF
 exports.calcBoxControlVector = calcBoxControlVector;
 
 var calcStatus = function calcStatus(updatedBoxPos) {
-  if (updatedBoxPos.x < 0) return 'reset';
+  if (updatedBoxPos.x < 0) return 'waiting';
   return 'sliding';
 };
 
@@ -87323,8 +87382,14 @@ var rotatingBox_1 = require("./rotatingBox");
 
 var slidingBox_1 = require("./slidingBox");
 
-var updateBox = function updateBox(box) {
+var updateBox = function updateBox(box, index) {
   return function (params) {
+    if (params.statusNoteNum == index && box.status == 'waiting') {
+      box.status = 'reset';
+    }
+
+    ;
+    if (box.status == 'waiting') return box;
     if (box.status == 'falling') return fallingBox_1.fallingBox(box);
     if (box.status == 'rotating') return rotatingBox_1.rotatingBox(box, params);
     if (box.status == 'sliding') return slidingBox_1.slidingBox(box, params);
@@ -87428,6 +87493,8 @@ var params_1 = require("./params");
 
 var pane_1 = require("./pane");
 
+var seqs_1 = require("./seqs");
+
 var setBox_1 = require("./box/setBox");
 
 var updateBox_1 = require("./box/updateBox");
@@ -87440,31 +87507,48 @@ var sketch = function sketch(props) {
   return function (s) {
     var canvasDiv = document.getElementById('canvas');
     var params = params_1.setParams(canvasDiv.clientWidth);
-    var boxes = Array.from(Array(1), function () {
+    var boxes = Array.from(Array(params.dataObjCount), function () {
       return setBox_1.setBox(params);
     });
 
     s.setup = function () {
       s.createCanvas(params.canvasSize, params.canvasSize);
-      pane_1.setPane(props, s, params); // s.frameRate(30);
-      // s.noLoop();
+      pane_1.setPane(props, s, params);
+      seqs_1.setSeqs(props, params); // s.frameRate(30);
+
+      s.noLoop();
     };
 
     s.draw = function () {
       s.background(255);
       params_1.updateParams(s, params);
-      boxes = boxes.map(function (box) {
-        return updateBox_1.updateBox(box)(params);
+      boxes = boxes.map(function (box, index) {
+        return updateBox_1.updateBox(box, index)(params);
       });
       drawBox_1.drawBox(s, boxes, params);
       drawBox_1.drawSlope(s, params);
       frame_1.drawFrame(s, params);
+      params.statusNoteNum = -1; // reset
     };
   };
 };
 
 exports.sketch = sketch;
-},{"./params":"20210506/params.ts","./pane":"20210506/pane.ts","./box/setBox":"20210506/box/setBox.ts","./box/updateBox":"20210506/box/updateBox.ts","./box/drawBox":"20210506/box/drawBox.ts","./frame":"20210506/frame.ts"}],"20210506/p5_20210506.ts":[function(require,module,exports) {
+},{"./params":"20210506/params.ts","./pane":"20210506/pane.ts","./seqs":"20210506/seqs.ts","./box/setBox":"20210506/box/setBox.ts","./box/updateBox":"20210506/box/updateBox.ts","./box/drawBox":"20210506/box/drawBox.ts","./frame":"20210506/frame.ts"}],"20210506/synths.ts":[function(require,module,exports) {
+"use strict"; // import * as Tone from 'tone';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.synths = void 0;
+
+var synths = function synths() {
+  var synthMap = new Map();
+  return synthMap;
+};
+
+exports.synths = synths;
+},{}],"20210506/p5_20210506.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -87474,19 +87558,22 @@ exports.p5_20210506 = void 0;
 
 var index_1 = require("./index");
 
+var synths_1 = require("./synths");
+
 var p5_20210506 = function p5_20210506() {
   var p5map = {
     date: '20210506',
     title: 'Fall Box',
     note: 'Box fall to slope.',
     content: 'Experiment to create two difference sound at moment of the second hand advances.',
-    sketch: index_1.sketch
+    sketch: index_1.sketch,
+    synths: synths_1.synths
   };
   return p5map;
 };
 
 exports.p5_20210506 = p5_20210506;
-},{"./index":"20210506/index.ts"}],"getP5maps.ts":[function(require,module,exports) {
+},{"./index":"20210506/index.ts","./synths":"20210506/synths.ts"}],"getP5maps.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -87732,7 +87819,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54812" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49887" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,8 +1,8 @@
-import * as Tone from 'tone';
-import { props } from '../types/props';
+// import * as Tone from 'tone';
 
-export const synths = (props: props) => {
+export const synths = () => {
 	const synthMap = new Map();
-	props.synths = synthMap;
+	return synthMap;
 }
+
 

@@ -39,7 +39,7 @@ export const calcBoxControlVector = (preFrameCount:number, updatedFrameCount:num
 }
 
 export const calcStatus = (updatedBoxPos:P5.Vector):status => {
-	if (updatedBoxPos.x < 0) return 'reset';
+	if (updatedBoxPos.x < 0) return 'waiting';
 	return 'sliding';
 }
 
