@@ -86908,6 +86908,7 @@ var setParams = function setParams(width) {
     frameRate: 0,
     isStarted: false,
     // for box
+    colorPalette: [[0, 65, 109], [45, 125, 188], [82, 189, 242], [117, 212, 242]],
     statusNoteSeq: ['C3', 'D3', 'E3', 'F3'],
     statusNoteNum: -1,
     boxShrinkSpeedRate: 0.9,
@@ -87416,7 +87417,8 @@ exports.drawSlope = exports.drawBox = void 0;
 var p5_1 = __importDefault(require("p5"));
 
 var drawBox = function drawBox(s, boxes, params) {
-  boxes.forEach(function (box) {
+  boxes.forEach(function (box, index) {
+    var color = params.colorPalette[index];
     var rightLower = box.boxPos_rowRight;
     var leftLower = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI - box.boxAngle, box.boxWidth));
     ; // draw box
@@ -87425,7 +87427,7 @@ var drawBox = function drawBox(s, boxes, params) {
       var leftUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI + Math.atan(box.boxHeight / box.boxWidth) - box.boxAngle, Math.pow(Math.pow(box.boxWidth, 2) + Math.pow(box.boxHeight, 2), 0.5)));
       var rightUpper = p5_1.default.Vector.add(box.boxPos_rowRight, p5_1.default.Vector.fromAngle(Math.PI * 3 / 2 - box.boxAngle, box.boxHeight));
       s.push();
-      s.fill(0);
+      s.fill(color[0], color[1], color[2]);
       s.noStroke();
       s.beginShape();
       s.vertex(rightUpper.x, rightUpper.y);
@@ -87441,8 +87443,9 @@ var drawBox = function drawBox(s, boxes, params) {
       var centerLower = p5_1.default.Vector.div(p5_1.default.Vector.add(rightLower, leftLower), 2);
       var controlPoint = p5_1.default.Vector.add(centerLower, box.boxControlVector);
       s.push();
-      s.fill(0, 50);
-      s.noStroke();
+      s.fill(color[0], color[1], color[2], 30);
+      s.stroke(255);
+      s.strokeWeight(box.boxWidth * 0.2);
       s.beginShape();
       s.vertex(leftLower.x, leftLower.y);
       s.quadraticVertex(controlPoint.x, controlPoint.y, rightLower.x, rightLower.y);
@@ -87819,7 +87822,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49887" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57087" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

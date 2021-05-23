@@ -9,6 +9,12 @@ export const setParams = (width: number) => {
 		frameRate: 0,
 		isStarted: false,
 		// for box
+		colorPalette: [
+			[0, 65, 109],
+			[45,125,188],
+			[82, 189, 242],
+			[117, 212, 242]
+		],
 		statusNoteSeq: ['C3', 'D3', 'E3', 'F3'],
 		statusNoteNum: -1, // use without 0 - 4
 		boxShrinkSpeedRate: 0.9,
