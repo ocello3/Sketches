@@ -17,11 +17,16 @@ export const setParams = (width: number) => {
 		],
 		statusNoteSeq: ['C3', 'D3', 'E3', 'F3'],
 		statusNoteNum: -1, // use without 0 - 4
-		boxShrinkSpeedRate: 0.9,
-		boxRotateSpeedRate: 0.6,
-		boxSlideSpeedRate: 0.2,
-		boxControlPosVelocityRate: 17,
-		boxControlPosAccelerateRate: 3,
+		boxSizeRate: { min: 0.05, max: 0.15 },
+		boxPosXRate: { min: 0.3, max: 0.8 },
+		boxVelocityY: { min: 2, max: 7 },
+		gravity: { min: 0.1, max:0.6 },
+		// add range
+		boxShrinkSpeedRate: { min: 0.7, max: 1.1 },
+		boxRotateSpeedRate: { min: 0.4, max: 0.8 },
+		boxSlideSpeedRate: { min: 0.1, max: 0.3 },
+		boxControlPosVelocityRate: { min: 15, max: 20 },
+		boxControlPosAccelerateRate: { min: 1, max: 5 },
 		// for slope
 		tiltAngle: Math.PI / 6,
 	}

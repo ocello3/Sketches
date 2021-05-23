@@ -8,7 +8,8 @@ test('calcBoxRotateSpeed: preBoxAngle == 0', () => {
 	const preBoxVelocity = new P5.Vector().set(0, 10);
 	const preBoxAngle = 0;
 	const preBoxRotateSpeed = 0;
-	const updatedBoxRotateSpeed = calcBoxRotateSpeed(preBoxVelocity, preBoxAngle, preBoxRotateSpeed, params);
+	const preBoxRotateSpeedRate = 0.5;
+	const updatedBoxRotateSpeed = calcBoxRotateSpeed(preBoxVelocity, preBoxAngle, preBoxRotateSpeed, preBoxRotateSpeedRate);
 	expect(updatedBoxRotateSpeed).toBeGreaterThan(0);
 });
 
@@ -17,7 +18,8 @@ test('calcBoxRotateSpeed: preBox != 0', () => {
 	const preBoxVelocity = new P5.Vector().set(0, 10);
 	const preBoxAngle = 5;
 	const preBoxRotateSpeed = 10;
-	const updatedBoxRotateSpeed = calcBoxRotateSpeed(preBoxVelocity, preBoxAngle, preBoxRotateSpeed, params);
+	const preBoxRotateSpeedRate = 0.5;
+	const updatedBoxRotateSpeed = calcBoxRotateSpeed(preBoxVelocity, preBoxAngle, preBoxRotateSpeed, preBoxRotateSpeedRate);
 	expect(updatedBoxRotateSpeed).toBe(preBoxRotateSpeed);
 });
 

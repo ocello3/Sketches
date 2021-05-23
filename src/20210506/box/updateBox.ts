@@ -12,7 +12,7 @@ export const updateBox = (box:box, index:number) => (params:params):box => {
 	if (box.status == 'waiting') return box;
 	if (box.status == 'falling') return fallingBox(box);
 	if (box.status == 'rotating') return rotatingBox(box, params);
-	if (box.status == 'sliding') return slidingBox(box, params);
+	if (box.status == 'sliding') return slidingBox(box);
 	if (box.status == 'reset') return setBox(params);
 	throw 'status is unknown';
 }

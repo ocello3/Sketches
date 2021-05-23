@@ -1,5 +1,5 @@
 import P5 from 'p5';
-import Tweakpane from 'tweakpane';
+import { Pane } from 'tweakpane';
 import { initSketch } from './index';
 import { getP5maps } from './getP5maps';
 import { p5map } from './types/p5map';
@@ -49,7 +49,7 @@ export const createCoverPage = (props: props) => {
 						props.synths = synthMap;
 					}
 					// add tweakpane to props
-					props.pane = new Tweakpane({ container: document.getElementById('pane') });
+					props.pane = new Pane({ container: document.getElementById('pane') });
 					// add p5js to props
 					props.sketchPage = new P5(p5map.sketch(props), document.getElementById('canvas'));
 					// prepare back to top function
