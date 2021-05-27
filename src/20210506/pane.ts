@@ -24,8 +24,7 @@ export const setPane = (props: props, s: eP5, params: params): void => {
 		Tone.Transport.start();
 	}
 	// control button
-	const f1 = tab.pages[0].addFolder({ title: 'Control' });
-	const stopButton = f1.addButton({ title: 'start/stop' });
+	const stopButton = tab.pages[0].addButton({ title: 'start/stop' });
 	stopButton.on('click', () => {
 		if (!s.isLooping() && !params.isStarted) activate(); // when loaded
 		if (s.isLooping()) inactivate(); // when stoped
@@ -33,17 +32,16 @@ export const setPane = (props: props, s: eP5, params: params): void => {
 		s.isLooping() ? s.noLoop() : s.loop();
 	});
 	// frameRate monitor
-	f1.addMonitor(params, 'frameRate', { interval: 500 });
+	tab.pages[0].addMonitor(params, 'frameRate', { interval: 500 });
 	// parameter
-	const f2 = tab.pages[0].addFolder({ title: 'Box Params' });
-	f2.addInput(params, 'boxSizeRate', { min: 0.01, max: 0.2, step: 0.01, label: 'size'});
-	f2.addInput(params, 'boxPosXRate', { min: 0.1, max: 1, step: 0.1, label: 'init x-Pos'});
-	f2.addInput(params, 'boxVelocityY', { min: 1, max: 10, step: 1, label: 'init y-Velocity'});
-	f2.addInput(params, 'gravity', { min: 0.1, max: 1, step: 0.1 });
-	f2.addInput(params, 'boxShrinkSpeedRate', { min: 0.5, max: 1.5, step: 0.05, label: 'shrink speed'});
-	f2.addInput(params, 'boxRotateSpeedRate', { min: 0.1, max: 1.0, step: 0.05, label: 'rotate speed'});
-	f2.addInput(params, 'boxSlideSpeedRate', { min: 0.05, max: 0.5, step: 0.05, label: 'slide speed'});
-	f2.addInput(params, 'boxControlPosVelocityRate', { min: 10, max: 25, step: 1, label: 'bezier speed'});
-	f2.addInput(params, 'boxControlPosAccelerateRate', { min: 0.5, max: 7, step: 0.5, label: 'bezier accelerate'});
+	tab.pages[0].addInput(params, 'boxSizeRate', { min: 0.01, max: 0.2, step: 0.01, label: 'size'});
+	tab.pages[0].addInput(params, 'boxPosXRate', { min: 0.1, max: 1, step: 0.1, label: 'init x-Pos'});
+	tab.pages[0].addInput(params, 'boxVelocityY', { min: 1, max: 10, step: 1, label: 'init y-Velocity'});
+	tab.pages[0].addInput(params, 'gravity', { min: 0.1, max: 1, step: 0.1 });
+	tab.pages[0].addInput(params, 'boxShrinkSpeedRate', { min: 0.5, max: 1.5, step: 0.05, label: 'shrink speed'});
+	tab.pages[0].addInput(params, 'boxRotateSpeedRate', { min: 0.1, max: 1.0, step: 0.05, label: 'rotate speed'});
+	tab.pages[0].addInput(params, 'boxSlideSpeedRate', { min: 0.05, max: 0.5, step: 0.05, label: 'slide speed'});
+	tab.pages[0].addInput(params, 'boxControlPosVelocityRate', { min: 10, max: 25, step: 1, label: 'bezier speed'});
+	tab.pages[0].addInput(params, 'boxControlPosAccelerateRate', { min: 0.5, max: 7, step: 0.5, label: 'bezier accelerate'});
 };
 

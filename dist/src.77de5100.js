@@ -81208,7 +81208,12 @@ var setParams = function setParams(width) {
       max: 5
     },
     // for slope
-    tiltAngle: Math.PI / 6
+    tiltAngle: Math.PI / 6,
+    // for synth
+    volume: {
+      min: -40,
+      max: -15
+    }
   };
   return params;
 };
@@ -82773,10 +82778,7 @@ var setPane = function setPane(props, s, params) {
   }; // control button
 
 
-  var f1 = tab.pages[0].addFolder({
-    title: 'Control'
-  });
-  var stopButton = f1.addButton({
+  var stopButton = tab.pages[0].addButton({
     title: 'start/stop'
   });
   stopButton.on('click', function () {
@@ -82789,61 +82791,58 @@ var setPane = function setPane(props, s, params) {
     s.isLooping() ? s.noLoop() : s.loop();
   }); // frameRate monitor
 
-  f1.addMonitor(params, 'frameRate', {
+  tab.pages[0].addMonitor(params, 'frameRate', {
     interval: 500
   }); // parameter
 
-  var f2 = tab.pages[0].addFolder({
-    title: 'Box Params'
-  });
-  f2.addInput(params, 'boxSizeRate', {
+  tab.pages[0].addInput(params, 'boxSizeRate', {
     min: 0.01,
     max: 0.2,
     step: 0.01,
     label: 'size'
   });
-  f2.addInput(params, 'boxPosXRate', {
+  tab.pages[0].addInput(params, 'boxPosXRate', {
     min: 0.1,
     max: 1,
     step: 0.1,
     label: 'init x-Pos'
   });
-  f2.addInput(params, 'boxVelocityY', {
+  tab.pages[0].addInput(params, 'boxVelocityY', {
     min: 1,
     max: 10,
     step: 1,
     label: 'init y-Velocity'
   });
-  f2.addInput(params, 'gravity', {
+  tab.pages[0].addInput(params, 'gravity', {
     min: 0.1,
     max: 1,
     step: 0.1
   });
-  f2.addInput(params, 'boxShrinkSpeedRate', {
+  tab.pages[0].addInput(params, 'boxShrinkSpeedRate', {
     min: 0.5,
     max: 1.5,
     step: 0.05,
     label: 'shrink speed'
   });
-  f2.addInput(params, 'boxRotateSpeedRate', {
+  tab.pages[0].addInput(params, 'boxRotateSpeedRate', {
     min: 0.1,
     max: 1.0,
     step: 0.05,
     label: 'rotate speed'
   });
-  f2.addInput(params, 'boxSlideSpeedRate', {
+  tab.pages[0].addInput(params, 'boxSlideSpeedRate', {
     min: 0.05,
     max: 0.5,
     step: 0.05,
     label: 'slide speed'
   });
-  f2.addInput(params, 'boxControlPosVelocityRate', {
+  tab.pages[0].addInput(params, 'boxControlPosVelocityRate', {
     min: 10,
     max: 25,
     step: 1,
     label: 'bezier speed'
   });
-  f2.addInput(params, 'boxControlPosAccelerateRate', {
+  tab.pages[0].addInput(params, 'boxControlPosAccelerateRate', {
     min: 0.5,
     max: 7,
     step: 0.5,
@@ -82902,7 +82901,7 @@ var setSeqs = function setSeqs(props, params) {
     Tone.Draw.schedule(function () {
       params.statusNoteNum = seq.indexOf(note);
     }, time);
-  }, [seq[0], null, [seq[1], seq[2], null], null, seq[3]], '2n').start(0);
+  }, [seq[0], null, [seq[1], seq[2], null], [null, seq[3]]], '4n').start(0);
   props.synths.set('statusSeq', statusSeq);
 };
 
@@ -83238,7 +83237,98 @@ var updateBox = function updateBox(box, index) {
 };
 
 exports.updateBox = updateBox;
-},{"./setBox":"20210506/box/setBox.ts","./fallingBox":"20210506/box/fallingBox.ts","./rotatingBox":"20210506/box/rotatingBox.ts","./slidingBox":"20210506/box/slidingBox.ts"}],"20210506/box/drawBox.ts":[function(require,module,exports) {
+},{"./setBox":"20210506/box/setBox.ts","./fallingBox":"20210506/box/fallingBox.ts","./rotatingBox":"20210506/box/rotatingBox.ts","./slidingBox":"20210506/box/slidingBox.ts"}],"20210506/synths.ts":[function(require,module,exports) {
+"use strict";
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.playSynths = exports.synths = void 0;
+
+var Tone = __importStar(require("tone"));
+
+var synths = function synths() {
+  var synthMap = new Map();
+  var main = new Tone.Limiter(-15).toDestination();
+  synthMap.set('main', main);
+  var channel = new Tone.Channel(-10).connect(main);
+  var panner_0 = new Tone.Panner(0).connect(channel);
+  var synth_0 = new Tone.MetalSynth().connect(panner_0);
+  synthMap.set('panner_0', panner_0);
+  synthMap.set('synth_0', synth_0);
+  var panner_1 = new Tone.Panner(0).connect(channel);
+  var synth_1 = new Tone.MetalSynth().connect(panner_1);
+  synthMap.set('panner_1', panner_1);
+  synthMap.set('synth_1', synth_1);
+  var panner_2 = new Tone.Panner(0).connect(channel);
+  var synth_2 = new Tone.MetalSynth().connect(panner_2);
+  synthMap.set('panner_2', panner_2);
+  synthMap.set('synth_2', synth_2);
+  var panner_3 = new Tone.Panner(0).connect(channel);
+  var synth_3 = new Tone.MetalSynth().connect(panner_3);
+  synthMap.set('panner_3', panner_3);
+  synthMap.set('synth_3', synth_3);
+  return synthMap;
+};
+
+exports.synths = synths;
+
+var playSynths = function playSynths(s, props, boxes, params) {
+  var playSynth = function playSynth(box, index) {
+    var synthName = 'synth_' + index;
+    var pannerName = 'panner_' + index;
+    var boxSize = {
+      min: params.canvasSize * params.boxSizeRate.min,
+      max: params.canvasSize * params.boxSizeRate.max
+    };
+    var volume = s.map(box.boxWidth, boxSize.min, boxSize.max, params.volume.min, params.volume.max);
+    var pan = s.map(box.boxPos_rowRight.x, 0, params.canvasSize, -1, 1);
+    props.synths.get(pannerName).pan.value = pan;
+    props.synths.get(synthName).volume.value = volume;
+    props.synths.get(synthName).triggerAttackRelease('C4', '8n');
+  };
+
+  boxes.forEach(function (box, index) {
+    if (box.frameCount == 0 && box.status == 'sliding') playSynth(box, index);
+  });
+};
+
+exports.playSynths = playSynths;
+},{"tone":"../node_modules/tone/build/esm/index.js"}],"20210506/box/drawBox.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -83340,6 +83430,8 @@ var setBox_1 = require("./box/setBox");
 
 var updateBox_1 = require("./box/updateBox");
 
+var synths_1 = require("./synths");
+
 var drawBox_1 = require("./box/drawBox");
 
 var frame_1 = require("./frame");
@@ -83365,31 +83457,7 @@ var sketch = function sketch(props) {
       boxes = boxes.map(function (box, index) {
         return updateBox_1.updateBox(box, index)(params);
       });
-      boxes.forEach(function (box, index) {
-        var isStatus = box.status == 'rotating' || box.status == 'sliding';
-
-        if (box.frameCount == 0 && isStatus) {
-          if (index == 0) {
-            props.synths.get('synth_1').volume.value = -10;
-            props.synths.get('synth_1').triggerAttackRelease('C4', '8n');
-          }
-
-          if (index == 1) {
-            props.synths.get('synth_2').volume.value = -10;
-            props.synths.get('synth_2').triggerAttackRelease('C4', '8n');
-          }
-
-          if (index == 2) {
-            props.synths.get('synth_3').volume.value = -10;
-            props.synths.get('synth_3').triggerAttackRelease('C4', '8n');
-          }
-
-          if (index == 3) {
-            props.synths.get('synth_4').volume.value = -10;
-            props.synths.get('synth_4').triggerAttackRelease('C4', '8n');
-          }
-        }
-      });
+      synths_1.playSynths(s, props, boxes, params);
       drawBox_1.drawBox(s, boxes, params);
       drawBox_1.drawSlope(s, params);
       frame_1.drawFrame(s, params);
@@ -83399,73 +83467,7 @@ var sketch = function sketch(props) {
 };
 
 exports.sketch = sketch;
-},{"./params":"20210506/params.ts","./pane":"20210506/pane.ts","./seqs":"20210506/seqs.ts","./box/setBox":"20210506/box/setBox.ts","./box/updateBox":"20210506/box/updateBox.ts","./box/drawBox":"20210506/box/drawBox.ts","./frame":"20210506/frame.ts"}],"20210506/synths.ts":[function(require,module,exports) {
-"use strict";
-
-var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  Object.defineProperty(o, k2, {
-    enumerable: true,
-    get: function get() {
-      return m[k];
-    }
-  });
-} : function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  o[k2] = m[k];
-});
-
-var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
-  Object.defineProperty(o, "default", {
-    enumerable: true,
-    value: v
-  });
-} : function (o, v) {
-  o["default"] = v;
-});
-
-var __importStar = this && this.__importStar || function (mod) {
-  if (mod && mod.__esModule) return mod;
-  var result = {};
-  if (mod != null) for (var k in mod) {
-    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-  }
-
-  __setModuleDefault(result, mod);
-
-  return result;
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.synths = void 0;
-
-var Tone = __importStar(require("tone"));
-
-var synths = function synths() {
-  var synthMap = new Map();
-  var panner_1 = new Tone.Panner(0).toDestination();
-  var synth_1 = new Tone.MetalSynth().connect(panner_1);
-  synthMap.set('panner_1', panner_1);
-  synthMap.set('synth_1', synth_1);
-  var panner_2 = new Tone.Panner(0).toDestination();
-  var synth_2 = new Tone.MetalSynth().connect(panner_1);
-  synthMap.set('panner_2', panner_2);
-  synthMap.set('synth_2', synth_2);
-  var panner_3 = new Tone.Panner(0).toDestination();
-  var synth_3 = new Tone.MetalSynth().connect(panner_1);
-  synthMap.set('panner_3', panner_3);
-  synthMap.set('synth_3', synth_3);
-  var panner_4 = new Tone.Panner(0).toDestination();
-  var synth_4 = new Tone.MetalSynth().connect(panner_1);
-  synthMap.set('panner_4', panner_4);
-  synthMap.set('synth_4', synth_4);
-  return synthMap;
-};
-
-exports.synths = synths;
-},{"tone":"../node_modules/tone/build/esm/index.js"}],"20210506/p5_20210506.ts":[function(require,module,exports) {
+},{"./params":"20210506/params.ts","./pane":"20210506/pane.ts","./seqs":"20210506/seqs.ts","./box/setBox":"20210506/box/setBox.ts","./box/updateBox":"20210506/box/updateBox.ts","./synths":"20210506/synths.ts","./box/drawBox":"20210506/box/drawBox.ts","./frame":"20210506/frame.ts"}],"20210506/p5_20210506.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -83736,7 +83738,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61859" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62123" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -29,6 +29,8 @@ export const setParams = (width: number) => {
 		boxControlPosAccelerateRate: { min: 1, max: 5 },
 		// for slope
 		tiltAngle: Math.PI / 6,
+		// for synth
+		volume: { min: -40, max: -15 },
 	}
 	return params;
 };

@@ -5,6 +5,7 @@ import { setPane } from './pane';
 import { setSeqs } from './seqs';
 import { setBox } from './box/setBox';
 import { updateBox } from './box/updateBox';
+import { playSynths } from './synths';
 import { drawBox, drawSlope } from './box/drawBox';
 import { drawFrame } from './frame';
 
@@ -25,27 +26,7 @@ export const sketch = (props: props) => {
 			s.background(255);
 			updateParams(s, params);
 			boxes = boxes.map((box, index) => updateBox(box, index)(params));
-			boxes.forEach((box, index) => {
-				const isStatus = (box.status == 'rotating' || box.status == 'sliding');
-				if(box.frameCount == 0 && isStatus) {
-					if (index == 0) {
-						props.synths.get('synth_1').volume.value = -10;
-						props.synths.get('synth_1').triggerAttackRelease('C4', '8n');
-					}
-					if (index == 1) {
-						props.synths.get('synth_2').volume.value = -10;
-						props.synths.get('synth_2').triggerAttackRelease('C4', '8n');
-					}
-					if (index == 2) {
-						props.synths.get('synth_3').volume.value = -10;
-						props.synths.get('synth_3').triggerAttackRelease('C4', '8n');
-					}
-					if (index == 3) {
-						props.synths.get('synth_4').volume.value = -10;
-						props.synths.get('synth_4').triggerAttackRelease('C4', '8n');
-					}
-				}
-			});
+			playSynths(s, props, boxes,params);
 			drawBox(s, boxes, params);
 			drawSlope(s, params);
 			drawFrame(s, params);
