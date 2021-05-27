@@ -83355,8 +83355,7 @@ var sketch = function sketch(props) {
     s.setup = function () {
       s.createCanvas(params.canvasSize, params.canvasSize);
       pane_1.setPane(props, s, params);
-      seqs_1.setSeqs(props, params); // s.frameRate(30);
-
+      seqs_1.setSeqs(props, params);
       s.noLoop();
     };
 
@@ -83365,6 +83364,31 @@ var sketch = function sketch(props) {
       params_1.updateParams(s, params);
       boxes = boxes.map(function (box, index) {
         return updateBox_1.updateBox(box, index)(params);
+      });
+      boxes.forEach(function (box, index) {
+        var isStatus = box.status == 'rotating' || box.status == 'sliding';
+
+        if (box.frameCount == 0 && isStatus) {
+          if (index == 0) {
+            props.synths.get('synth_1').volume.value = -10;
+            props.synths.get('synth_1').triggerAttackRelease('C4', '8n');
+          }
+
+          if (index == 1) {
+            props.synths.get('synth_2').volume.value = -10;
+            props.synths.get('synth_2').triggerAttackRelease('C4', '8n');
+          }
+
+          if (index == 2) {
+            props.synths.get('synth_3').volume.value = -10;
+            props.synths.get('synth_3').triggerAttackRelease('C4', '8n');
+          }
+
+          if (index == 3) {
+            props.synths.get('synth_4').volume.value = -10;
+            props.synths.get('synth_4').triggerAttackRelease('C4', '8n');
+          }
+        }
       });
       drawBox_1.drawBox(s, boxes, params);
       drawBox_1.drawSlope(s, params);
@@ -83376,20 +83400,72 @@ var sketch = function sketch(props) {
 
 exports.sketch = sketch;
 },{"./params":"20210506/params.ts","./pane":"20210506/pane.ts","./seqs":"20210506/seqs.ts","./box/setBox":"20210506/box/setBox.ts","./box/updateBox":"20210506/box/updateBox.ts","./box/drawBox":"20210506/box/drawBox.ts","./frame":"20210506/frame.ts"}],"20210506/synths.ts":[function(require,module,exports) {
-"use strict"; // import * as Tone from 'tone';
+"use strict";
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.synths = void 0;
 
+var Tone = __importStar(require("tone"));
+
 var synths = function synths() {
   var synthMap = new Map();
+  var panner_1 = new Tone.Panner(0).toDestination();
+  var synth_1 = new Tone.MetalSynth().connect(panner_1);
+  synthMap.set('panner_1', panner_1);
+  synthMap.set('synth_1', synth_1);
+  var panner_2 = new Tone.Panner(0).toDestination();
+  var synth_2 = new Tone.MetalSynth().connect(panner_1);
+  synthMap.set('panner_2', panner_2);
+  synthMap.set('synth_2', synth_2);
+  var panner_3 = new Tone.Panner(0).toDestination();
+  var synth_3 = new Tone.MetalSynth().connect(panner_1);
+  synthMap.set('panner_3', panner_3);
+  synthMap.set('synth_3', synth_3);
+  var panner_4 = new Tone.Panner(0).toDestination();
+  var synth_4 = new Tone.MetalSynth().connect(panner_1);
+  synthMap.set('panner_4', panner_4);
+  synthMap.set('synth_4', synth_4);
   return synthMap;
 };
 
 exports.synths = synths;
-},{}],"20210506/p5_20210506.ts":[function(require,module,exports) {
+},{"tone":"../node_modules/tone/build/esm/index.js"}],"20210506/p5_20210506.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -83660,7 +83736,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63023" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61859" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
