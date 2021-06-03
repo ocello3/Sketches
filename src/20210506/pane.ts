@@ -43,5 +43,7 @@ export const setPane = (props: props, s: eP5, params: params): void => {
 	tab.pages[0].addInput(params, 'boxSlideSpeedRate', { min: 0.05, max: 0.5, step: 0.05, label: 'slide speed'});
 	tab.pages[0].addInput(params, 'boxControlPosVelocityRate', { min: 10, max: 25, step: 1, label: 'bezier speed'});
 	tab.pages[0].addInput(params, 'boxControlPosAccelerateRate', { min: 0.5, max: 7, step: 0.5, label: 'bezier accelerate'});
+	// synth parameter
+	tab.pages[1].addInput(params, 'volume', { min: -60, max: -10, step: 1 });
 };
 

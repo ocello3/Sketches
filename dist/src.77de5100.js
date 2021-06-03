@@ -82847,6 +82847,12 @@ var setPane = function setPane(props, s, params) {
     max: 7,
     step: 0.5,
     label: 'bezier accelerate'
+  }); // synth parameter
+
+  tab.pages[1].addInput(params, 'volume', {
+    min: -60,
+    max: -10,
+    step: 1
   });
 };
 
@@ -83738,7 +83744,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62123" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62400" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
