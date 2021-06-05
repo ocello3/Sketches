@@ -81163,12 +81163,12 @@ var setParams = function setParams(width) {
   var params = {
     // default
     canvasSize: width,
-    dataObjCount: 4,
+    dataObjCount: 5,
     frameRate: 0,
     isStarted: false,
     // for box
-    colorPalette: [[0, 65, 109], [45, 125, 188], [82, 189, 242], [117, 212, 242]],
-    statusNoteSeq: ['C3', 'D3', 'E3', 'F3'],
+    colorPalette: [[0, 65, 109], [45, 125, 188], [82, 189, 242], [117, 212, 242], [38, 148, 171]],
+    statusNoteSeq: ['C3', 'D3', 'E3', 'F3', 'G3'],
     statusNoteNum: -1,
     boxSizeRate: {
       min: 0.05,
@@ -81213,7 +81213,11 @@ var setParams = function setParams(width) {
     volume: {
       min: -40,
       max: -15
-    }
+    },
+    harmonicity: 10,
+    resonance: 400,
+    modulationIndex: 10,
+    decay: 0.4
   };
   return params;
 };
@@ -82761,9 +82765,9 @@ var setPane = function setPane(props, s, params) {
 
   var activate = function activate() {
     // for (const value of props.synths.values()) value.start();
-    Tone.Transport.start();
     Tone.start(); // remove after add synths
 
+    Tone.Transport.start();
     params.isStarted = true;
   };
 
@@ -82791,67 +82795,84 @@ var setPane = function setPane(props, s, params) {
     s.isLooping() ? s.noLoop() : s.loop();
   }); // frameRate monitor
 
-  tab.pages[0].addMonitor(params, 'frameRate', {
+  var tab_1 = tab.pages[0];
+  tab_1.addMonitor(params, 'frameRate', {
     interval: 500
   }); // parameter
 
-  tab.pages[0].addInput(params, 'boxSizeRate', {
+  tab_1.addInput(params, 'boxSizeRate', {
     min: 0.01,
     max: 0.2,
     step: 0.01,
     label: 'size'
   });
-  tab.pages[0].addInput(params, 'boxPosXRate', {
+  tab_1.addInput(params, 'boxPosXRate', {
     min: 0.1,
     max: 1,
     step: 0.1,
     label: 'init x-Pos'
   });
-  tab.pages[0].addInput(params, 'boxVelocityY', {
+  tab_1.addInput(params, 'boxVelocityY', {
     min: 1,
     max: 10,
     step: 1,
     label: 'init y-Velocity'
   });
-  tab.pages[0].addInput(params, 'gravity', {
+  tab_1.addInput(params, 'gravity', {
     min: 0.1,
     max: 1,
     step: 0.1
   });
-  tab.pages[0].addInput(params, 'boxShrinkSpeedRate', {
+  tab_1.addInput(params, 'boxShrinkSpeedRate', {
     min: 0.5,
     max: 1.5,
     step: 0.05,
     label: 'shrink speed'
   });
-  tab.pages[0].addInput(params, 'boxRotateSpeedRate', {
+  tab_1.addInput(params, 'boxRotateSpeedRate', {
     min: 0.1,
     max: 1.0,
     step: 0.05,
     label: 'rotate speed'
   });
-  tab.pages[0].addInput(params, 'boxSlideSpeedRate', {
+  tab_1.addInput(params, 'boxSlideSpeedRate', {
     min: 0.05,
     max: 0.5,
     step: 0.05,
     label: 'slide speed'
   });
-  tab.pages[0].addInput(params, 'boxControlPosVelocityRate', {
+  tab_1.addInput(params, 'boxControlPosVelocityRate', {
     min: 10,
     max: 25,
     step: 1,
     label: 'bezier speed'
   });
-  tab.pages[0].addInput(params, 'boxControlPosAccelerateRate', {
+  tab_1.addInput(params, 'boxControlPosAccelerateRate', {
     min: 0.5,
     max: 7,
     step: 0.5,
     label: 'bezier accelerate'
   }); // synth parameter
 
-  tab.pages[1].addInput(params, 'volume', {
+  var tab_2 = tab.pages[1];
+  tab_2.addInput(params, 'volume', {
     min: -60,
     max: -10,
+    step: 1
+  });
+  tab_2.addInput(params, 'harmonicity', {
+    min: 5,
+    max: 20,
+    step: 1
+  });
+  tab_2.addInput(params, 'resonance', {
+    min: 100,
+    max: 1000,
+    step: 50
+  });
+  tab_2.addInput(params, 'modulationIndex', {
+    min: 5,
+    max: 40,
     step: 1
   });
 };
@@ -82907,7 +82928,7 @@ var setSeqs = function setSeqs(props, params) {
     Tone.Draw.schedule(function () {
       params.statusNoteNum = seq.indexOf(note);
     }, time);
-  }, [seq[0], null, [seq[1], seq[2], null], [null, seq[3]]], '4n').start(0);
+  }, [seq[0], null, [seq[1], seq[2], null], [null, seq[3]], seq[4]], '4n').start(0);
   props.synths.set('statusSeq', statusSeq);
 };
 
@@ -83283,58 +83304,65 @@ var __importStar = this && this.__importStar || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.playSynths = exports.synths = void 0;
+exports.synths = void 0;
 
 var Tone = __importStar(require("tone"));
 
 var synths = function synths() {
   var synthMap = new Map();
-  var main = new Tone.Limiter(-15).toDestination();
+  var main = new Tone.Limiter(-5).toDestination();
   synthMap.set('main', main);
-  var channel = new Tone.Channel(-10).connect(main);
-  var panner_0 = new Tone.Panner(0).connect(channel);
+  var channel_0 = new Tone.Channel(0).connect(main);
+  var channel_1 = new Tone.Channel(0).connect(main);
+  var pingPong_0 = new Tone.PingPongDelay("4n", 0.1).connect(channel_1);
+  var panner_0 = new Tone.Panner(0).fan(channel_0, pingPong_0);
   var synth_0 = new Tone.MetalSynth().connect(panner_0);
   synthMap.set('panner_0', panner_0);
   synthMap.set('synth_0', synth_0);
-  var panner_1 = new Tone.Panner(0).connect(channel);
-  var synth_1 = new Tone.MetalSynth().connect(panner_1);
-  synthMap.set('panner_1', panner_1);
-  synthMap.set('synth_1', synth_1);
-  var panner_2 = new Tone.Panner(0).connect(channel);
-  var synth_2 = new Tone.MetalSynth().connect(panner_2);
-  synthMap.set('panner_2', panner_2);
-  synthMap.set('synth_2', synth_2);
-  var panner_3 = new Tone.Panner(0).connect(channel);
-  var synth_3 = new Tone.MetalSynth().connect(panner_3);
-  synthMap.set('panner_3', panner_3);
-  synthMap.set('synth_3', synth_3);
   return synthMap;
 };
 
 exports.synths = synths;
+},{"tone":"../node_modules/tone/build/esm/index.js"}],"20210506/play.ts":[function(require,module,exports) {
+"use strict";
 
-var playSynths = function playSynths(s, props, boxes, params) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.play = void 0;
+
+var play = function play(s, props, boxes, params) {
   var playSynth = function playSynth(box, index) {
-    var synthName = 'synth_' + index;
-    var pannerName = 'panner_' + index;
     var boxSize = {
       min: params.canvasSize * params.boxSizeRate.min,
       max: params.canvasSize * params.boxSizeRate.max
     };
     var volume = s.map(box.boxWidth, boxSize.min, boxSize.max, params.volume.min, params.volume.max);
     var pan = s.map(box.boxPos_rowRight.x, 0, params.canvasSize, -1, 1);
-    props.synths.get(pannerName).pan.value = pan;
-    props.synths.get(synthName).volume.value = volume;
-    props.synths.get(synthName).triggerAttackRelease('C4', '8n');
+    var notes = ['C4', 'D4', 'E4', 'G4', 'A4'];
+    props.synths.get('panner_0').pan.value = pan;
+    props.synths.get('synth_0').set({
+      harmonicity: params.harmonicity,
+      resonance: params.resonance,
+      modulationIndex: params.modulationIndex,
+      envelope: {
+        decay: params.decay
+      },
+      volume: volume
+    });
+    props.synths.get('synth_0').triggerAttackRelease(notes[index], '8n');
   };
 
-  boxes.forEach(function (box, index) {
-    if (box.frameCount == 0 && box.status == 'sliding') playSynth(box, index);
-  });
+  for (var index = 0; index < params.dataObjCount; index++) {
+    if (boxes[index].frameCount == 0 && boxes[index].status == 'sliding') {
+      playSynth(boxes[index], index);
+      break;
+    }
+  }
 };
 
-exports.playSynths = playSynths;
-},{"tone":"../node_modules/tone/build/esm/index.js"}],"20210506/box/drawBox.ts":[function(require,module,exports) {
+exports.play = play;
+},{}],"20210506/box/drawBox.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -83438,6 +83466,8 @@ var updateBox_1 = require("./box/updateBox");
 
 var synths_1 = require("./synths");
 
+var play_1 = require("./play");
+
 var drawBox_1 = require("./box/drawBox");
 
 var frame_1 = require("./frame");
@@ -83446,6 +83476,7 @@ var sketch = function sketch(props) {
   return function (s) {
     var canvasDiv = document.getElementById('canvas');
     var params = params_1.setParams(canvasDiv.clientWidth);
+    props.synths = synths_1.synths();
     var boxes = Array.from(Array(params.dataObjCount), function () {
       return setBox_1.setBox(params);
     });
@@ -83463,7 +83494,7 @@ var sketch = function sketch(props) {
       boxes = boxes.map(function (box, index) {
         return updateBox_1.updateBox(box, index)(params);
       });
-      synths_1.playSynths(s, props, boxes, params);
+      play_1.play(s, props, boxes, params);
       drawBox_1.drawBox(s, boxes, params);
       drawBox_1.drawSlope(s, params);
       frame_1.drawFrame(s, params);
@@ -83473,7 +83504,7 @@ var sketch = function sketch(props) {
 };
 
 exports.sketch = sketch;
-},{"./params":"20210506/params.ts","./pane":"20210506/pane.ts","./seqs":"20210506/seqs.ts","./box/setBox":"20210506/box/setBox.ts","./box/updateBox":"20210506/box/updateBox.ts","./synths":"20210506/synths.ts","./box/drawBox":"20210506/box/drawBox.ts","./frame":"20210506/frame.ts"}],"20210506/p5_20210506.ts":[function(require,module,exports) {
+},{"./params":"20210506/params.ts","./pane":"20210506/pane.ts","./seqs":"20210506/seqs.ts","./box/setBox":"20210506/box/setBox.ts","./box/updateBox":"20210506/box/updateBox.ts","./synths":"20210506/synths.ts","./play":"20210506/play.ts","./box/drawBox":"20210506/box/drawBox.ts","./frame":"20210506/frame.ts"}],"20210506/p5_20210506.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -83483,22 +83514,19 @@ exports.p5_20210506 = void 0;
 
 var index_1 = require("./index");
 
-var synths_1 = require("./synths");
-
 var p5_20210506 = function p5_20210506() {
   var p5map = {
     date: '20210506',
-    title: 'Fall Box',
-    note: 'Box fall to slope.',
-    content: 'Experiment to create two difference sound at moment of the second hand advances.',
-    sketch: index_1.sketch,
-    synths: synths_1.synths
+    title: 'Sink into Slope',
+    note: 'Boxes collide and sink into slope.',
+    content: 'Boxes falls to slope. When boxes clash to slope, the height start to shrink and start to sink. Refer <a href="https://scrapbox.io/ocello3blog/FallingBox_20210506" target="_blank" rel="noopener noreferrer">this link</a> to see development log.',
+    sketch: index_1.sketch
   };
   return p5map;
 };
 
 exports.p5_20210506 = p5_20210506;
-},{"./index":"20210506/index.ts","./synths":"20210506/synths.ts"}],"getP5maps.ts":[function(require,module,exports) {
+},{"./index":"20210506/index.ts"}],"getP5maps.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -83744,7 +83772,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62400" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57701" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

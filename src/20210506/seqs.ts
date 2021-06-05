@@ -8,7 +8,7 @@ export const setSeqs = (props: props, params:params) => {
 		Tone.Draw.schedule(() => {
 			params.statusNoteNum = seq.indexOf(note);
 		}, time);
-	}, [seq[0], null, [seq[1], seq[2], null],[null, seq[3]]], '4n').start(0);
+	}, [seq[0], null, [seq[1], seq[2], null],[null, seq[3]], seq[4]], '4n').start(0);
 	props.synths.set('statusSeq', statusSeq);
 }
 

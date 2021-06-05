@@ -5,7 +5,7 @@ export const setParams = (width: number) => {
 	const params = {
 		// default
 		canvasSize: width,
-		dataObjCount: 4,
+		dataObjCount: 5,
 		frameRate: 0,
 		isStarted: false,
 		// for box
@@ -13,9 +13,10 @@ export const setParams = (width: number) => {
 			[0, 65, 109],
 			[45,125,188],
 			[82, 189, 242],
-			[117, 212, 242]
+			[117, 212, 242],
+			[38, 148,171],
 		],
-		statusNoteSeq: ['C3', 'D3', 'E3', 'F3'],
+		statusNoteSeq: ['C3', 'D3', 'E3', 'F3', 'G3'],
 		statusNoteNum: -1, // use without 0 - 4
 		boxSizeRate: { min: 0.05, max: 0.15 },
 		boxPosXRate: { min: 0.3, max: 0.8 },
@@ -31,6 +32,10 @@ export const setParams = (width: number) => {
 		tiltAngle: Math.PI / 6,
 		// for synth
 		volume: { min: -40, max: -15 },
+		harmonicity: 10,
+		resonance: 400,
+		modulationIndex: 10,
+		decay: 0.4,
 	}
 	return params;
 };

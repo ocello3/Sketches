@@ -5,7 +5,8 @@ import { setPane } from './pane';
 import { setSeqs } from './seqs';
 import { setBox } from './box/setBox';
 import { updateBox } from './box/updateBox';
-import { playSynths } from './synths';
+import { synths } from './synths';
+import { play } from './play';
 import { drawBox, drawSlope } from './box/drawBox';
 import { drawFrame } from './frame';
 
@@ -13,6 +14,7 @@ export const sketch = (props: props) => {
 	return (s: eP5): void => {
 		const canvasDiv = document.getElementById('canvas');
 		const params: params = setParams(canvasDiv.clientWidth);
+		props.synths = synths();
 		let boxes = Array.from(Array(params.dataObjCount), () => setBox(params));
 
 		s.setup = () => {
@@ -26,7 +28,7 @@ export const sketch = (props: props) => {
 			s.background(255);
 			updateParams(s, params);
 			boxes = boxes.map((box, index) => updateBox(box, index)(params));
-			playSynths(s, props, boxes,params);
+			play(s, props, boxes,params);
 			drawBox(s, boxes, params);
 			drawSlope(s, params);
 			drawFrame(s, params);
