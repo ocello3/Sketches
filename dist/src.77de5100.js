@@ -83739,7 +83739,204 @@ var p5_20210606 = function p5_20210606() {
 };
 
 exports.p5_20210606 = p5_20210606;
-},{"./index":"20210606/index.ts","./synths":"20210606/synths.ts"}],"getP5maps.ts":[function(require,module,exports) {
+},{"./index":"20210606/index.ts","./synths":"20210606/synths.ts"}],"20210707/params.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateParams = exports.setParams = void 0;
+
+var setParams = function setParams(width) {
+  var params = {
+    // default
+    canvasSize: width,
+    dataObjCount: 5,
+    frameRate: 0,
+    isStarted: false,
+    // for box
+    colorPalette: [[0, 65, 109], [45, 125, 188], [82, 189, 242], [117, 212, 242], [38, 148, 171]]
+  };
+  return params;
+};
+
+exports.setParams = setParams;
+var thisParams = exports.setParams(0);
+
+var updateParams = function updateParams(s, params) {
+  params.frameRate = s.frameRate();
+};
+
+exports.updateParams = updateParams;
+},{}],"20210707/pane.ts":[function(require,module,exports) {
+"use strict";
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.setPane = void 0; // import * as Tone from 'tone';  // for tonejs
+
+var TweakpaneIntervalPlugin = __importStar(require("@tweakpane/plugin-interval"));
+
+var setPane = function setPane(props, s, params) {
+  props.pane.registerPlugin(TweakpaneIntervalPlugin);
+  var tab = props.pane.addTab({
+    pages: [{
+      title: 'Canvas'
+    }, {
+      title: 'Synth'
+    }]
+  });
+
+  var activate = function activate() {
+    // for (const value of props.synths.values()) value.start();
+    // Tone.start(); // remove after add synths
+    // Tone.Transport.start();
+    params.isStarted = true;
+  };
+
+  var inactivate = function inactivate() {// Tone.Destination.mute = true;
+    // Tone.Transport.stop();
+  };
+
+  var reactivate = function reactivate() {// Tone.Destination.mute = false;
+    // Tone.Transport.start();
+  }; // control button
+
+
+  var stopButton = tab.pages[0].addButton({
+    title: 'start/stop'
+  });
+  stopButton.on('click', function () {
+    if (!s.isLooping() && !params.isStarted) activate(); // when loaded
+
+    if (s.isLooping()) inactivate(); // when stoped
+
+    if (!s.isLooping() && params.isStarted) reactivate(); // when restarted
+
+    s.isLooping() ? s.noLoop() : s.loop();
+  }); // frameRate monitor
+
+  var tab_1 = tab.pages[0];
+  tab_1.addMonitor(params, 'frameRate', {
+    interval: 500
+  }); // parameter
+  // synth parameter
+
+  var tab_2 = tab.pages[1];
+};
+
+exports.setPane = setPane;
+},{"@tweakpane/plugin-interval":"../node_modules/@tweakpane/plugin-interval/dist/tweakpane-plugin-interval.js"}],"20210707/frame.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.drawFrame = void 0;
+
+var drawFrame = function drawFrame(s, params) {
+  s.push();
+  s.stroke('black');
+  s.strokeWeight(1);
+  s.noFill();
+  s.rect(0, 0, params.canvasSize, params.canvasSize);
+  s.pop();
+};
+
+exports.drawFrame = drawFrame;
+},{}],"20210707/index.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.sketch = void 0;
+
+var params_1 = require("./params");
+
+var pane_1 = require("./pane");
+
+var frame_1 = require("./frame");
+
+var sketch = function sketch(props) {
+  return function (s) {
+    var canvasDiv = document.getElementById('canvas');
+    var params = params_1.setParams(canvasDiv.clientWidth);
+
+    s.setup = function () {
+      s.createCanvas(params.canvasSize, params.canvasSize);
+      pane_1.setPane(props, s, params);
+      s.noLoop();
+    };
+
+    s.draw = function () {
+      s.background(255);
+      params_1.updateParams(s, params);
+      frame_1.drawFrame(s, params);
+    };
+  };
+};
+
+exports.sketch = sketch;
+},{"./params":"20210707/params.ts","./pane":"20210707/pane.ts","./frame":"20210707/frame.ts"}],"20210707/p5_20210707.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.p5_20210707 = void 0;
+
+var index_1 = require("./index");
+
+var p5_20210707 = function p5_20210707() {
+  var p5map = {
+    date: '20210707',
+    title: 'Sheard Font',
+    note: 'Sheard Font',
+    content: 'Sheard Font',
+    sketch: index_1.sketch,
+    synths: undefined
+  };
+  return p5map;
+};
+
+exports.p5_20210707 = p5_20210707;
+},{"./index":"20210707/index.ts"}],"getP5maps.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -83761,12 +83958,15 @@ var p5_20210418_1 = require("./20210418/p5_20210418");
 
 var p5_20210506_1 = require("./20210506/p5_20210506");
 
-var p5_20210606_1 = require("./20210606/p5_20210606"); // import { p5_YYYYMMDD } from './template/p5_YYYYMMDD'; // comment out
+var p5_20210606_1 = require("./20210606/p5_20210606");
+
+var p5_20210707_1 = require("./20210707/p5_20210707"); // import { p5_YYYYMMDD } from './template/p5_YYYYMMDD'; // comment out
 
 
 var getP5maps = function getP5maps() {
   var p5maps = []; // p5maps.push(p5_YYYYMMDD()); // comment out
 
+  p5maps.push(p5_20210707_1.p5_20210707());
   p5maps.push(p5_20210606_1.p5_20210606());
   p5maps.push(p5_20210506_1.p5_20210506());
   p5maps.push(p5_20210418_1.p5_20210418());
@@ -83779,7 +83979,7 @@ var getP5maps = function getP5maps() {
 };
 
 exports.getP5maps = getP5maps;
-},{"./20200501/p5_20200501":"20200501/p5_20200501.ts","./20200912/p5_20200912":"20200912/p5_20200912.ts","./20201023/p5_20201023":"20201023/p5_20201023.ts","./20201231/p5_20201231":"20201231/p5_20201231.ts","./20210201/p5_20210201":"20210201/p5_20210201.ts","./20210418/p5_20210418":"20210418/p5_20210418.ts","./20210506/p5_20210506":"20210506/p5_20210506.ts","./20210606/p5_20210606":"20210606/p5_20210606.ts"}],"createCoverPage.ts":[function(require,module,exports) {
+},{"./20200501/p5_20200501":"20200501/p5_20200501.ts","./20200912/p5_20200912":"20200912/p5_20200912.ts","./20201023/p5_20201023":"20201023/p5_20201023.ts","./20201231/p5_20201231":"20201231/p5_20201231.ts","./20210201/p5_20210201":"20210201/p5_20210201.ts","./20210418/p5_20210418":"20210418/p5_20210418.ts","./20210506/p5_20210506":"20210506/p5_20210506.ts","./20210606/p5_20210606":"20210606/p5_20210606.ts","./20210707/p5_20210707":"20210707/p5_20210707.ts"}],"createCoverPage.ts":[function(require,module,exports) {
 "use strict";
 
 var __values = this && this.__values || function (o) {
@@ -83988,7 +84188,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62119" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57156" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
