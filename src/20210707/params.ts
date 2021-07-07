@@ -16,6 +16,7 @@ export const setParams = (width: number) => {
 			[117, 212, 242],
 			[38, 148,171],
 		],
+		angle: 0,
 	}
 	return params;
 };

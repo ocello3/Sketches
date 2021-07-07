@@ -19,6 +19,15 @@ export const sketch = (props: props) => {
 			s.background(255);
 			updateParams(s, params);
 			drawFrame(s, params);
+			params.angle += 0.1;
+			
+			s.push();
+			s.translate(params.canvasSize * 0.5, params.canvasSize * 0.5);
+			s.shearX(params.angle);
+			s.textAlign(s.CENTER, s.CENTER);
+			s.textSize(params.canvasSize * 0.3);
+			s.text('A', 0, 0);
+			s.pop();
 		};
 	};
 };

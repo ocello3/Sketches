@@ -83755,7 +83755,8 @@ var setParams = function setParams(width) {
     frameRate: 0,
     isStarted: false,
     // for box
-    colorPalette: [[0, 65, 109], [45, 125, 188], [82, 189, 242], [117, 212, 242], [38, 148, 171]]
+    colorPalette: [[0, 65, 109], [45, 125, 188], [82, 189, 242], [117, 212, 242], [38, 148, 171]],
+    angle: 0
   };
   return params;
 };
@@ -83857,6 +83858,11 @@ var setPane = function setPane(props, s, params) {
   }); // parameter
   // synth parameter
 
+  tab_1.addInput(params, 'angle', {
+    step: 0.1,
+    min: Math.PI * -2,
+    max: Math.PI * 2
+  });
   var tab_2 = tab.pages[1];
 };
 
@@ -83908,6 +83914,14 @@ var sketch = function sketch(props) {
       s.background(255);
       params_1.updateParams(s, params);
       frame_1.drawFrame(s, params);
+      params.angle += 0.1;
+      s.push();
+      s.translate(params.canvasSize * 0.5, params.canvasSize * 0.5);
+      s.shearX(params.angle);
+      s.textAlign(s.CENTER, s.CENTER);
+      s.textSize(params.canvasSize * 0.3);
+      s.text('A', 0, 0);
+      s.pop();
     };
   };
 };
@@ -84188,7 +84202,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57156" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59454" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
