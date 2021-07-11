@@ -16,7 +16,8 @@ export const setParams = (width: number) => {
 			[117, 212, 242],
 			[38, 148,171],
 		],
-		angle: 0,
+		// for font
+		frameCount: 0,
 	}
 	return params;
 };
@@ -26,5 +27,6 @@ export type params = typeof thisParams;
 
 export const updateParams = (s:eP5, params:params):void => {
 	params.frameRate = s.frameRate();
+	params.frameCount = s.frameCount;
 }
 

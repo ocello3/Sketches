@@ -36,7 +36,7 @@ export const setPane = (props: props, s: eP5, params: params): void => {
 	tab_1.addMonitor(params, 'frameRate', { interval: 500 });
 	// parameter
 	// synth parameter
-	tab_1.addInput(params, 'angle', { step: 0.1, min: Math.PI * (-2), max: Math.PI * 2 });
+	// tab_1.addInput(params, 'angle', { step: 0.1, min: Math.PI * (-2), max: Math.PI * 2 });
 	const tab_2 = tab.pages[1];
 };
 
